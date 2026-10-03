@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root,
+  .jemore-theme-light {
+    --jemore-blu-rgb: #222c7c;
+    --jemore-blu-hsl: 233.333 57% 31%;
+    --jemore-blu-scuro-rgb: #1e1e2f;
+    --jemore-blu-scuro-hsl: 240 22% 15%;
+    --jemore-blu-petrolio-rgb: #383b53;
+    --jemore-blu-petrolio-hsl: 233.333 19% 27%;
+    --jemore-bianco-latte-rgb: #fdf7f7;
+    --jemore-bianco-latte-hsl: 0 60% 98%;
+    --jemore-giallo-rgb: #ffd404;
+    --jemore-giallo-hsl: 49.721 100% 51%;
+
+    /* Shadcn UI colors */
+    --background: var(--jemore-bianco-latte-hsl);
+    --foreground: 0 0% 5%;
+    --card: var(--jemore-blu-petrolio-hsl);
+    --card-foreground: 0 0% 5%;
+    --popover: var(--jemore-giallo-hsl);
+    --popover-foreground: var(--jemore-blu-hsl);
+    --primary: var(--jemore-blu-hsl);
+    --primary-foreground: var(--jemore-giallo-hsl);
+    --secondary: var(--jemore-blu-scuro-hsl);
+    --secondary-foreground: var(--jemore-giallo-hsl);
+    --muted: var(--jemore-blu-petrolio-hsl);
+    --muted-foreground: var(--jemore-bianco-latte-hsl);
+    --accent: var(--jemore-giallo-hsl);
+    --accent-foreground: var(--jemore-blu-hsl);
+    --destructive: var(--jemore-giallo-hsl);
+    --destructive-foreground: var(--jemore-blu-hsl);
+    --border: 0 0% 20%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+
+    --radius: 0.5rem;
+
+    @apply font-opensans;
+  }
+
+  .jemore-theme-light .jemore-theme-variant-1 {
+    --background: var(--jemore-blu-petrolio-hsl);
+    --foreground: var(--jemore-bianco-latte-hsl);
+  }
+
+  .jemore-theme-dark {
+    --background: 240 22% 15%; /* --blu-scuro */
+    --foreground: 0 60% 98%; /* --bianco-latte */
+
+    --card: 233 19% 27%; /* --blu-petrolio */
+    --card-foreground: 0 60% 98%; /* --bianco-latte */
+
+    --popover: 240 22% 15%; /* --blu-scuro */
+    --popover-foreground: 0 60% 98%; /* --bianco-latte */
+
+    --primary: 233 57% 31%; /* --blu */
+    --primary-foreground: 50 100% 51%; /* --giallo per un contrasto più forte */
+
+    --secondary: 50 100% 51%; /* --giallo */
+    --secondary-foreground: 240 22% 15%; /* --blu-scuro */
+
+    --muted: 232, 19%, 80%; /* --blu-petrolio */
+    --muted-foreground: 0 60% 95%; /* --bianco-latte leggermente più scuro */
+
+    --accent: 50 100% 51%; /* --giallo */
+    --accent-foreground: 240 22% 15%; /* --blu-scuro */
+
+    --destructive: 0 70% 55%; /* Rosso più vibrante per il tema scuro */
+    --destructive-foreground: 0 60% 98%;
+
+    --border: 20 0% 50%;
+    --input: 233 20% 35%; /* Un blu leggermente più chiaro per l'input */
+    --ring: 50 100% 51%; /* --giallo per l'outline del focus */
+
+    --radius: 0.5rem;
+
+    @apply font-opensans;
+  }
+
+  .jemore-theme-dark .jemore-theme-variant-1 {
+    --background: 233 19% 27%;
+    --foreground: 0 60% 90%;
+  }
+
+  .jemore-theme-variant-1 hr {
+    @apply border-foreground;
+  }
+
+  * {
+    @apply bg-background text-foreground;
+  }
+}

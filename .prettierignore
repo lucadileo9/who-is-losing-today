@@ -1,0 +1,38 @@
+# Cartelle di build/distribuzione
+dist/
+build/
+.next/
+out/
+
+# Dipendenze
+node_modules/
+
+# File di configurazione
+.env*
+.DS_Store
+yarn.lock
+next.config.js
+plopfile.js
+postcss.config.js
+tailwind.config.js
+tsconfig.json
+eslint.config.js
+
+
+
+# File Markdown
+README.md
+CONTRIBUTING.md
+
+# File JSON sensibili
+components.json
+package.json
+package-lock.json
+
+
+# Cartelle specifiche
+.plop/
+public/
+coverage/
+.cache/
+components/ui/
