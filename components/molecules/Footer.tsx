@@ -1,4 +1,5 @@
 import { Sparkles } from "lucide-react"
+import { BugReportModal } from "@/components/molecules/BugReportModal"
 
 export function Footer() {
   return (
@@ -11,9 +12,13 @@ export function Footer() {
           <span className="font-semibold text-foreground">Who Is Losing Today?</span>
           <span>· Sfida tra amici</span>
         </div>
-        <p className="text-xs text-muted-foreground">
-          Krilion · Metazooa · Chronophoto — Gestione punteggi quotidiani
-        </p>
+
+        <div className="flex items-center gap-4">
+          <BugReportModal />
+          <span className="text-xs text-muted-foreground hidden sm:inline">
+            Krilion · Metazooa · Chronophoto
+          </span>
+        </div>
       </div>
     </footer>
   )
