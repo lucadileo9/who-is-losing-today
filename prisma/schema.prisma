@@ -30,6 +30,7 @@ model User {
   sessions      Session[]
   dailyScores   DailyScore[]
   dailyNotes    DailyNote[]
+  bugReports    BugReport[]
 
   @@map("users")
 }
@@ -123,4 +124,23 @@ model DailyNote {
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@map("daily_notes")
+}
+
+// ------------------------------------------------------
+// MODELLO SEGNALAZIONE BUG & FEEDBACK
+// ------------------------------------------------------
+
+model BugReport {
+  id          String   @id @default(cuid())
+  userId      String?
+  userEmail   String?
+  userName    String?  @default("Ospite")
+  description String   @db.Text
+  pageUrl     String?
+  status      String   @default("OPEN") // "OPEN", "RESOLVED", "CLOSED"
+  createdAt   DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("bug_reports")
 }
