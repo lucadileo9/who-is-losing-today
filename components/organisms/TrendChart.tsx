@@ -5,6 +5,7 @@ import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YA
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { type LeaderboardTab, type Player, PLAYER_COLORS } from "@/lib/game-data"
 import { ChartTooltip } from "@/components/molecules/ChartTooltip"
+import { apiFetch } from "@/lib/utils"
 import { BarChart3 } from "lucide-react"
 
 export function TrendChart({ tab }: { tab: LeaderboardTab }) {
@@ -16,7 +17,7 @@ export function TrendChart({ tab }: { tab: LeaderboardTab }) {
   const loadTrendData = useCallback(async () => {
     setIsLoading(true)
     try {
-      const res = await fetch("/api/dashboard")
+      const res = await apiFetch("/api/dashboard")
       if (res.ok) {
         const json = await res.json()
         setChartData(json?.groupTrend?.[tab] || [])

@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Avatar } from "@/components/atoms"
 import { getTodayIsoString, shiftIsoDate, formatItalianDate } from "@/lib/date-utils"
 import { DatePicker } from "@/components/molecules/DatePicker"
+import { apiFetch } from "@/lib/utils"
 
 interface RankedPlayer {
   id: string
@@ -27,7 +28,7 @@ export function DailySummaryCards() {
   const fetchDailyData = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await fetch(`/api/dashboard?date=${selectedDateStr}`)
+      const res = await apiFetch(`/api/dashboard?date=${selectedDateStr}`)
       if (res.ok) {
         const json = await res.json()
         setRankedToday(json?.dailySummary?.ranked || [])

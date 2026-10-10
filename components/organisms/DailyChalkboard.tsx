@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react"
 import { useSession } from "next-auth/react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button, Avatar } from "@/components/atoms"
+import { apiFetch } from "@/lib/utils"
 import { MessageSquare, Send, Sparkles, Trash2, LogIn } from "lucide-react"
 
 export interface ChalkboardNote {
@@ -29,7 +30,7 @@ export function DailyChalkboard() {
 
   const fetchNotes = useCallback(async () => {
     try {
-      const res = await fetch("/api/notes")
+      const res = await apiFetch("/api/notes")
       if (res.ok) {
         const json = await res.json()
         setNotes(json.notes || [])
@@ -53,7 +54,7 @@ export function DailyChalkboard() {
     setError(null)
 
     try {
-      const res = await fetch("/api/notes", {
+      const res = await apiFetch("/api/notes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ content: inputText }),

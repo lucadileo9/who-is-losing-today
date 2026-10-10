@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react"
 import { AppShell } from "@/components/molecules/AppShell"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge, Button } from "@/components/atoms"
+import { apiFetch } from "@/lib/utils"
 import { Bug, CheckCircle2, AlertCircle, Trash2, RefreshCw, ExternalLink, ShieldCheck } from "lucide-react"
 
 export interface BugReportItem {
@@ -26,7 +27,7 @@ export default function AdminBugsPage() {
   const fetchBugs = useCallback(async () => {
     setIsLoading(true)
     try {
-      const res = await fetch("/api/bugs")
+      const res = await apiFetch("/api/bugs")
       if (res.ok) {
         const json = await res.json()
         setBugs(json.bugs || [])
@@ -47,7 +48,7 @@ export default function AdminBugsPage() {
     setActionLoadingId(id)
 
     try {
-      const res = await fetch(`/api/bugs/${id}`, {
+      const res = await apiFetch(`/api/bugs/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
@@ -70,7 +71,7 @@ export default function AdminBugsPage() {
     setActionLoadingId(id)
 
     try {
-      const res = await fetch(`/api/bugs/${id}`, {
+      const res = await apiFetch(`/api/bugs/${id}`, {
         method: "DELETE",
       })
 

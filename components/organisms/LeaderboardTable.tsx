@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Avatar } from "@/components/atoms"
 import { type LeaderboardTab, type Player, isLowerBetter, calculateOverallScore } from "@/lib/game-data"
+import { apiFetch } from "@/lib/utils"
 
 export function LeaderboardTable({ tab }: { tab: LeaderboardTab }) {
   const isOverall = tab === "Totale"
@@ -15,7 +16,7 @@ export function LeaderboardTable({ tab }: { tab: LeaderboardTab }) {
   const loadPlayers = useCallback(async () => {
     setIsLoading(true)
     try {
-      const res = await fetch("/api/dashboard")
+      const res = await apiFetch("/api/dashboard")
       if (res.ok) {
         const json = await res.json()
         setPlayerList(json?.players || [])

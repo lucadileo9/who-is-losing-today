@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/atoms"
+import { apiFetch } from "@/lib/utils"
 import { Bug, Check, Send } from "lucide-react"
 
 export function BugReportModal() {
@@ -30,7 +31,7 @@ export function BugReportModal() {
 
     try {
       const pageUrl = typeof window !== "undefined" ? window.location.pathname : "/"
-      const res = await fetch("/api/bugs", {
+      const res = await apiFetch("/api/bugs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

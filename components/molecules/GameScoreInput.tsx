@@ -5,7 +5,7 @@ import { Check, Send } from "lucide-react"
 import { useSession } from "next-auth/react"
 import { Button, Input } from "@/components/atoms"
 import { games, parseScore, type Game, gameTone } from "@/lib/game-data"
-import { cn } from "@/lib/utils"
+import { cn, apiFetch } from "@/lib/utils"
 
 export function GameScoreInput() {
   const { data: session } = useSession()
@@ -34,7 +34,7 @@ export function GameScoreInput() {
     setIsSubmitting(true)
 
     try {
-      const res = await fetch("/api/scores", {
+      const res = await apiFetch("/api/scores", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -4,6 +4,8 @@ import { useEffect, useState, useCallback } from "react"
 import { useSession } from "next-auth/react"
 import { UserProfileStats, UserTrendItem, UserHistoryItem } from "@/lib/services/user-service"
 
+import { apiFetch } from "@/lib/utils"
+
 export interface UserStatsHookResult {
   user: {
     id: string
@@ -52,7 +54,7 @@ export function useUserStats(fromDate?: string, toDate?: string): UserStatsHookR
       if (toDate) params.set("toDate", toDate)
 
       const url = `/api/user/me${params.toString() ? `?${params.toString()}` : ""}`
-      const res = await fetch(url)
+      const res = await apiFetch(url)
 
       if (!res.ok) {
         if (res.status === 401) {

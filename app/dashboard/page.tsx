@@ -11,6 +11,7 @@ import { type LeaderboardTab } from "@/lib/game-data"
 import { Users, Flame } from "lucide-react"
 import { DashboardTemplate } from "@/components/templates/DashboardTemplate"
 import { GameTabFilter } from "@/components/molecules/GameTabFilter"
+import { apiFetch } from "@/lib/utils"
 
 export default function DashboardPage() {
   const [tab, setTab] = useState<LeaderboardTab>("Totale")
@@ -20,7 +21,7 @@ export default function DashboardPage() {
   })
 
   const fetchFastStats = useCallback(() => {
-    fetch("/api/dashboard")
+    apiFetch("/api/dashboard")
       .then((res) => res.json())
       .then((data) => {
         if (typeof data.activePlayersCount === "number") {
