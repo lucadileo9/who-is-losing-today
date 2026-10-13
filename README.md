@@ -53,45 +53,75 @@ La documentazione del repository è suddivisa in sezioni specializzate all'inter
 
 ---
 
-## ⚡ Guida Rapida di Avvio (Quickstart)
+## ⚡ Guida Rapida di Avvio (Come far partire l'app)
 
-### 1. Clona il Repository ed Installa le Dipendenze
-```bash
-git clone https://github.com/lucadileo9/who-is-losing-today.git
-cd who-is-losing-today
-npm install
-```
+Puoi avviare l'applicazione in **due modalità principali** a seconda delle tue esigenze:
 
-### 2. Avvia il Database PostgreSQL Locale con Docker
-Assicurati che **Docker Desktop** sia aperto sul tuo PC, poi esegui:
-```bash
-docker compose up -d
-```
+---
 
-### 3. Configura il File `.env.local`
-Crea un file `.env.local` nella radice del progetto:
-```env
-DATABASE_URL="postgresql://postgres:mysecretpassword@localhost:5432/who_is_losing_today?schema=public"
-DIRECT_URL="postgresql://postgres:mysecretpassword@localhost:5432/who_is_losing_today?schema=public"
+### 🚀 Modalità 1: Full-Stack con Docker (Consigliata per testare l'ambiente di produzione)
 
-NEXTAUTH_SECRET="super_secret_key_12345"
-NEXTAUTH_URL="http://localhost:3000"
+Questa modalità avvia sia il database PostgreSQL che l'applicazione Next.js containerizzata esattamente come girerà in produzione. All'avvio del container vengono eseguiti **automaticamente** la migrazione dello schema e il **seeding** completo dei giochi e degli utenti di test con storico.
 
-GOOGLE_CLIENT_ID="il_tuo_client_id_google"
-GOOGLE_CLIENT_SECRET="il_tuo_client_secret_google"
-```
+1. Assicurati che **Docker Desktop** sia in esecuzione sul tuo PC.
+2. Esegui il comando:
+   ```bash
+   docker compose -f docker-compose.local.yml up --build
+   ```
+3. Apri il browser su **`http://localhost:3000`**.
+4. Per fermare i container: `Ctrl + C` oppure `docker compose -f docker-compose.local.yml down`.
 
-### 4. Crea le Tabelle e Popola lo Storico di Test (Seed)
-```bash
-# 1. Genera le tabelle in PostgreSQL
-npx prisma db push
+---
 
-# 2. Inserisce 14 giorni di storico e 5 giocatori di test
-npx prisma db seed
-```
+### 💻 Modalità 2: Sviluppo Locale Rapido (`npm run dev` + DB Docker)
 
-### 5. Avvia il Server di Sviluppo
-```bash
-npm run dev
-```
-Apri il browser su **`http://localhost:3000`**.
+Ideale mentre programmi, per avere l'**Hot Reloading istantaneo** di Next.js:
+
+1. **Clona il repository ed installa le dipendenze**:
+   ```bash
+   npm install
+   ```
+
+2. **Avvia solo il Database PostgreSQL locale**:
+   ```bash
+   docker compose -f docker-compose.local.yml up who-is-losing-today-db-local -d
+   ```
+
+3. **Configura il file `.env.local`**:
+   Copia il template `.env.example` in `.env.local`:
+   ```env
+   DATABASE_URL="postgresql://postgres:postgres@localhost:5432/who_is_losing_today_local?schema=public"
+   DIRECT_URL="postgresql://postgres:postgres@localhost:5432/who_is_losing_today_local?schema=public"
+
+   NEXTAUTH_SECRET="sviluppo_locale_chiave_segreta_minimo_32_caratteri"
+   NEXTAUTH_URL="http://localhost:3000"
+
+   # Opzionali per sviluppo locale senza login Google:
+   GOOGLE_CLIENT_ID=""
+   GOOGLE_CLIENT_SECRET=""
+   ```
+
+4. **Inizializza il Database e popola i dati di test (Seed)**:
+   ```bash
+   # 1. Crea le tabelle nel DB
+   npx prisma db push
+
+   # 2. Popola giochi, 5 utenti di test, 7 giorni di storico e bacheca
+   npx prisma db seed
+   ```
+
+5. **Avvia il server di sviluppo Next.js**:
+   ```bash
+   npm run dev
+   ```
+   Apri **`http://localhost:3000`**.
+
+---
+
+### 🛠️ Comandi Utili per il Database & Sviluppo
+
+* **`npx prisma db seed`**: Esegue lo script di seeding ([`prisma/seed.ts`](prisma/seed.ts)) in modo idempotente (aggiunge giochi e utenti di test se non presenti).
+* **`npm run db:reset`**: Resetta completamente il database, elimina tutti i dati, riapplica lo schema ed esegue il seed da zero.
+* **`npx prisma studio`**: Apre una comoda interfaccia grafica web su `http://localhost:5555` per ispezionare e modificare direttamente le tabelle del database.
+* **`npm run validate`**: Esegue ESLint e Prettier per verificare la qualità del codice.
+
