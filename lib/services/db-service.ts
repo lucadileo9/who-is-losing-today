@@ -175,6 +175,7 @@ export async function getDailySummaryFromDb(selectedDateStr: string) {
       const total = Math.round((kr + mz + ch) / 3)
       return {
         ...user,
+        scores,
         overallScore: total,
       }
     })

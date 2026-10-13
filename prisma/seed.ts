@@ -5,15 +5,15 @@ type GameId = "Krilion" | "Metazooa" | "Chronophoto"
 function calculateNormalizedScore(game: GameId, score: number): number {
   if (game === "Metazooa") {
     if (score <= 0 || score > 20) return 0
-    return Math.max(0, Math.min(100, Math.round(((20 - score) / 19) * 100)))
+    return Math.max(0, Math.min(1000, Math.round(((20 - score) / 19) * 1000)))
   }
   if (game === "Chronophoto") {
-    return Math.max(0, Math.min(100, Math.round((score / 5000) * 100)))
+    return Math.max(0, Math.min(1000, Math.round((score / 5000) * 1000)))
   }
   if (game === "Krilion") {
-    return Math.max(0, Math.min(100, Math.round((score / 700) * 100)))
+    return Math.max(0, Math.min(1000, Math.round((score / 700) * 1000)))
   }
-  return Math.min(100, score)
+  return Math.min(1000, score)
 }
 
 const prisma = new PrismaClient()

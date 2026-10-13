@@ -71,13 +71,13 @@ export const PLAYER_COLORS: Record<string, string> = {
 
 export const groupPlayerTrendData: Record<LeaderboardTab, { day: string; [key: string]: string | number }[]> = {
   Totale: [
-    { day: "12 mar", "Sara Bianchi": 84, "Marco Rossi": 78, "Giulia Ferri": 72, "Luca De Angelis": 65, "Anna Conti": 58 },
-    { day: "13 mar", "Sara Bianchi": 86, "Marco Rossi": 80, "Giulia Ferri": 75, "Luca De Angelis": 68, "Anna Conti": 60 },
-    { day: "14 mar", "Sara Bianchi": 85, "Marco Rossi": 82, "Giulia Ferri": 78, "Luca De Angelis": 70, "Anna Conti": 64 },
-    { day: "15 mar", "Sara Bianchi": 89, "Marco Rossi": 84, "Giulia Ferri": 80, "Luca De Angelis": 73, "Anna Conti": 67 },
-    { day: "16 mar", "Sara Bianchi": 90, "Marco Rossi": 85, "Giulia Ferri": 81, "Luca De Angelis": 75, "Anna Conti": 69 },
-    { day: "17 mar", "Sara Bianchi": 92, "Marco Rossi": 87, "Giulia Ferri": 83, "Luca De Angelis": 77, "Anna Conti": 71 },
-    { day: "18 mar", "Sara Bianchi": 94, "Marco Rossi": 88, "Giulia Ferri": 85, "Luca De Angelis": 79, "Anna Conti": 72 },
+    { day: "12 mar", "Sara Bianchi": 840, "Marco Rossi": 780, "Giulia Ferri": 720, "Luca De Angelis": 650, "Anna Conti": 580 },
+    { day: "13 mar", "Sara Bianchi": 860, "Marco Rossi": 800, "Giulia Ferri": 750, "Luca De Angelis": 680, "Anna Conti": 600 },
+    { day: "14 mar", "Sara Bianchi": 850, "Marco Rossi": 820, "Giulia Ferri": 780, "Luca De Angelis": 700, "Anna Conti": 640 },
+    { day: "15 mar", "Sara Bianchi": 890, "Marco Rossi": 840, "Giulia Ferri": 800, "Luca De Angelis": 730, "Anna Conti": 670 },
+    { day: "16 mar", "Sara Bianchi": 900, "Marco Rossi": 850, "Giulia Ferri": 810, "Luca De Angelis": 750, "Anna Conti": 690 },
+    { day: "17 mar", "Sara Bianchi": 920, "Marco Rossi": 870, "Giulia Ferri": 830, "Luca De Angelis": 770, "Anna Conti": 710 },
+    { day: "18 mar", "Sara Bianchi": 940, "Marco Rossi": 880, "Giulia Ferri": 850, "Luca De Angelis": 790, "Anna Conti": 720 },
   ],
   Krilion: [
     { day: "12 mar", "Sara Bianchi": 574, "Marco Rossi": 532, "Giulia Ferri": 511, "Luca De Angelis": 476, "Anna Conti": 434 },
@@ -129,26 +129,26 @@ export const history = [
 ]
 
 /**
- * Calcola il punteggio normalizzato (0 - 100) per ciascun gioco
+ * Calcola il punteggio normalizzato (0 - 1000) per ciascun gioco
  * - Metazooa: max 20 tentativi. Più è grande meglio è (20 - n tentativi).
- *   1 tentativo (ottimo) = 20 - 1 = 19 (100%), 20 tentativi = 0 (0%).
+ *   1 tentativo (ottimo) = 20 - 1 = 19 (1000 pt), 20 tentativi = 0 (0 pt).
  * - Chronophoto: max 5000 punti.
  * - Krilion: max 700 punti.
  */
 export function calculateNormalizedScore(game: Game, score: number): number {
   if (game === "Metazooa") {
     if (score <= 0 || score > 20) return 0
-    return Math.max(0, Math.min(100, Math.round(((20 - score) / 19) * 100)))
+    return Math.max(0, Math.min(1000, Math.round(((20 - score) / 19) * 1000)))
   }
   if (game === "Chronophoto") {
-    // Chronophoto scala fino a 5.000 -> normalizzato in 0-100
-    return Math.max(0, Math.min(100, Math.round((score / 5000) * 100)))
+    // Chronophoto scala fino a 5.000 -> normalizzato in 0-1000
+    return Math.max(0, Math.min(1000, Math.round((score / 5000) * 1000)))
   }
   if (game === "Krilion") {
-    // Krilion scala fino a 700 -> normalizzato in 0-100
-    return Math.max(0, Math.min(100, Math.round((score / 700) * 100)))
+    // Krilion scala fino a 700 -> normalizzato in 0-1000
+    return Math.max(0, Math.min(1000, Math.round((score / 700) * 1000)))
   }
-  return Math.min(100, score)
+  return Math.min(1000, score)
 }
 
 /**

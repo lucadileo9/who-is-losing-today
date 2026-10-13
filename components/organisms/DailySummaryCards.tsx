@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Avatar } from "@/components/atoms"
 import { getTodayIsoString, shiftIsoDate, formatItalianDate } from "@/lib/date-utils"
 import { DatePicker } from "@/components/molecules/DatePicker"
+import { GameTabFilter } from "@/components/molecules/GameTabFilter"
+import { type Game, type LeaderboardTab, GAME_CONFIG, isLowerBetter } from "@/lib/game-data"
 import { apiFetch } from "@/lib/utils"
 
 interface RankedPlayer {
@@ -14,10 +16,12 @@ interface RankedPlayer {
   initials: string
   color: string
   overallScore: number
+  scores?: Record<Game, number>
 }
 
 export function DailySummaryCards() {
   const [selectedDateStr, setSelectedDateStr] = useState<string>(getTodayIsoString)
+  const [selectedTab, setSelectedTab] = useState<LeaderboardTab>("Totale")
   const [rankedToday, setRankedToday] = useState<RankedPlayer[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -58,12 +62,31 @@ export function DailySummaryCards() {
     }
   }, [fetchDailyData])
 
-  const loser = rankedToday.length > 0 ? rankedToday[rankedToday.length - 1] : null
+  const isOverall = selectedTab === "Totale"
+  const activeGame = selectedTab as Game
+
+  // Ordina e filtra i giocatori in base al tab selezionato
+  const rankedForView = isOverall
+    ? rankedToday
+    : [...rankedToday]
+        .filter((p) => p.scores && (p.scores[activeGame] ?? 0) > 0)
+        .sort((a, b) => {
+          const scoreA = a.scores?.[activeGame] ?? 0
+          const scoreB = b.scores?.[activeGame] ?? 0
+          if (isLowerBetter(activeGame)) {
+            // Per Metazooa: meno tentativi è meglio
+            return scoreA - scoreB
+          }
+          // Per Krilion e Chronophoto: più punti è meglio
+          return scoreB - scoreA
+        })
+
+  const loser = rankedForView.length > 0 ? rankedForView[rankedForView.length - 1] : null
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Navigatore Data Interattivo */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border bg-card p-3 shadow-xs">
+      {/* Navigatore Data e Filtro Giochi Interattivo */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 rounded-2xl border bg-card p-3 shadow-xs">
         <div className="flex items-center gap-2">
           <button
             onClick={() => shiftDate(-1)}
@@ -87,8 +110,10 @@ export function DailySummaryCards() {
           </button>
         </div>
 
-        {/* Picker Calendario Diretto */}
-        <DatePicker label="Scegli data:" value={selectedDateStr} onChange={setSelectedDateStr} />
+        <div className="flex flex-wrap items-center gap-2">
+          <GameTabFilter selectedTab={selectedTab} onSelectTab={setSelectedTab} showTotale={true} />
+          <DatePicker label="Data:" value={selectedDateStr} onChange={setSelectedDateStr} />
+        </div>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -97,7 +122,7 @@ export function DailySummaryCards() {
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400">
-                <Frown className="size-4" /> Il Perdente di Oggi
+                <Frown className="size-4" /> {isOverall ? "Il Perdente di Oggi" : `Il Perdente - ${selectedTab}`}
               </span>
               <span className="text-xs font-medium text-muted-foreground capitalize">
                 {formatItalianDate(selectedDateStr)}
@@ -113,9 +138,26 @@ export function DailySummaryCards() {
                 <Avatar initials={loser.initials} className={`size-14 text-base font-bold ${loser.color} shadow-sm`} />
                 <div>
                   <h3 className="text-xl font-bold tracking-tight">{loser.name}</h3>
-                  <p className="mt-0.5 text-xs text-muted-foreground">Punteggio complessivo: <span className="font-semibold text-foreground">{loser.overallScore} pt</span></p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {isOverall ? (
+                      <>
+                        Punteggio complessivo: <span className="font-semibold text-foreground">{loser.overallScore} pt</span>
+                      </>
+                    ) : (
+                      <>
+                        Risultato {selectedTab}:{" "}
+                        <span className="font-semibold text-foreground">
+                          {loser.scores?.[activeGame]} {GAME_CONFIG[activeGame]?.unit}
+                        </span>
+                      </>
+                    )}
+                  </p>
                   <div className="mt-2 inline-flex items-center gap-1 rounded-md bg-rose-500/10 px-2 py-1 text-[11px] font-semibold text-rose-600 dark:text-rose-400">
-                    Ultimo classificato per la data selezionata
+                    {isOverall
+                      ? "Ultimo classificato per la data selezionata"
+                      : isLowerBetter(activeGame)
+                      ? `Maggior numero di tentativi a ${selectedTab}`
+                      : `Punteggio più basso a ${selectedTab}`}
                   </div>
                 </div>
               </div>
@@ -123,7 +165,11 @@ export function DailySummaryCards() {
               <div className="flex flex-col items-center justify-center gap-1 py-4 text-center text-muted-foreground">
                 <Trophy className="size-8 opacity-30" />
                 <p className="text-xs font-medium">Nessun punteggio per questa data.</p>
-                <p className="text-[11px]">Registra una partita per decretare il perdente!</p>
+                <p className="text-[11px]">
+                  {isOverall
+                    ? "Registra una partita per decretare il perdente!"
+                    : `Nessuna partita a ${selectedTab} registrata per oggi.`}
+                </p>
               </div>
             )}
           </CardContent>
@@ -134,7 +180,7 @@ export function DailySummaryCards() {
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                <Crown className="size-4 text-amber-500" /> Classifica della Giornata
+                <Crown className="size-4 text-amber-500" /> {isOverall ? "Classifica della Giornata" : `Classifica - ${selectedTab}`}
               </span>
               <span className="text-xs font-medium text-muted-foreground capitalize">
                 {formatItalianDate(selectedDateStr)}
@@ -146,20 +192,28 @@ export function DailySummaryCards() {
             <div className="flex flex-col gap-2.5">
               {loading ? (
                 <div className="h-20 animate-pulse rounded-xl bg-muted/20" />
-              ) : rankedToday.length > 0 ? (
-                rankedToday.slice(0, 3).map((player, idx) => (
+              ) : rankedForView.length > 0 ? (
+                rankedForView.slice(0, 3).map((player, idx) => (
                   <div key={player.id} className="flex items-center justify-between rounded-xl bg-muted/40 p-2.5 border">
                     <div className="flex items-center gap-3">
                       <span className="w-5 text-center text-xs font-bold text-muted-foreground">#{idx + 1}</span>
                       <Avatar initials={player.initials} className={`size-7 text-xs ${player.color}`} />
                       <span className="text-sm font-semibold">{player.name}</span>
                     </div>
-                    <span className="text-xs font-bold">{player.overallScore} pt</span>
+                    <span className="text-xs font-bold">
+                      {isOverall
+                        ? `${player.overallScore} pt`
+                        : `${player.scores?.[activeGame] ?? 0} ${GAME_CONFIG[activeGame]?.unit}`}
+                    </span>
                   </div>
                 ))
               ) : (
                 <div className="flex flex-col items-center justify-center gap-1 py-4 text-center text-muted-foreground">
-                  <p className="text-xs font-medium">Nessun giocatore in classifica oggi.</p>
+                  <p className="text-xs font-medium">
+                    {isOverall
+                      ? "Nessun giocatore in classifica oggi."
+                      : `Nessun risultato registrato per ${selectedTab} oggi.`}
+                  </p>
                 </div>
               )}
             </div>
