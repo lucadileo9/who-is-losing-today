@@ -11,7 +11,7 @@ services:
     volumes:
       - /srv/storage/docker/who-is-losing-today/postgres:/var/lib/postgresql/data
     networks:
-      - storage_default # O il nome della rete Docker usata da Nginx
+      - storage_default 
 
   who-is-losing-today-web:
     build:
@@ -33,6 +33,15 @@ services:
       - who-is-losing-today-db
     networks:
       - storage_default
+ 
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared-tunnel
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run --token ${TUNNEL_TOKEN} 
+    networks:
+      - storage_default
+
 
 networks:
   storage_default:
