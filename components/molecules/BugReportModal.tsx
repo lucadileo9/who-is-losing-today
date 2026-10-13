@@ -1,7 +1,7 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { useSession } from "next-auth/react"
+import { useState } from 'react';
+import { useSession } from 'next-auth/react';
 import {
   Dialog,
   DialogContent,
@@ -9,65 +9,65 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/atoms"
-import { apiFetch } from "@/lib/utils"
-import { Bug, Check, Send } from "lucide-react"
+} from '@/components/ui/dialog';
+import { Button } from '@/components/atoms';
+import { apiFetch } from '@/lib/utils';
+import { Bug, Check, Send } from 'lucide-react';
 
 export function BugReportModal() {
-  const { data: session } = useSession()
-  const [open, setOpen] = useState(false)
-  const [description, setDescription] = useState("")
-  const [category, setCategory] = useState("BUG")
-  const [priority, setPriority] = useState("MEDIUM")
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const { data: session } = useSession();
+  const [open, setOpen] = useState(false);
+  const [description, setDescription] = useState('');
+  const [category, setCategory] = useState('BUG');
+  const [priority, setPriority] = useState('MEDIUM');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!description.trim() || isSubmitting) return
+    e.preventDefault();
+    if (!description.trim() || isSubmitting) return;
 
-    setIsSubmitting(true)
-    setError(null)
+    setIsSubmitting(true);
+    setError(null);
 
     try {
-      const res = await apiFetch("/api/bugs", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await apiFetch('/api/bugs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           description,
           category,
           priority,
         }),
-      })
+      });
 
-      const json = await res.json()
+      const json = await res.json();
 
       if (!res.ok) {
-        setError(json.error || "Impossibile inviare la segnalazione.")
+        setError(json.error || 'Impossibile inviare la segnalazione.');
       } else {
-        setSubmitted(true)
-        setDescription("")
-        setCategory("BUG")
-        setPriority("MEDIUM")
+        setSubmitted(true);
+        setDescription('');
+        setCategory('BUG');
+        setPriority('MEDIUM');
         setTimeout(() => {
-          setSubmitted(false)
-          setOpen(false)
-        }, 2500)
+          setSubmitted(false);
+          setOpen(false);
+        }, 2500);
       }
     } catch (err) {
-      console.error("Errore invio bug:", err)
-      setError("Errore di connessione al server.")
+      console.error('Errore invio bug:', err);
+      setError('Errore di connessione al server.');
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-amber-500 transition-colors cursor-pointer">
+        <button className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-amber-500">
           <Bug className="size-3.5" />
           <span>Segnala un Bug</span>
         </button>
@@ -80,7 +80,8 @@ export function BugReportModal() {
             <DialogTitle>Segnala un problema / Suggerimento</DialogTitle>
           </div>
           <DialogDescription>
-            Hai notato qualcosa che non funziona o hai un suggerimento per migliorare l&apos;app?
+            Hai notato qualcosa che non funziona o hai un suggerimento per
+            migliorare l&apos;app?
           </DialogDescription>
         </DialogHeader>
 
@@ -89,51 +90,64 @@ export function BugReportModal() {
             <div className="grid size-12 place-items-center rounded-full bg-emerald-500/10">
               <Check className="size-6" />
             </div>
-            <p className="text-sm font-semibold">Segnalazione inviata con successo!</p>
-            <p className="text-xs text-muted-foreground">Grazie per il tuo aiuto nel migliorare Who Is Losing Today.</p>
+            <p className="text-sm font-semibold">
+              Segnalazione inviata con successo!
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Grazie per il tuo aiuto nel migliorare Who Is Losing Today.
+            </p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-4 pt-2">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {/* Selezione Categoria / Argomento */}
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="bug-category" className="text-xs font-medium text-muted-foreground">
+                <label
+                  htmlFor="bug-category"
+                  className="text-xs font-medium text-muted-foreground"
+                >
                   Argomento:
                 </label>
                 <select
                   id="bug-category"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full rounded-xl border bg-background px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/50 cursor-pointer"
+                  className="w-full cursor-pointer rounded-xl border bg-background px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/50"
                 >
-                  <option value="BUG">🐛 Bug / Errore</option>
-                  <option value="UI_UX">🎨 UI / UX (Grafica)</option>
-                  <option value="FEATURE">💡 Funzionalità (Feature)</option>
-                  <option value="OTHER">💬 Altro</option>
+                  <option value="BUG">Bug / Errore</option>
+                  <option value="UI_UX">UI / UX (Grafica)</option>
+                  <option value="FEATURE">Funzionalità (Feature)</option>
+                  <option value="OTHER">Altro</option>
                 </select>
               </div>
 
               {/* Selezione Priorità */}
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="bug-priority" className="text-xs font-medium text-muted-foreground">
+                <label
+                  htmlFor="bug-priority"
+                  className="text-xs font-medium text-muted-foreground"
+                >
                   Priorità:
                 </label>
                 <select
                   id="bug-priority"
                   value={priority}
                   onChange={(e) => setPriority(e.target.value)}
-                  className="w-full rounded-xl border bg-background px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/50 cursor-pointer"
+                  className="w-full cursor-pointer rounded-xl border bg-background px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/50"
                 >
-                  <option value="LOW">🟢 Bassa</option>
-                  <option value="MEDIUM">🟡 Media (Standard)</option>
-                  <option value="HIGH">🟠 Alta</option>
-                  <option value="CRITICAL">🔴 Critica / Bloccante</option>
+                  <option value="LOW">Bassa</option>
+                  <option value="MEDIUM">Media (Standard)</option>
+                  <option value="HIGH">Alta</option>
+                  <option value="CRITICAL">Critica / Bloccante</option>
                 </select>
               </div>
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label htmlFor="bug-desc" className="text-xs font-medium text-muted-foreground">
+              <label
+                htmlFor="bug-desc"
+                className="text-xs font-medium text-muted-foreground"
+              >
                 Descrivi cosa è successo o cosa vorresti migliorare:
               </label>
               <textarea
@@ -149,22 +163,29 @@ export function BugReportModal() {
 
             {session?.user && (
               <p className="text-[11px] text-muted-foreground">
-                Inviando come: <strong>{session.user.name}</strong> ({session.user.email})
+                Inviando come: <strong>{session.user.name}</strong> (
+                {session.user.email})
               </p>
             )}
 
-            {error && <p className="text-xs font-medium text-destructive">{error}</p>}
+            {error && (
+              <p className="text-xs font-medium text-destructive">{error}</p>
+            )}
 
             <div className="flex justify-end gap-2 pt-2">
-              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+              >
                 Annulla
               </Button>
               <Button
                 type="submit"
                 disabled={!description.trim() || isSubmitting}
-                className="bg-amber-500 hover:bg-amber-600 text-white cursor-pointer"
+                className="cursor-pointer bg-amber-500 text-white hover:bg-amber-600"
               >
-                <Send className="size-4 mr-1.5" />
+                <Send className="mr-1.5 size-4" />
                 Invia segnalazione
               </Button>
             </div>
@@ -172,5 +193,5 @@ export function BugReportModal() {
         )}
       </DialogContent>
     </Dialog>
-  )
+  );
 }

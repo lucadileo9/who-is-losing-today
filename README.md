@@ -1,10 +1,10 @@
-# 🏆 Who Is Losing Today?
+# Who Is Losing Today?
 
 > **Chi sta perdendo oggi?** — L'applicazione web moderna per tracciare i punteggi quotidiani delle sfide tra amici nei giochi **Krilion**, **Metazooa** e **Chronophoto**.
 
 ---
 
-## 🚀 Panoramica del Progetto
+## Panoramica del Progetto
 
 **Who Is Losing Today** è una web app Full-Stack sviluppata con **Next.js 15 (App Router)**, **React 19**, **Tailwind CSS**, **Prisma ORM**, **PostgreSQL** e **NextAuth (Google OAuth)**.
 
@@ -17,7 +17,7 @@ L'applicazione permette a un gruppo di amici di:
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 * **Framework**: Next.js 15.5 (App Router & React Server Components)
 * **Linguaggio**: TypeScript 5.3
@@ -28,38 +28,38 @@ L'applicazione permette a un gruppo di amici di:
 
 ---
 
-## 📚 Hub della Documentazione Dettagliata
+## Hub della Documentazione Dettagliata
 
 La documentazione del repository è suddivisa in sezioni specializzate all'interno della cartella [`docs/`](docs/):
 
-### 🏛️ Architettura Generale & Teoria
-* 🏛️ **[`docs/architecture.md`](docs/architecture.md)**: Architettura generale dell'applicazione e flusso dei dati.
-* 🔐 **[`docs/theory/sso-authentication.md`](docs/theory/sso-authentication.md)**: Teoria dell'autenticazione SSO, OAuth 2.0, JWT e Cookies.
-* 🗄️ **[`docs/theory/prisma-and-orm.md`](docs/theory/prisma-and-orm.md)**: Teoria dei database relazionali RDBMS e Prisma ORM.
-* 🚢 **[`docs/theory/deployment-and-infrastructure.md`](docs/theory/deployment-and-infrastructure.md)**: Confronto tra ambiente Docker Locale, Supabase e Vercel.
+### Architettura Generale & Teoria
+* **[`docs/architecture.md`](docs/architecture.md)**: Architettura generale dell'applicazione e flusso dei dati.
+* **[`docs/theory/sso-authentication.md`](docs/theory/sso-authentication.md)**: Teoria dell'autenticazione SSO, OAuth 2.0, JWT e Cookies.
+* **[`docs/theory/prisma-and-orm.md`](docs/theory/prisma-and-orm.md)**: Teoria dei database relazionali RDBMS e Prisma ORM.
+* **[`docs/theory/deployment-and-infrastructure.md`](docs/theory/deployment-and-infrastructure.md)**: Confronto tra ambiente Docker Locale, Supabase e Vercel.
 
-### 🔌 API, Configurazione & Estensioni
-* 🔌 **[`docs/api-reference.md`](docs/api-reference.md)**: Registro completo delle rotte API REST.
-* 🎮 **[`docs/adding-games.md`](docs/adding-games.md)**: Guida passo-passo per aggiungere un nuovo gioco in 5 minuti.
-* 🔑 **[`docs/GOOGLE_AUTH_SETUP.md`](docs/GOOGLE_AUTH_SETUP.md)**: Guida per sviluppatori per configurare Google Cloud Console.
-* 🗄️ **[`docs/SUPABASE_POSTGRES_SETUP.md`](docs/SUPABASE_POSTGRES_SETUP.md)**: Guida operativa per avviare il DB su Docker o Supabase.
+### API, Configurazione & Estensioni
+* **[`docs/api-reference.md`](docs/api-reference.md)**: Registro completo delle rotte API REST.
+* **[`docs/adding-games.md`](docs/adding-games.md)**: Guida passo-passo per aggiungere un nuovo gioco in 5 minuti.
+* **[`docs/GOOGLE_AUTH_SETUP.md`](docs/GOOGLE_AUTH_SETUP.md)**: Guida per sviluppatori per configurare Google Cloud Console.
+* **[`docs/SUPABASE_POSTGRES_SETUP.md`](docs/SUPABASE_POSTGRES_SETUP.md)**: Guida operativa per avviare il DB su Docker o Supabase.
 
-### 🧩 Componenti UI (Atomic Design) e Funzioni
-* ⚛️ **[`docs/components/atoms.md`](docs/components/atoms.md)**: Guida a tutti i componenti Atomi (`Button`, `Input`, `Avatar`, `Badge`, `Providers`).
-* 🧬 **[`docs/components/molecules.md`](docs/components/molecules.md)**: Guida a tutte le Molecole (`GameScoreInput`, `DatePicker`, `ChartTooltip`, `GameTabFilter`).
-* 🏢 **[`docs/components/organisms.md`](docs/components/organisms.md)**: Guida a tutti gli Organismi (`Header`, `DailySummaryCards`, `LeaderboardTable`, `TrendChart`).
-* 📄 **[`docs/components/templates.md`](docs/components/templates.md)**: Guida ai Template di pagina (`DashboardTemplate`, `ProfileTemplate`).
-* ⚙️ **[`docs/components/functions-and-utilities.md`](docs/components/functions-and-utilities.md)**: Guida completa a tutte le funzioni matematiche, helper e di query DB.
+### Componenti UI (Atomic Design) e Funzioni
+* **[`docs/components/atoms.md`](docs/components/atoms.md)**: Guida a tutti i componenti Atomi (`Button`, `Input`, `Avatar`, `Badge`, `Providers`).
+* **[`docs/components/molecules.md`](docs/components/molecules.md)**: Guida a tutte le Molecole (`GameScoreInput`, `DatePicker`, `ChartTooltip`, `GameTabFilter`).
+* **[`docs/components/organisms.md`](docs/components/organisms.md)**: Guida a tutti gli Organismi (`Header`, `DailySummaryCards`, `LeaderboardTable`, `TrendChart`).
+* **[`docs/components/templates.md`](docs/components/templates.md)**: Guida ai Template di pagina (`DashboardTemplate`, `ProfileTemplate`).
+* **[`docs/components/functions-and-utilities.md`](docs/components/functions-and-utilities.md)**: Guida completa a tutte le funzioni matematiche, helper e di query DB.
 
 ---
 
-## ⚡ Guida Rapida di Avvio (Come far partire l'app)
+## Guida Rapida di Avvio (Come far partire l'app)
 
 Puoi avviare l'applicazione in **due modalità principali** a seconda delle tue esigenze:
 
 ---
 
-### 🚀 Modalità 1: Full-Stack con Docker (Consigliata per testare l'ambiente di produzione)
+### Modalità 1: Full-Stack con Docker (Consigliata per testare l'ambiente di produzione)
 
 Questa modalità avvia sia il database PostgreSQL che l'applicazione Next.js containerizzata esattamente come girerà in produzione. All'avvio del container vengono eseguiti **automaticamente** la migrazione dello schema e il **seeding** completo dei giochi e degli utenti di test con storico.
 
@@ -73,7 +73,7 @@ Questa modalità avvia sia il database PostgreSQL che l'applicazione Next.js con
 
 ---
 
-### 💻 Modalità 2: Sviluppo Locale Rapido (`npm run dev` + DB Docker)
+### Modalità 2: Sviluppo Locale Rapido (`npm run dev` + DB Docker)
 
 Ideale mentre programmi, per avere l'**Hot Reloading istantaneo** di Next.js:
 
@@ -118,7 +118,7 @@ Ideale mentre programmi, per avere l'**Hot Reloading istantaneo** di Next.js:
 
 ---
 
-### 🛠️ Comandi Utili per il Database & Sviluppo
+### Comandi Utili per il Database & Sviluppo
 
 * **`npx prisma db seed`**: Esegue lo script di seeding ([`prisma/seed.ts`](prisma/seed.ts)) in modo idempotente (aggiunge giochi e utenti di test se non presenti).
 * **`npm run db:reset`**: Resetta completamente il database, elimina tutti i dati, riapplica lo schema ed esegue il seed da zero.
