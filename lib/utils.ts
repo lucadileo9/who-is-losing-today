@@ -11,9 +11,7 @@ export const BASE_PATH = "/who-is-losing-today"
  * Restituisce il percorso API completo aggiungendo il basePath se necessario
  */
 export function getApiPath(path: string): string {
-  const cleanPath = path.startsWith("/") ? path : `/${path}`
-  if (cleanPath.startsWith(BASE_PATH)) return cleanPath
-  return `${BASE_PATH}${cleanPath}`
+  return path.startsWith("/") ? path : `/${path}`
 }
 
 /**
