@@ -136,8 +136,9 @@ model BugReport {
   userEmail   String?
   userName    String?  @default("Ospite")
   description String   @db.Text
-  pageUrl     String?
-  status      String   @default("OPEN") // "OPEN", "RESOLVED", "CLOSED"
+  category    String   @default("BUG")     // "BUG", "UI_UX", "FEATURE", "OTHER"
+  priority    String   @default("MEDIUM")  // "LOW", "MEDIUM", "HIGH", "CRITICAL"
+  status      String   @default("OPEN")    // "OPEN", "RESOLVED", "CLOSED"
   createdAt   DateTime @default(now())
 
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)

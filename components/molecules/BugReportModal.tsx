@@ -18,6 +18,8 @@ export function BugReportModal() {
   const { data: session } = useSession()
   const [open, setOpen] = useState(false)
   const [description, setDescription] = useState("")
+  const [category, setCategory] = useState("BUG")
+  const [priority, setPriority] = useState("MEDIUM")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -30,13 +32,13 @@ export function BugReportModal() {
     setError(null)
 
     try {
-      const pageUrl = typeof window !== "undefined" ? window.location.pathname : "/"
       const res = await apiFetch("/api/bugs", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           description,
-          pageUrl,
+          category,
+          priority,
         }),
       })
 
@@ -47,6 +49,8 @@ export function BugReportModal() {
       } else {
         setSubmitted(true)
         setDescription("")
+        setCategory("BUG")
+        setPriority("MEDIUM")
         setTimeout(() => {
           setSubmitted(false)
           setOpen(false)
@@ -69,11 +73,11 @@ export function BugReportModal() {
         </button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[480px]">
         <DialogHeader>
           <div className="flex items-center gap-2 text-amber-500">
             <Bug className="size-5" />
-            <DialogTitle>Segnala un problema / Bug 🐛</DialogTitle>
+            <DialogTitle>Segnala un problema / Suggerimento</DialogTitle>
           </div>
           <DialogDescription>
             Hai notato qualcosa che non funziona o hai un suggerimento per migliorare l&apos;app?
@@ -90,6 +94,44 @@ export function BugReportModal() {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-4 pt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Selezione Categoria / Argomento */}
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="bug-category" className="text-xs font-medium text-muted-foreground">
+                  Argomento:
+                </label>
+                <select
+                  id="bug-category"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full rounded-xl border bg-background px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/50 cursor-pointer"
+                >
+                  <option value="BUG">🐛 Bug / Errore</option>
+                  <option value="UI_UX">🎨 UI / UX (Grafica)</option>
+                  <option value="FEATURE">💡 Funzionalità (Feature)</option>
+                  <option value="OTHER">💬 Altro</option>
+                </select>
+              </div>
+
+              {/* Selezione Priorità */}
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="bug-priority" className="text-xs font-medium text-muted-foreground">
+                  Priorità:
+                </label>
+                <select
+                  id="bug-priority"
+                  value={priority}
+                  onChange={(e) => setPriority(e.target.value)}
+                  className="w-full rounded-xl border bg-background px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/50 cursor-pointer"
+                >
+                  <option value="LOW">🟢 Bassa</option>
+                  <option value="MEDIUM">🟡 Media (Standard)</option>
+                  <option value="HIGH">🟠 Alta</option>
+                  <option value="CRITICAL">🔴 Critica / Bloccante</option>
+                </select>
+              </div>
+            </div>
+
             <div className="flex flex-col gap-1.5">
               <label htmlFor="bug-desc" className="text-xs font-medium text-muted-foreground">
                 Descrivi cosa è successo o cosa vorresti migliorare:

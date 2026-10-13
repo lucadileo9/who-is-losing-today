@@ -5,7 +5,7 @@ import { AppShell } from "@/components/molecules/AppShell"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge, Button } from "@/components/atoms"
 import { apiFetch } from "@/lib/utils"
-import { Bug, CheckCircle2, AlertCircle, Trash2, RefreshCw, ExternalLink, ShieldCheck } from "lucide-react"
+import { Bug, CheckCircle2, AlertCircle, Trash2, RefreshCw, ShieldCheck } from "lucide-react"
 
 export interface BugReportItem {
   id: string
@@ -13,14 +13,31 @@ export interface BugReportItem {
   userEmail?: string | null
   userName?: string | null
   description: string
-  pageUrl?: string | null
+  category: "BUG" | "UI_UX" | "FEATURE" | "OTHER"
+  priority: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL"
   status: "OPEN" | "RESOLVED" | "CLOSED"
   createdAt: string
 }
 
+const CATEGORY_CONFIG: Record<string, { label: string; emoji: string; tone: string }> = {
+  BUG: { label: "Bug / Errore", emoji: "🐛", tone: "bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/30" },
+  UI_UX: { label: "UI / UX", emoji: "🎨", tone: "bg-purple-500/15 text-purple-600 dark:text-purple-400 border-purple-500/30" },
+  FEATURE: { label: "Funzionalità", emoji: "💡", tone: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30" },
+  OTHER: { label: "Altro", emoji: "💬", tone: "bg-zinc-500/15 text-zinc-600 dark:text-zinc-400 border-zinc-500/30" },
+}
+
+const PRIORITY_CONFIG: Record<string, { label: string; tone: string }> = {
+  LOW: { label: "Bassa", tone: "bg-slate-500/15 text-slate-600 dark:text-slate-400 border-slate-500/30" },
+  MEDIUM: { label: "Media", tone: "bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/30" },
+  HIGH: { label: "Alta", tone: "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30" },
+  CRITICAL: { label: "Critica", tone: "bg-red-500/20 text-red-600 dark:text-red-400 border-red-500/40" },
+}
+
 export default function AdminBugsPage() {
   const [bugs, setBugs] = useState<BugReportItem[]>([])
-  const [filter, setFilter] = useState<"ALL" | "OPEN" | "RESOLVED">("ALL")
+  const [statusFilter, setStatusFilter] = useState<"ALL" | "OPEN" | "RESOLVED">("ALL")
+  const [categoryFilter, setCategoryFilter] = useState<string>("ALL")
+  const [priorityFilter, setPriorityFilter] = useState<string>("ALL")
   const [isLoading, setIsLoading] = useState(true)
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null)
 
@@ -60,7 +77,51 @@ export default function AdminBugsPage() {
         )
       }
     } catch (err) {
-      console.error("Errore aggiornamento bug:", err)
+      console.error("Errore aggiornamento stato bug:", err)
+    } finally {
+      setActionLoadingId(null)
+    }
+  }
+
+  const updatePriority = async (id: string, newPriority: string) => {
+    setActionLoadingId(id)
+
+    try {
+      const res = await apiFetch(`/api/bugs/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ priority: newPriority }),
+      })
+
+      if (res.ok) {
+        setBugs((prev) =>
+          prev.map((b) => (b.id === id ? { ...b, priority: newPriority as BugReportItem["priority"] } : b))
+        )
+      }
+    } catch (err) {
+      console.error("Errore aggiornamento priorità bug:", err)
+    } finally {
+      setActionLoadingId(null)
+    }
+  }
+
+  const updateCategory = async (id: string, newCategory: string) => {
+    setActionLoadingId(id)
+
+    try {
+      const res = await apiFetch(`/api/bugs/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ category: newCategory }),
+      })
+
+      if (res.ok) {
+        setBugs((prev) =>
+          prev.map((b) => (b.id === id ? { ...b, category: newCategory as BugReportItem["category"] } : b))
+        )
+      }
+    } catch (err) {
+      console.error("Errore aggiornamento categoria bug:", err)
     } finally {
       setActionLoadingId(null)
     }
@@ -90,8 +151,10 @@ export default function AdminBugsPage() {
   const resolvedCount = bugs.filter((b) => b.status === "RESOLVED" || b.status === "CLOSED").length
 
   const filteredBugs = bugs.filter((b) => {
-    if (filter === "OPEN") return b.status === "OPEN"
-    if (filter === "RESOLVED") return b.status === "RESOLVED" || b.status === "CLOSED"
+    if (statusFilter === "OPEN" && b.status !== "OPEN") return false
+    if (statusFilter === "RESOLVED" && b.status !== "RESOLVED" && b.status !== "CLOSED") return false
+    if (categoryFilter !== "ALL" && b.category !== categoryFilter) return false
+    if (priorityFilter !== "ALL" && b.priority !== priorityFilter) return false
     return true
   })
 
@@ -146,38 +209,73 @@ export default function AdminBugsPage() {
 
           {/* Filtri Tabelle e Contenuto */}
           <Card>
-            <CardHeader className="flex flex-col gap-3 pb-3 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <CardTitle>Registro Segnalazioni</CardTitle>
-                <CardDescription>Elenco completo dei feedback nel database PostgreSQL</CardDescription>
+            <CardHeader className="flex flex-col gap-4 pb-4">
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <CardTitle>Registro Segnalazioni</CardTitle>
+                  <CardDescription>Elenco completo dei feedback nel database PostgreSQL</CardDescription>
+                </div>
+
+                {/* Filtri Stato */}
+                <div className="flex gap-1.5 rounded-xl bg-muted p-1 border w-fit">
+                  <button
+                    onClick={() => setStatusFilter("ALL")}
+                    className={`rounded-lg px-3 py-1 text-xs font-medium transition-colors cursor-pointer ${
+                      statusFilter === "ALL" ? "bg-background text-foreground shadow-xs" : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    Tutti ({totalCount})
+                  </button>
+                  <button
+                    onClick={() => setStatusFilter("OPEN")}
+                    className={`rounded-lg px-3 py-1 text-xs font-medium transition-colors cursor-pointer ${
+                      statusFilter === "OPEN" ? "bg-background text-amber-500 shadow-xs" : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    Aperti ({openCount})
+                  </button>
+                  <button
+                    onClick={() => setStatusFilter("RESOLVED")}
+                    className={`rounded-lg px-3 py-1 text-xs font-medium transition-colors cursor-pointer ${
+                      statusFilter === "RESOLVED" ? "bg-background text-emerald-500 shadow-xs" : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    Risolti ({resolvedCount})
+                  </button>
+                </div>
               </div>
 
-              {/* Filtri Stato */}
-              <div className="flex gap-1.5 rounded-xl bg-muted p-1 border">
-                <button
-                  onClick={() => setFilter("ALL")}
-                  className={`rounded-lg px-3 py-1 text-xs font-medium transition-colors cursor-pointer ${
-                    filter === "ALL" ? "bg-background text-foreground shadow-xs" : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  Tutti ({totalCount})
-                </button>
-                <button
-                  onClick={() => setFilter("OPEN")}
-                  className={`rounded-lg px-3 py-1 text-xs font-medium transition-colors cursor-pointer ${
-                    filter === "OPEN" ? "bg-background text-amber-500 shadow-xs" : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  Aperti ({openCount})
-                </button>
-                <button
-                  onClick={() => setFilter("RESOLVED")}
-                  className={`rounded-lg px-3 py-1 text-xs font-medium transition-colors cursor-pointer ${
-                    filter === "RESOLVED" ? "bg-background text-emerald-500 shadow-xs" : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  Risolti ({resolvedCount})
-                </button>
+              {/* Filtri secondari: Categoria e Priorità */}
+              <div className="flex flex-wrap items-center gap-3 pt-1 border-t">
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="text-muted-foreground font-medium">Argomento:</span>
+                  <select
+                    value={categoryFilter}
+                    onChange={(e) => setCategoryFilter(e.target.value)}
+                    className="rounded-lg border bg-background px-2.5 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-amber-500 cursor-pointer"
+                  >
+                    <option value="ALL">Tutti gli argomenti</option>
+                    <option value="BUG">🐛 Bug / Errore</option>
+                    <option value="UI_UX">🎨 UI / UX</option>
+                    <option value="FEATURE">💡 Funzionalità</option>
+                    <option value="OTHER">💬 Altro</option>
+                  </select>
+                </div>
+
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="text-muted-foreground font-medium">Priorità:</span>
+                  <select
+                    value={priorityFilter}
+                    onChange={(e) => setPriorityFilter(e.target.value)}
+                    className="rounded-lg border bg-background px-2.5 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-amber-500 cursor-pointer"
+                  >
+                    <option value="ALL">Tutte le priorità</option>
+                    <option value="CRITICAL">🔴 Critica</option>
+                    <option value="HIGH">🟠 Alta</option>
+                    <option value="MEDIUM">🟡 Media</option>
+                    <option value="LOW">🟢 Bassa</option>
+                  </select>
+                </div>
               </div>
             </CardHeader>
 
@@ -191,6 +289,8 @@ export default function AdminBugsPage() {
               ) : filteredBugs.length > 0 ? (
                 filteredBugs.map((bug) => {
                   const isResolved = bug.status === "RESOLVED" || bug.status === "CLOSED"
+                  const catCfg = CATEGORY_CONFIG[bug.category] || CATEGORY_CONFIG.OTHER
+                  const prioCfg = PRIORITY_CONFIG[bug.priority] || PRIORITY_CONFIG.MEDIUM
                   const dateFormatted = new Date(bug.createdAt).toLocaleDateString("it-IT", {
                     day: "numeric",
                     month: "short",
@@ -218,18 +318,46 @@ export default function AdminBugsPage() {
                           >
                             {isResolved ? "RISOLTO" : "APERTO"}
                           </Badge>
+
+                          {/* Selettore Argomento inline per lo sviluppatore */}
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[11px] text-muted-foreground">Argomento:</span>
+                            <select
+                              value={bug.category || "BUG"}
+                              disabled={actionLoadingId === bug.id}
+                              onChange={(e) => updateCategory(bug.id, e.target.value)}
+                              className={`rounded-md border px-2 py-0.5 text-xs font-medium cursor-pointer ${catCfg.tone}`}
+                            >
+                              <option value="BUG">🐛 Bug / Errore</option>
+                              <option value="UI_UX">🎨 UI / UX</option>
+                              <option value="FEATURE">💡 Funzionalità</option>
+                              <option value="OTHER">💬 Altro</option>
+                            </select>
+                          </div>
+
+                          {/* Selettore Priorità inline per lo sviluppatore */}
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[11px] text-muted-foreground">Priorità:</span>
+                            <select
+                              value={bug.priority || "MEDIUM"}
+                              disabled={actionLoadingId === bug.id}
+                              onChange={(e) => updatePriority(bug.id, e.target.value)}
+                              className={`rounded-md border px-2 py-0.5 text-xs font-medium cursor-pointer ${prioCfg.tone}`}
+                            >
+                              <option value="LOW">🟢 Bassa</option>
+                              <option value="MEDIUM">🟡 Media</option>
+                              <option value="HIGH">🟠 Alta</option>
+                              <option value="CRITICAL">🔴 Critica</option>
+                            </select>
+                          </div>
+
                           <span className="text-xs font-semibold">{bug.userName || "Ospite"}</span>
                           {bug.userEmail && (
                             <span className="text-xs text-muted-foreground">({bug.userEmail})</span>
                           )}
                         </div>
 
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                          {bug.pageUrl && (
-                            <span className="flex items-center gap-1 font-mono text-[11px] bg-muted px-2 py-0.5 rounded">
-                              <ExternalLink className="size-3" /> {bug.pageUrl}
-                            </span>
-                          )}
+                        <div className="text-xs text-muted-foreground">
                           <span>{dateFormatted}</span>
                         </div>
                       </div>
@@ -278,9 +406,7 @@ export default function AdminBugsPage() {
                   <Bug className="size-10 opacity-30 text-amber-500" />
                   <p className="text-sm font-semibold">Nessuna segnalazione bug trovata.</p>
                   <p className="text-xs text-muted-foreground">
-                    {filter === "ALL"
-                      ? "Il database è pulito e non ci sono problemi segnalati dai giocatori!"
-                      : `Nessuna segnalazione nello stato "${filter}".`}
+                    Non ci sono segnalazioni corrispondenti ai filtri selezionati.
                   </p>
                 </div>
               )}

@@ -22,11 +22,17 @@ export async function POST(request: Request) {
   try {
     const session = await getServerSession(authOptions)
     const body = await request.json()
-    const { description, pageUrl } = body
+    const { description, category = "BUG", priority = "MEDIUM" } = body
 
     if (!description || description.trim().length === 0) {
       return NextResponse.json({ error: "La descrizione del problema non può essere vuota." }, { status: 400 })
     }
+
+    const validCategories = ["BUG", "UI_UX", "FEATURE", "OTHER"]
+    const validPriorities = ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
+
+    const safeCategory = validCategories.includes(category) ? category : "BUG"
+    const safePriority = validPriorities.includes(priority) ? priority : "MEDIUM"
 
     let userId: string | null = null
     const userEmail: string | null = session?.user?.email || null
@@ -46,7 +52,8 @@ export async function POST(request: Request) {
         userEmail,
         userName,
         description: description.trim(),
-        pageUrl: pageUrl || "/",
+        category: safeCategory,
+        priority: safePriority,
         status: "OPEN",
       },
     })
