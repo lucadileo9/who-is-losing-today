@@ -47,13 +47,43 @@ export async function getPlayersFromDb(): Promise<DbPlayer[]> {
       // Conteggia le partite totali giocate da questo utente
       const playedCount = user.dailyScores.length
 
+      // BUG-01 FIX: Calcola la streak reale (giorni consecutivi a ritroso)
+      const uniqueDates = Array.from(
+        new Set(user.dailyScores.map((s) => s.scoreDate.toISOString().split("T")[0]))
+      ).sort().reverse()
+
+      let streak = 0
+      const todayStr = new Date().toISOString().split("T")[0]
+      const yesterdayDate = new Date()
+      yesterdayDate.setDate(yesterdayDate.getDate() - 1)
+      const yesterdayStr = yesterdayDate.toISOString().split("T")[0]
+
+      const startDate = uniqueDates.includes(todayStr)
+        ? new Date(todayStr)
+        : uniqueDates.includes(yesterdayStr)
+        ? new Date(yesterdayStr)
+        : null
+
+      if (startDate) {
+        const cursor = new Date(startDate)
+        while (true) {
+          const curStr = cursor.toISOString().split("T")[0]
+          if (uniqueDates.includes(curStr)) {
+            streak++
+            cursor.setDate(cursor.getDate() - 1)
+          } else {
+            break
+          }
+        }
+      }
+
       return {
         id: user.id,
         name: user.name || "Giocatore",
         initials: user.initials || "U",
         color: user.color || "bg-chart-1",
         scores,
-        streak: Math.min(14, Math.max(1, playedCount)),
+        streak,
         played: playedCount,
       }
     })
@@ -110,10 +140,12 @@ export async function getGroupPlayerTrendFromDb(): Promise<Record<LeaderboardTab
       const chronophotoRow: { day: string; [key: string]: string | number } = { day: dayLabel }
 
       userMap.forEach((scores, userName) => {
+        const gamesPlayed = (scores.Krilion > 0 ? 1 : 0) + (scores.Metazooa > 0 ? 1 : 0) + (scores.Chronophoto > 0 ? 1 : 0)
         const krNorm = calculateNormalizedScore("Krilion", scores.Krilion)
         const mzNorm = calculateNormalizedScore("Metazooa", scores.Metazooa)
         const chNorm = calculateNormalizedScore("Chronophoto", scores.Chronophoto)
-        const overall = Math.round((krNorm + mzNorm + chNorm) / 3)
+        // BUG-03 FIX: dividi per i giochi effettivamente giocati, non sempre per 3
+        const overall = gamesPlayed > 0 ? Math.round((krNorm + mzNorm + chNorm) / gamesPlayed) : 0
 
         totaleRow[userName] = overall
         krilionRow[userName] = scores.Krilion
@@ -169,10 +201,12 @@ export async function getDailySummaryFromDb(selectedDateStr: string) {
     })
 
     const ranked = Array.from(userScoresMap.values()).map(({ user, scores }) => {
+      const gamesPlayed = (scores.Krilion > 0 ? 1 : 0) + (scores.Metazooa > 0 ? 1 : 0) + (scores.Chronophoto > 0 ? 1 : 0)
       const kr = calculateNormalizedScore("Krilion", scores.Krilion)
       const mz = calculateNormalizedScore("Metazooa", scores.Metazooa)
       const ch = calculateNormalizedScore("Chronophoto", scores.Chronophoto)
-      const total = Math.round((kr + mz + ch) / 3)
+      // BUG-03 FIX: dividi per i giochi effettivamente giocati, non sempre per 3
+      const total = gamesPlayed > 0 ? Math.round((kr + mz + ch) / gamesPlayed) : 0
       return {
         ...user,
         scores,
