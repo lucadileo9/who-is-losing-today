@@ -74,5 +74,14 @@ export const authOptions: NextAuthOptions = {
       return session
     },
   },
-  secret: process.env.NEXTAUTH_SECRET || "super_secret_local_dev_key_12345",
+  // SEC-03 FIX: in produzione, NEXTAUTH_SECRET deve essere definita esplicitamente.
+  // Il fallback hardcoded è accettabile solo in locale/dev.
+  secret: (() => {
+    if (!process.env.NEXTAUTH_SECRET && process.env.NODE_ENV === "production") {
+      throw new Error(
+        "NEXTAUTH_SECRET non è definita. Impostala come variabile d'ambiente in produzione."
+      )
+    }
+    return process.env.NEXTAUTH_SECRET || "super_secret_local_dev_key_12345"
+  })(),
 }
