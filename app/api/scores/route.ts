@@ -62,22 +62,9 @@ export async function POST(request: Request) {
       }
     }
 
-    // 2. Se non c'è una sessione, prendiamo il primo utente o creiamo un utente Ospite locale per i test
+    // BUG-05 FIX: se non c'è sessione né email, rifiuta la richiesta con 401
     if (!user) {
-      user = await prisma.user.findFirst({
-        orderBy: { createdAt: "asc" },
-      })
-    }
-
-    if (!user) {
-      user = await prisma.user.create({
-        data: {
-          email: "ospite@whoislosing.local",
-          name: "Giocatore Ospite",
-          initials: "GO",
-          color: "bg-chart-1",
-        },
-      })
+      return NextResponse.json({ error: "Autenticazione richiesta per registrare un punteggio." }, { status: 401 })
     }
 
     const todayDate = new Date()
