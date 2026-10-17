@@ -17,7 +17,7 @@ export function GameTabFilter({ selectedTab, onSelectTab, showTotale = true }: G
         <button
           key={tab}
           onClick={() => onSelectTab(tab)}
-          className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all shrink-0 ${
+          className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all shrink-0 cursor-pointer ${
             selectedTab === tab
               ? "bg-background text-foreground shadow-xs"
               : "text-muted-foreground hover:text-foreground"
