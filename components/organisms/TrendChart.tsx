@@ -3,10 +3,22 @@
 import { useEffect, useState, useCallback } from "react"
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { type LeaderboardTab, type Player, PLAYER_COLORS } from "@/lib/game-data"
+import { type LeaderboardTab, type Player } from "@/lib/game-data"
 import { ChartTooltip } from "@/components/molecules/ChartTooltip"
 import { apiFetch } from "@/lib/utils"
 import { BarChart3 } from "lucide-react"
+
+// DEAD-01 FIX: palette di colori distinti generata per indice (non più nomi hardcoded)
+const PLAYER_PALETTE = [
+  "#8b5cf6", // viola
+  "#3b82f6", // blu
+  "#10b981", // verde
+  "#f59e0b", // ambra
+  "#ec4899", // rosa
+  "#ef4444", // rosso
+  "#06b6d4", // cyan
+  "#f97316", // arancio
+]
 
 export function TrendChart({ tab }: { tab: LeaderboardTab }) {
   const [mounted, setMounted] = useState(false)
@@ -67,8 +79,9 @@ export function TrendChart({ tab }: { tab: LeaderboardTab }) {
                 <XAxis dataKey="day" axisLine={false} tickLine={false} className="text-xs text-muted-foreground" />
                 <YAxis axisLine={false} tickLine={false} className="text-xs text-muted-foreground" />
                 <Tooltip content={<ChartTooltip />} />
-                {activePlayers.map((player) => {
-                  const color = PLAYER_COLORS[player.name] || "#8b5cf6"
+                {activePlayers.map((player, idx) => {
+                  // DEAD-01 FIX: colore basato sull'indice, funziona con qualsiasi utente reale
+                  const color = PLAYER_PALETTE[idx % PLAYER_PALETTE.length]
                   return (
                     <Line
                       key={player.id}
