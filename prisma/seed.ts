@@ -1,19 +1,19 @@
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient, ScoreUnit, Role } from "@prisma/client"
 
 type GameId = "Krilion" | "Metazooa" | "Chronophoto"
 
 function calculateNormalizedScore(game: GameId, score: number): number {
   if (game === "Metazooa") {
     if (score <= 0 || score > 20) return 0
-    return Math.max(0, Math.min(1000, Math.round(((20 - score) / 19) * 1000)))
+    return Math.max(0, Math.min(100, Math.round(((20 - score) / 19) * 100)))
   }
   if (game === "Chronophoto") {
-    return Math.max(0, Math.min(1000, Math.round((score / 5000) * 1000)))
+    return Math.max(0, Math.min(100, Math.round((score / 5000) * 100)))
   }
   if (game === "Krilion") {
-    return Math.max(0, Math.min(1000, Math.round((score / 700) * 1000)))
+    return Math.max(0, Math.min(100, Math.round((score / 700) * 100)))
   }
-  return Math.min(1000, score)
+  return Math.min(100, score)
 }
 
 const prisma = new PrismaClient()
@@ -21,11 +21,11 @@ const prisma = new PrismaClient()
 async function main() {
   console.log("🌱 Avvio popolamento base del database...")
 
-  // 1. Inserimento / Aggiornamento dei Giochi
+  // 1. Inserimento / Aggiornamento dei Giochi con colori ufficiali ed enum ScoreUnit
   const games = [
-    { id: "Krilion", name: "Krilion", shortName: "KR", unit: "pts", isLowerBetter: false },
-    { id: "Metazooa", name: "Metazooa", shortName: "MZ", unit: "tentativi", isLowerBetter: true },
-    { id: "Chronophoto", name: "Chronophoto", shortName: "CH", unit: "pts", isLowerBetter: false },
+    { id: "Krilion", name: "Krilion", shortName: "KR", unit: ScoreUnit.POINTS, color: "#10b981", isLowerBetter: false },
+    { id: "Metazooa", name: "Metazooa", shortName: "MZ", unit: ScoreUnit.ATTEMPTS, color: "#f97316", isLowerBetter: true },
+    { id: "Chronophoto", name: "Chronophoto", shortName: "CH", unit: ScoreUnit.POINTS, color: "#8b5cf6", isLowerBetter: false },
   ]
 
   for (const game of games) {
@@ -50,81 +50,89 @@ async function main() {
 
   // 2. Inserimento / Aggiornamento Utenti di Test
   const testUsers = [
-    { id: "user-sara", name: "Sara Bianchi", email: "sara@whoislosing.local", initials: "SB", color: "bg-chart-1" },
-    { id: "user-marco", name: "Marco Rossi", email: "marco@whoislosing.local", initials: "MR", color: "bg-chart-2" },
-    { id: "user-giulia", name: "Giulia Ferri", email: "giulia@whoislosing.local", initials: "GF", color: "bg-chart-3" },
-    { id: "user-luca", name: "Luca De Angelis", email: "luca@whoislosing.local", initials: "LD", color: "bg-chart-4" },
-    { id: "user-anna", name: "Anna Conti", email: "anna@whoislosing.local", initials: "AC", color: "bg-chart-5" },
+    { id: "user-sara", name: "Sara Bianchi", email: "sara@whoislosing.local", initials: "SB", color: "#3b82f6", role: Role.PLAYER },
+    { id: "user-marco", name: "Marco Rossi", email: "marco@whoislosing.local", initials: "MR", color: "#ef4444", role: Role.PLAYER },
+    { id: "user-giulia", name: "Giulia Ferri", email: "giulia@whoislosing.local", initials: "GF", color: "#10b981", role: Role.PLAYER },
+    { id: "user-luca", name: "Luca De Angelis", email: "luca@whoislosing.local", initials: "LD", color: "#8b5cf6", role: Role.ADMIN },
+    { id: "user-anna", name: "Anna Conti", email: "anna@whoislosing.local", initials: "AC", color: "#f59e0b", role: Role.PLAYER },
   ]
 
   const createdUsers: Record<string, string> = {}
 
-  for (const u of testUsers) {
-    const user = await prisma.user.upsert({
-      where: { email: u.email },
-      update: { name: u.name, initials: u.initials, color: u.color },
-      create: u,
+  for (const user of testUsers) {
+    const upserted = await prisma.user.upsert({
+      where: { email: user.email },
+      update: {
+        name: user.name,
+        initials: user.initials,
+        color: user.color,
+        role: user.role,
+      },
+      create: user,
     })
-    createdUsers[u.name] = user.id
-    console.log(`👤 Utente configurato: ${user.name}`)
+    createdUsers[user.id] = upserted.id
+
+    // Inserisci anche in Whitelist per permettere login di test
+    await prisma.whitelist.upsert({
+      where: { email: user.email },
+      update: { role: user.role },
+      create: { email: user.email, role: user.role },
+    })
   }
+  console.log(`👤 ${testUsers.length} utenti di test e whitelist configurati.`)
 
-  // 3. Generazione Storico Punteggi per gli ultimi 7 giorni (incluso oggi)
-  const userScoreProfiles: Record<string, { krBase: number; mzBase: number; chBase: number }> = {
-    "Sara Bianchi": { krBase: 630, mzBase: 3, chBase: 3100 },
-    "Marco Rossi": { krBase: 600, mzBase: 5, chBase: 2850 },
-    "Giulia Ferri": { krBase: 580, mzBase: 4, chBase: 2950 },
-    "Luca De Angelis": { krBase: 530, mzBase: 7, chBase: 2400 },
-    "Anna Conti": { krBase: 490, mzBase: 9, chBase: 2100 },
-  }
-
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-
+  // 3. Inserimento Punteggi Storici (Ultimi 7 giorni)
+  const userKeys = Object.keys(createdUsers)
   let scoreCount = 0
 
   for (let daysAgo = 6; daysAgo >= 0; daysAgo--) {
-    const scoreDate = new Date(today)
-    scoreDate.setDate(scoreDate.getDate() - daysAgo)
-    scoreDate.setHours(0, 0, 0, 0)
+    const targetDate = new Date()
+    targetDate.setDate(targetDate.getDate() - daysAgo)
+    targetDate.setHours(0, 0, 0, 0)
 
-    for (const [name, userId] of Object.entries(createdUsers)) {
-      const profile = userScoreProfiles[name]
-      if (!profile) continue
+    for (const userKey of userKeys) {
+      const userId = createdUsers[userKey]
 
-      // Leggera variazione per ogni giorno
-      const variance = (daysAgo % 3) - 1 // -1, 0, 1
-      const krScore = Math.max(300, Math.min(700, profile.krBase + variance * 25))
-      const mzScore = Math.max(1, Math.min(18, profile.mzBase + variance))
-      const chScore = Math.max(1200, Math.min(4800, profile.chBase + variance * 180))
+      const krilionScore = Math.floor(Math.random() * 400) + 200
+      const metazooaAttempts = Math.floor(Math.random() * 8) + 1
+      const chronophotoScore = Math.floor(Math.random() * 3000) + 1500
 
-      const dayGames: { game: GameId; rawScore: number }[] = [
-        { game: "Krilion", rawScore: krScore },
-        { game: "Metazooa", rawScore: mzScore },
-        { game: "Chronophoto", rawScore: chScore },
+      const dailyScoresToInsert = [
+        {
+          gameId: "Krilion" as GameId,
+          raw: krilionScore,
+        },
+        {
+          gameId: "Metazooa" as GameId,
+          raw: metazooaAttempts,
+        },
+        {
+          gameId: "Chronophoto" as GameId,
+          raw: chronophotoScore,
+        },
       ]
 
-      for (const dg of dayGames) {
-        const norm = calculateNormalizedScore(dg.game, dg.rawScore)
+      for (const item of dailyScoresToInsert) {
+        const normalized = calculateNormalizedScore(item.gameId, item.raw)
+
         await prisma.dailyScore.upsert({
           where: {
             userId_gameId_scoreDate: {
               userId,
-              gameId: dg.game,
-              scoreDate,
+              gameId: item.gameId,
+              scoreDate: targetDate,
             },
           },
           update: {
-            rawScore: dg.rawScore,
-            normalizedScore: norm,
+            rawScore: item.raw,
+            normalizedScore: normalized,
           },
           create: {
             userId,
-            gameId: dg.game,
-            rawScore: dg.rawScore,
-            normalizedScore: norm,
-            scoreDate,
-            createdAt: scoreDate,
+            gameId: item.gameId,
+            rawScore: item.raw,
+            normalizedScore: normalized,
+            scoreDate: targetDate,
           },
         })
         scoreCount++
@@ -140,14 +148,12 @@ async function main() {
     await prisma.dailyNote.createMany({
       data: [
         {
-          authorName: "Sara Bianchi",
-          authorColor: "bg-chart-1",
+          userId: createdUsers["user-sara"],
           content: "Oggi Chronophoto era difficilissimo, chi ha fatto più di 3000 punti è un robot! 🤖",
           createdAt: new Date(),
         },
         {
-          authorName: "Marco Rossi",
-          authorColor: "bg-chart-2",
+          userId: createdUsers["user-marco"],
           content: "Metazooa indovinato in 3 tentativi, oggi si punta al primo posto! 🔥",
           createdAt: new Date(Date.now() - 3600000 * 3),
         },
