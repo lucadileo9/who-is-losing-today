@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "@/lib/prisma"
 import { Adapter } from "next-auth/adapters"
+import { Role } from "@prisma/client"
 
 const useSecureCookies = process.env.NODE_ENV === "production" || process.env.NEXTAUTH_URL?.startsWith("https://")
 
@@ -30,7 +31,7 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "Utente Demo (Locale)",
       credentials: {
-        email: { label: "Email", type: "text", placeholder: "sara@example.com" },
+        email: { label: "Email", type: "text", placeholder: "sara@whoislosing.local" },
       },
       async authorize(credentials) {
         if (!credentials?.email) return null
@@ -44,6 +45,8 @@ export const authOptions: NextAuthOptions = {
             name: user.name,
             email: user.email,
             image: user.image,
+            role: user.role,
+            color: user.color,
           }
         }
         const newUser = await prisma.user.create({
@@ -51,7 +54,8 @@ export const authOptions: NextAuthOptions = {
             email: targetEmail,
             name: targetEmail.split("@")[0],
             initials: targetEmail.substring(0, 2).toUpperCase(),
-            color: "bg-chart-1",
+            color: "#3b82f6",
+            role: Role.PLAYER,
           },
         })
         return {
@@ -59,6 +63,8 @@ export const authOptions: NextAuthOptions = {
           name: newUser.name,
           email: newUser.email,
           image: newUser.image,
+          role: newUser.role,
+          color: newUser.color,
         }
       },
     }),
@@ -66,16 +72,72 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
+  pages: {
+    error: "/auth/unauthorized",
+  },
   callbacks: {
+    async signIn({ user }) {
+      if (!user.email) return false
+      const email = user.email.toLowerCase().trim()
+
+      // 1. Verifica Whitelist dal database
+      const allowed = await prisma.whitelist.findUnique({
+        where: { email },
+      })
+
+      // 2. Controllo variabile d'ambiente per fallback iniziale o seed (se definita)
+      const envAllowed = process.env.ALLOWED_EMAILS
+        ?.toLowerCase()
+        .split(",")
+        .map((e) => e.trim())
+
+      const isAllowed = Boolean(allowed || (envAllowed && envAllowed.includes(email)))
+
+      if (!isAllowed) {
+        console.warn(`[AUTH] Accesso negato per email non in whitelist: ${email}`)
+        return "/auth/unauthorized"
+      }
+
+      // Se l'utente non ha ancora un ruolo allineato, aggiornalo con quello della whitelist
+      if (allowed) {
+        const existingUser = await prisma.user.findUnique({ where: { email } })
+        if (existingUser && existingUser.role !== allowed.role) {
+          await prisma.user.update({
+            where: { email },
+            data: { role: allowed.role },
+          })
+        }
+      }
+
+      return true
+    },
+
+    async jwt({ token, user }) {
+      if (user?.email) {
+        const email = user.email.toLowerCase().trim()
+        const dbUser = await prisma.user.findUnique({
+          where: { email },
+          select: { id: true, role: true, color: true },
+        })
+        if (dbUser) {
+          token.id = dbUser.id
+          token.role = dbUser.role
+          token.color = dbUser.color
+        }
+      }
+      return token
+    },
+
     async session({ session, token }) {
-      if (session.user && token.sub) {
-        ;(session.user as { id?: string }).id = token.sub
+      if (session.user) {
+        session.user.id = (token.id as string) || (token.sub as string)
+        session.user.role = (token.role as Role) || Role.PLAYER
+        session.user.color = (token.color as string) || "#3b82f6"
       }
       return session
     },
   },
   // SEC-03 FIX: in produzione, NEXTAUTH_SECRET deve essere definita esplicitamente.
-  // Il fallback hardcoded è accettabile solo in locale/dev.
   secret: (() => {
     if (!process.env.NEXTAUTH_SECRET && process.env.NODE_ENV === "production") {
       throw new Error(

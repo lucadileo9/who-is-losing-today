@@ -52,7 +52,7 @@ export async function GET() {
       }
 
       const timeStr = n.createdAt.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })
-      const name = n.user?.name || n.authorName || "Giocatore"
+      const name = n.user?.name || "Giocatore"
 
       return {
         id: n.id,
@@ -63,11 +63,11 @@ export async function GET() {
           name,
           initials: name
             .split(" ")
-            .map((s) => s[0])
+            .map((s: string) => s[0])
             .join("")
             .substring(0, 2)
             .toUpperCase(),
-          color: n.user?.color || n.authorColor || "bg-chart-1",
+          color: n.user?.color || "#EC4899",
           image: n.user?.image || null,
         },
       }
@@ -102,19 +102,15 @@ export async function POST(request: Request) {
     }
 
     // Trova l'utente nel DB
-    let targetUserId: string | null = null
     const dbUser = await prisma.user.findUnique({ where: { email: session.user.email } })
 
-    if (dbUser) {
-      targetUserId = dbUser.id
+    if (!dbUser) {
+      return NextResponse.json({ error: "Utente non trovato." }, { status: 404 })
     }
-
-    const authorName = dbUser?.name || session.user.name || "Giocatore"
 
     const note = await prisma.dailyNote.create({
       data: {
-        userId: targetUserId,
-        authorName,
+        userId: dbUser.id,
         content,
       },
       include: {
@@ -131,7 +127,7 @@ export async function POST(request: Request) {
     })
 
     const timeStr = note.createdAt.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })
-    const name = note.user?.name || note.authorName || "Giocatore"
+    const name = note.user?.name || "Giocatore"
 
     return NextResponse.json({
       note: {
@@ -143,11 +139,11 @@ export async function POST(request: Request) {
           name,
           initials: name
             .split(" ")
-            .map((s) => s[0])
+            .map((s: string) => s[0])
             .join("")
             .substring(0, 2)
             .toUpperCase(),
-          color: note.user?.color || note.authorColor || "bg-chart-1",
+          color: note.user?.color || "#EC4899",
           image: note.user?.image || null,
         },
       },
