@@ -12,8 +12,51 @@ generator client {
 }
 
 // ------------------------------------------------------
-// MODELLI UTENTI & AUTENTICAZIONE (Compatibile con NextAuth / Auth.js)
+// ENUM
 // ------------------------------------------------------
+
+enum Role {
+  ADMIN
+  PLAYER
+}
+
+enum ScoreUnit {
+  POINTS
+  ATTEMPTS
+}
+
+enum BugCategory {
+  BUG
+  UI_UX
+  FEATURE
+  OTHER
+}
+
+enum BugPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum BugStatus {
+  OPEN
+  RESOLVED
+  CLOSED
+}
+
+// ------------------------------------------------------
+// MODELLI UTENTI, WHITELIST & AUTENTICAZIONE
+// ------------------------------------------------------
+
+model Whitelist {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  role      Role     @default(PLAYER)
+  createdAt DateTime @default(now())
+
+  @@map("whitelist")
+}
 
 model User {
   id            String    @id @default(cuid())
@@ -22,7 +65,8 @@ model User {
   emailVerified DateTime?
   image         String?
   initials      String?
-  color         String?   @default("bg-chart-1")
+  role          Role      @default(PLAYER)
+  color         String    @default("#3b82f6") // Colore esadecimale per grafici (Recharts) e avatar
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -83,7 +127,8 @@ model Game {
   id            String       @id // es: "Krilion", "Metazooa", "Chronophoto"
   name          String
   shortName     String       // es: "KR", "MZ", "CH"
-  unit          String       // "pts" o "tentativi"
+  unit          ScoreUnit    @default(POINTS)
+  color         String       @default("#10b981") // Colore iconico del gioco (Hex)
   isLowerBetter Boolean      @default(false)
   createdAt     DateTime     @default(now())
 
@@ -98,7 +143,7 @@ model DailyScore {
   gameId          String
   rawScore        Int      // Punteggio grezzo (es. 3129, 3)
   normalizedScore Int      // Punteggio scalato 0-100
-  scoreDate       DateTime @default(now()) // Data del punteggio (YYYY-MM-DD)
+  scoreDate       DateTime @db.Date // Solo data YYYY-MM-DD: zero bug fuso orario UTC/GMT
   rawInputText    String?  // Testo incollato dall'utente
   createdAt       DateTime @default(now())
 
@@ -106,6 +151,8 @@ model DailyScore {
   game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
 
   @@unique([userId, gameId, scoreDate])
+  @@index([scoreDate, gameId])
+  @@index([userId, scoreDate])
   @@map("daily_scores")
 }
 
@@ -114,15 +161,14 @@ model DailyScore {
 // ------------------------------------------------------
 
 model DailyNote {
-  id          String   @id @default(cuid())
-  userId      String?
-  authorName  String?  @default("Giocatore")
-  authorColor String?  @default("bg-chart-1")
-  content     String   @db.Text
-  createdAt   DateTime @default(now())
+  id        String   @id @default(cuid())
+  userId    String   // OBBLIGATORIO: legato all'utente autenticato
+  content   String   @db.Text
+  createdAt DateTime @default(now())
 
-  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([createdAt])
   @@map("daily_notes")
 }
 
@@ -131,17 +177,16 @@ model DailyNote {
 // ------------------------------------------------------
 
 model BugReport {
-  id          String   @id @default(cuid())
-  userId      String?
-  userEmail   String?
-  userName    String?  @default("Ospite")
-  description String   @db.Text
-  category    String   @default("BUG")     // "BUG", "UI_UX", "FEATURE", "OTHER"
-  priority    String   @default("MEDIUM")  // "LOW", "MEDIUM", "HIGH", "CRITICAL"
-  status      String   @default("OPEN")    // "OPEN", "RESOLVED", "CLOSED"
-  createdAt   DateTime @default(now())
+  id          String      @id @default(cuid())
+  userId      String      // OBBLIGATORIO: legato all'utente autenticato
+  description String      @db.Text
+  category    BugCategory @default(BUG)
+  priority    BugPriority @default(MEDIUM)
+  status      BugStatus   @default(OPEN)
+  createdAt   DateTime    @default(now())
 
-  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([status, priority])
   @@map("bug_reports")
 }
