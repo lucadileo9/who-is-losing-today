@@ -64,21 +64,21 @@ gitGraph
   * `lib/auth.ts`, `middleware.ts`
 
 #### Checklist Attività & Commit Atomici:
-1. [ ] **`feat(db): update schema with @db.Date, whitelist, game colors and enums`**
+1. [x] **`feat(db): update schema with @db.Date, whitelist, game colors and enums`**
    * Aggiunta tabella `Whitelist`, enum `Role`, `ScoreUnit`, `BugCategory`, `BugPriority`, `BugStatus`.
    * Conversione `scoreDate` a `@db.Date`.
    * Aggiunta `color` nel modello `Game`.
    * Indici composti su `DailyScore` e `DailyNote`.
-2. [ ] **`feat(types): implement all DTO interfaces and contracts`**
+2. [x] **`feat(types): implement all DTO interfaces and contracts`**
    * Creazione di `UserSummaryDTO`, `DailyResultsDTO`, `PeriodResultsDTO`, `HallOfFameDTO`, `UserProfileDTO`, `DailyNoteDTO`.
-3. [ ] **`feat(dal): implement Data Access Layer functions`**
+3. [x] **`feat(dal): implement Data Access Layer functions`**
    * Implementazione di `getDailyResults()`, `getPeriodResults()`, `getHallOfFame()`, `getUserProfile()`, `getActiveNotes()`.
    * Calcolo della formula totale (sempre divisa per 3 con penalizzazione per giochi saltati).
    * Calcolo vincitore e perdente (con regola: perdente `null` se $<2$ partecipanti).
-4. [ ] **`feat(actions): implement Server Actions with Zod schemas`**
+4. [x] **`feat(actions): implement Server Actions with Zod schemas`**
    * `submitScoreAction`, `createNoteAction`, `deleteNoteAction`, `updateUserColorAction`.
    * Controllo sessione lato server con `getServerSession`.
-5. [ ] **`feat(auth): add whitelist verification in signIn callback and edge middleware`**
+5. [x] **`feat(auth): add whitelist verification in signIn callback and edge middleware`**
    * Blocco login per email non in whitelist e redirect a `/auth/unauthorized`.
    * Protezione delle rotte tramite `middleware.ts`.
 
