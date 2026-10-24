@@ -126,7 +126,8 @@ export async function getUserProfileStats(userId: string): Promise<UserProfileSt
     })
 
     const hasPlayedToday = gamesPlayedTodayCount > 0
-    const todayTotal = hasPlayedToday ? Math.round((krNorm + mzNorm + chNorm) / 3) : null
+    // BUG-03 FIX: dividi per i giochi effettivamente giocati oggi, non sempre per 3
+    const todayTotal = hasPlayedToday ? Math.round((krNorm + mzNorm + chNorm) / gamesPlayedTodayCount) : null
 
     // 4. Statistiche per singolo gioco (Migliore, Media, Conteggio)
     const gameStats: Record<Game, UserGameStat> = {
@@ -251,7 +252,9 @@ export async function getUserTrend(
         const krNorm = kr !== null ? calculateNormalizedScore("Krilion", kr) : 0
         const mzNorm = mz !== null ? calculateNormalizedScore("Metazooa", mz) : 0
         const chNorm = ch !== null ? calculateNormalizedScore("Chronophoto", ch) : 0
-        total = Math.round((krNorm + mzNorm + chNorm) / 3)
+        // BUG-03 FIX: dividi per i giochi effettivamente presenti in questo giorno
+        const gamesPlayed = (kr !== null ? 1 : 0) + (mz !== null ? 1 : 0) + (ch !== null ? 1 : 0)
+        total = Math.round((krNorm + mzNorm + chNorm) / gamesPlayed)
       }
 
       result.push({
