@@ -34,26 +34,21 @@ export async function POST(request: Request) {
     const safeCategory = validCategories.includes(category) ? category : "BUG"
     const safePriority = validPriorities.includes(priority) ? priority : "MEDIUM"
 
-    let userId: string | null = null
-    const userEmail: string | null = session?.user?.email || null
-    let userName: string = session?.user?.name || "Ospite"
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Devi essere autenticato per inviare una segnalazione." }, { status: 401 })
+    }
 
-    if (userEmail) {
-      const dbUser = await prisma.user.findUnique({ where: { email: userEmail } })
-      if (dbUser) {
-        userId = dbUser.id
-        userName = dbUser.name || userName
-      }
+    const dbUser = await prisma.user.findUnique({ where: { email: session.user.email } })
+    if (!dbUser) {
+      return NextResponse.json({ error: "Utente non trovato." }, { status: 404 })
     }
 
     const bugReport = await prisma.bugReport.create({
       data: {
-        userId,
-        userEmail,
-        userName,
+        userId: dbUser.id,
         description: description.trim(),
-        category: safeCategory,
-        priority: safePriority,
+        category: safeCategory as any,
+        priority: safePriority as any,
         status: "OPEN",
       },
     })
