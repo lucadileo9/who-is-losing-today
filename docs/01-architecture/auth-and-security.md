@@ -91,8 +91,7 @@ Il sistema prevede due ruoli definiti nell'enum `Role`:
 
 ### Sincronizzazione Automatica del Ruolo
 
-Nel callback `signIn` di
-[lib/auth.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/auth.ts):
+Nel callback `signIn` di [lib/auth.ts](../../lib/auth.ts):
 
 ```typescript
 if (allowed) {
@@ -149,11 +148,11 @@ if (!auth.success) {
 
 Tutti i dati in ingresso da Server Actions o Route Handlers vengono validati
 prima di qualsiasi elaborazione o query al database. Gli schemi risiedono in
-[lib/validations/](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/validations/):
+[lib/validations/](../../lib/validations/):
 
 ### Esempi di Schemi Principali
 
-#### Inserimento Punteggi ([lib/validations/scores.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/validations/scores.ts))
+#### Inserimento Punteggi ([lib/validations/scores.ts](../../lib/validations/scores.ts))
 
 ```typescript
 export const submitScoreSchema = z.object({
@@ -170,7 +169,7 @@ export const submitScoreSchema = z.object({
 });
 ```
 
-#### Bacheca Note ([lib/validations/notes.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/validations/notes.ts))
+#### Bacheca Note ([lib/validations/notes.ts](../../lib/validations/notes.ts))
 
 ```typescript
 export const createNoteSchema = z.object({
@@ -182,7 +181,7 @@ export const createNoteSchema = z.object({
 });
 ```
 
-#### Preferenze Utente ([lib/validations/user.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/validations/user.ts))
+#### Preferenze Utente ([lib/validations/user.ts](../../lib/validations/user.ts))
 
 ```typescript
 export const updateUserPreferencesSchema = z.object({
@@ -206,9 +205,7 @@ token JWT.
 > variabile mancante, la compilazione Docker fallisce perché i segreti non sono
 > (e non devono essere) presenti nei layer dell'immagine.
 
-In
-[lib/auth.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/auth.ts)
-il segreto è gestito in modo robusto:
+In [lib/auth.ts](../../lib/auth.ts) il segreto è gestito in modo robusto:
 
 ```typescript
 secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET || 'super_secret_local_dev_key_12345',

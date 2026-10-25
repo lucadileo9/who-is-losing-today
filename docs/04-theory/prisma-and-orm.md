@@ -99,7 +99,7 @@ raggiungerebbe il limite `max_connections` (100) e rifiuterebbe qualsiasi nuova
 query con l'errore:
 `Error: Can't reach database server / Connection pool exhausted`.
 
-### La Soluzione: Il Pattern Singleton ([lib/prisma.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/prisma.ts))
+### La Soluzione: Il Pattern Singleton ([lib/prisma.ts](../../lib/prisma.ts))
 
 ```typescript
 // ✅ CORRETTO:
@@ -123,9 +123,8 @@ istanza del client e lo stesso pool di connessioni.
 
 ## Seeding e Popolamento Dati
 
-Il file
-[prisma/seed.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/prisma/seed.ts)
-è programmato per popolare l'istanza di database con:
+Il file [prisma/seed.ts](../../prisma/seed.ts) è programmato per popolare
+l'istanza di database con:
 
 - Il catalogo dei giochi di default (`Krilion`, `Metazooa`, `Chronophoto`).
 - Utenti fittizi con colori distintivi.

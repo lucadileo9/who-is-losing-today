@@ -25,8 +25,7 @@ aggregazione.
 
 ## Formule di Normalizzazione per Singolo Gioco
 
-Le funzioni risiedono in
-[lib/game-data.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/game-data.ts):
+Le funzioni risiedono in [lib/game-data.ts](../../lib/game-data.ts):
 
 ### Chronophoto (Punti: Higher is Better)
 
@@ -86,7 +85,7 @@ dove $N$ è il numero totale di giochi attivi nella giornata.
 
 ## Assegnazione di Vincitore e Perdente del Giorno
 
-In [lib/data/daily.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/data/daily.ts):
+In [lib/data/daily.ts](../../lib/data/daily.ts):
 
 1. **Ordinamento**: La lista giocatori viene ordinata per `normalizedScore` decrescente:
    - Rank 1: **Vincitore del Giorno** (`winner`).
@@ -112,12 +111,12 @@ Quando due o più giocatori ottengono lo stesso punteggio normalizzato:
 
 ## Statistiche di Periodo e Hall of Fame
 
-### Classifiche di Periodo ([lib/data/period.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/data/period.ts))
+### Classifiche di Periodo ([lib/data/period.ts](../../lib/data/period.ts))
 Nei filtri per periodo (`week`, `month`, `last_month`, `all`), l'ordinamento primario è determinato da:
 $$\text{averageScore} = \text{round}\left(\frac{\text{totalPoints}}{\text{playedCount}}\right)$$
 I criteri secondari di ordinamento sono `playedCount` (a parità di media, premia la costanza) e `bestScore`.
 
-### Hall of Fame ([lib/data/hall-of-fame.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/data/hall-of-fame.ts))
+### Hall of Fame ([lib/data/hall-of-fame.ts](../../lib/data/hall-of-fame.ts))
 Estrae i record storici assoluti:
 - **Record Krilion**: `orderBy: { rawScore: 'desc' }`.
 - **Record Metazooa**: `where: { rawScore: { gt: 0 } }, orderBy: { rawScore: 'asc' }`.

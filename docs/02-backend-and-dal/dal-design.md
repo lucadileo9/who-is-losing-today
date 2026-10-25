@@ -20,9 +20,8 @@ delle pagine JSX o delle Server Actions crea:
 - **Query inefficienti**: Rischio di incorrere nel problema `N+1` e
   over-fetching di campi non necessari.
 
-Il **DAL** risiede interamente in
-[lib/data/](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/data/) ed
-è l'unico modulo autorizzato a eseguire query Prisma di lettura:
+Il **DAL** risiede interamente in [lib/data/](../../lib/data/) ed è l'unico
+modulo autorizzato a eseguire query Prisma di lettura:
 
 ```mermaid
 flowchart TD
@@ -62,8 +61,9 @@ Il DAL è strutturato per domini di responsabilità indipendenti:
 ## Disaccoppiamento tramite DTO (Data Transfer Objects)
 
 I modelli Prisma non vengono mai restituiti "puri" al frontend. Il DAL trasforma
-i risultati in **DTO tipizzati** definiti in
-[lib/types/](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/types/):
+i risultati in **DTO tipizzati** definiti in [lib/types/](../../lib/types/) (per
+la reference completa di ciascun modello, consulta la guida dedicata
+[Modelli DTO e Contratti di Tipo](./dtos-and-types.md)):
 
 ### Vantaggi dei DTO:
 
@@ -133,7 +133,7 @@ registrati.
 ## Gestione del Connection Pooling
 
 Le query passano attraverso il client Prisma configurato come singleton in
-[lib/prisma.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/prisma.ts):
+[lib/prisma.ts](../../lib/prisma.ts):
 
 ```typescript
 import { PrismaClient } from '@prisma/client';

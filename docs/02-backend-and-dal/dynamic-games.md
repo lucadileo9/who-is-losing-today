@@ -37,7 +37,7 @@ Con il refactoring del DAL:
 
 Nel caso in cui il database sia vuoto o in fase di prima inizializzazione, il
 DAL utilizza la configurazione centralizzata definita in
-[lib/theme/colors.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/theme/colors.ts):
+[lib/theme/colors.ts](../../lib/theme/colors.ts):
 
 ```typescript
 export const DEFAULT_GAME_FALLBACKS = [
@@ -62,7 +62,7 @@ Supponiamo di voler aggiungere un quarto gioco: **Wordle** (gioco a tentativi da
 ### Passo 1: Registrare il Gioco nel Database
 
 Aggiungi il record nel database tramite SQL o aggiornando
-[prisma/seed.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/prisma/seed.ts):
+[prisma/seed.ts](../../prisma/seed.ts):
 
 ```typescript
 await prisma.game.upsert({
@@ -83,9 +83,8 @@ await prisma.game.upsert({
 
 ### Passo 2: Definire la Normalizzazione del Punteggio
 
-In
-[lib/game-data.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/game-data.ts),
-estendi la funzione `calculateNormalizedScore`:
+In [lib/game-data.ts](../../lib/game-data.ts), estendi la funzione
+`calculateNormalizedScore`:
 
 ```typescript
 export function calculateNormalizedScore(game: string, score: number): number {
@@ -105,10 +104,8 @@ export function calculateNormalizedScore(game: string, score: number): number {
 
 ### Passo 3: Aggiungere il Parser del Testo Incollato
 
-In
-[lib/game-data.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/game-data.ts),
-estendi la funzione `parseScore` per estrarre in automatico il punteggio dal
-testo copiato da appuntati:
+In [lib/game-data.ts](../../lib/game-data.ts), estendi la funzione `parseScore`
+per estrarre in automatico il punteggio dal testo copiato da appuntati:
 
 ```typescript
 export function parseScore(text: string, game: string): number | null {
@@ -133,8 +130,7 @@ export function parseScore(text: string, game: string): number | null {
 ### Passo 4: Centralizzare i Token Grafici
 
 Aggiungi la configurazione estetica in
-[lib/theme/colors.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/theme/colors.ts)
-e in `GAME_CONFIG`:
+[lib/theme/colors.ts](../../lib/theme/colors.ts) e in `GAME_CONFIG`:
 
 ```typescript
 // In lib/theme/colors.ts:

@@ -8,10 +8,9 @@ codice ed evitare fallimenti di build in produzione.
 
 ## Obiettivi della Pipeline
 
-La pipeline
-([.github/workflows/ci.yml](file:///c:/Users/lucad/my-projects/who-is-losing-today/.github/workflows/ci.yml))
-agisce come un cancello di controllo automatico prima che qualsiasi modifica
-venga integrata nel ramo `master`.
+La pipeline ([.github/workflows/ci.yml](../../.github/workflows/ci.yml)) agisce
+come un cancello di controllo automatico prima che qualsiasi modifica venga
+integrata nel ramo `master`.
 
 Ogni volta che viene eseguito un `push` o una `pull_request`, la CI verifica in
 un ambiente vergine Ubuntu:

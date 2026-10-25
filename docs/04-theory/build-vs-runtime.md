@@ -95,8 +95,7 @@ secret: (() => {
 
 ## Il Pattern di Risoluzione Corretto
 
-La soluzione adottata in
-[lib/auth.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/auth.ts):
+La soluzione adottata in [lib/auth.ts](../../lib/auth.ts):
 
 ```typescript
 // NUOVO CODICE ROBUSTO:

@@ -19,9 +19,7 @@ Prima di iniziare, verificare che siano installati sul proprio computer:
 
 ## Configurazione delle Variabili d'Ambiente
 
-Creare o modificare i file
-[.env](file:///c:/Users/lucad/my-projects/who-is-losing-today/.env) e
-[.env.local](file:///c:/Users/lucad/my-projects/who-is-losing-today/.env.local)
+Creare o modificare i file [.env](../../.env) e [.env.local](../../.env.local)
 nella radice del progetto:
 
 ```env

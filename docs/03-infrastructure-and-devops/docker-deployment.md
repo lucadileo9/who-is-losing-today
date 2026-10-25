@@ -41,7 +41,7 @@ flowchart TD
 
 ---
 
-## Il Dockerfile Multi-Stage ([Dockerfile](file:///c:/Users/lucad/my-projects/who-is-losing-today/Dockerfile))
+## Il Dockerfile Multi-Stage ([Dockerfile](../../Dockerfile))
 
 La compilazione dell'immagine usa la tecnica **Multi-Stage Build** per ridurre
 le dimensioni finali dell'immagine da oltre 1.2 GB a circa 150 MB:
@@ -116,7 +116,7 @@ All'avvio del container:
 
 ---
 
-## Configurazione Docker Compose di Produzione ([docker-compose.yml](file:///c:/Users/lucad/my-projects/who-is-losing-today/docker-compose.yml))
+## Configurazione Docker Compose di Produzione ([docker-compose.yml](../../docker-compose.yml))
 
 ### Servizio Database (`who-is-losing-today-db`)
 

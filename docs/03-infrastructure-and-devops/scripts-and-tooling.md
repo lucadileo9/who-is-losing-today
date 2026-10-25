@@ -1,8 +1,8 @@
 # DevOps — Script e Tooling di Sviluppo
 
 Questo documento illustra tutti gli script npm configurati in
-[package.json](file:///c:/Users/lucad/my-projects/who-is-losing-today/package.json),
-i tool di qualità del codice e le convenzioni per i commit e il branching Git.
+[package.json](../../package.json), i tool di qualità del codice e le
+convenzioni per i commit e il branching Git.
 
 ---
 
@@ -44,11 +44,11 @@ i tool di qualità del codice e le convenzioni per i commit e il branching Git.
 
 - **`npm run format`**: Riformatta l'intero codebase (TypeScript, CSS, JSON,
   Markdown) secondo le regole definite nel file
-  [.prettierrc](file:///c:/Users/lucad/my-projects/who-is-losing-today/.prettierrc).
+  [.prettierrc](../../.prettierrc).
 - **`npm run format:check`**: Verifica che tutti i file siano correttamente
   formattati senza applicare modifiche (utile in CI).
 - **`npm run lint`**: Esegue il linter ESLint 9 con configurazione Flat Config
-  ([eslint.config.mjs](file:///c:/Users/lucad/my-projects/who-is-losing-today/eslint.config.mjs)).
+  ([eslint.config.mjs](../../eslint.config.mjs)).
 - **`npm run typecheck`**: Lancia il compilatore TypeScript (`tsc --noEmit`) su
   tutto il progetto. Non genera file JavaScript ma intercetta errori di typing,
   proprietà mancanti o incompatibilità di interfacce.
@@ -68,9 +68,8 @@ i tool di qualità del codice e le convenzioni per i commit e il branching Git.
 
 - **`npm run db:reset`**: Esegue il reset distruttivo del database locale
   (`prisma db push --force-reset`), ricrea le tabelle secondo `schema.prisma` e
-  lancia il seed automatico
-  ([prisma/seed.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/prisma/seed.ts))
-  ripopolando i giocatori e i punteggi dimostrativi.
+  lancia il seed automatico ([prisma/seed.ts](../../prisma/seed.ts)) ripopolando
+  i giocatori e i punteggi dimostrativi.
 
 ---
 

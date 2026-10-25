@@ -15,7 +15,7 @@ tramite `revalidatePath()`.
 
 ---
 
-### Dominio Punteggi ([app/actions/scores.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/app/actions/scores.ts))
+### Dominio Punteggi ([app/actions/scores.ts](../../app/actions/scores.ts))
 
 #### `submitScoreAction(formData: unknown)`
 
@@ -43,7 +43,7 @@ data solare.
 
 ---
 
-### Dominio Bacheca ([app/actions/notes.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/app/actions/notes.ts))
+### Dominio Bacheca ([app/actions/notes.ts](../../app/actions/notes.ts))
 
 #### `createNoteAction(content: string)`
 
@@ -64,7 +64,7 @@ Elimina un messaggio dalla bacheca.
 
 ---
 
-### Dominio Profilo Utente ([app/actions/user.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/app/actions/user.ts))
+### Dominio Profilo Utente ([app/actions/user.ts](../../app/actions/user.ts))
 
 #### `updateUserPreferencesAction(data: unknown)`
 
@@ -84,7 +84,7 @@ avatar) e le iniziali.
 
 ---
 
-### Dominio Amministrazione ([app/actions/admin.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/app/actions/admin.ts))
+### Dominio Amministrazione ([app/actions/admin.ts](../../app/actions/admin.ts))
 
 > [!CAUTION] Tutte le action di questo dominio richiedono la guardia
 > `getAuthenticatedAdmin()`. Se l'utente non ha ruolo `ADMIN`, l'operazione
