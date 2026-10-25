@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { Crown, Flame } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PlayerAvatar } from '@/components/atoms/PlayerAvatar';
@@ -114,34 +115,38 @@ export function HeroPlayerCard({
         </div>
       ) : (
         <div className="mt-4 flex items-center gap-4 sm:gap-5">
-          <PlayerAvatar
-            name={playerScore.user.name}
-            image={playerScore.user.image}
-            color={playerScore.user.color}
-            size="lg"
-            isWinner={isWinner}
-            isLoser={!isWinner}
-            className="shrink-0"
-          />
+          <Link
+            href={`/profile/${playerScore.user.id}`}
+            className="flex items-center gap-4 sm:gap-5 transition-opacity hover:opacity-85"
+          >
+            <PlayerAvatar
+              name={playerScore.user.name}
+              image={playerScore.user.image}
+              color={playerScore.user.color}
+              size="lg"
+              isWinner={isWinner}
+              isLoser={!isWinner}
+              className="shrink-0"
+            />
 
-          <div className="flex flex-col min-w-0">
-            <div className="flex items-center gap-2">
-              <h3 className="text-lg sm:text-xl font-black text-white truncate">
-                {playerScore.user.name}
-              </h3>
-              {isMe && (
-                <span
-                  className={cn(
-                    'rounded px-1.5 py-0.5 text-[10px] font-black border uppercase',
-                    cfg.youBadgeBg
-                  )}
-                >
-                  Tu
-                </span>
-              )}
-            </div>
+            <div className="flex flex-col min-w-0">
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg sm:text-xl font-black text-white truncate transition-colors hover:text-cyan-400">
+                  {playerScore.user.name}
+                </h3>
+                {isMe && (
+                  <span
+                    className={cn(
+                      'rounded px-1.5 py-0.5 text-[10px] font-black border uppercase',
+                      cfg.youBadgeBg
+                    )}
+                  >
+                    Tu
+                  </span>
+                )}
+              </div>
 
-            <div className="mt-1 flex items-baseline gap-1.5">
+              <div className="mt-1 flex items-baseline gap-1.5">
               <span
                 className={cn(
                   'text-2xl sm:text-3xl font-black tracking-tight',
@@ -155,6 +160,7 @@ export function HeroPlayerCard({
               </span>
             </div>
           </div>
+          </Link>
         </div>
       )}
     </div>

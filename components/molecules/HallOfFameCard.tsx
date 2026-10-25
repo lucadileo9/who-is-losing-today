@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { GameBadge } from '@/components/atoms/GameBadge';
@@ -78,7 +79,10 @@ export function HallOfFameCard({
 
       {/* Detentore del Record */}
       <div className="flex items-center justify-between border-t border-white/5 pt-3">
-        <div className="flex min-w-0 items-center gap-2">
+        <Link
+          href={`/profile/${record.holder.id}`}
+          className="flex min-w-0 items-center gap-2 transition-opacity hover:opacity-85"
+        >
           <PlayerAvatar
             name={record.holder.name}
             image={record.holder.image}
@@ -86,10 +90,10 @@ export function HallOfFameCard({
             size="xs"
             isWinner={true}
           />
-          <span className="max-w-[100px] truncate text-xs font-bold text-white sm:max-w-[120px]">
+          <span className="max-w-[100px] truncate text-xs font-bold text-white transition-colors hover:text-cyan-400 sm:max-w-[120px]">
             {record.holder.name}
           </span>
-        </div>
+        </Link>
 
         <div className="flex shrink-0 items-center gap-1 text-[10px] text-muted-foreground">
           <Calendar className="size-3" />

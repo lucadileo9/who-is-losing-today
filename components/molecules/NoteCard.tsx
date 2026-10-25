@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useTransition } from 'react';
+import Link from 'next/link';
 import { Trash2, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { DailyNoteDTO } from '@/lib/types/notes';
@@ -38,7 +39,10 @@ export function NoteCard({ note, isAdmin = false, className }: NoteCardProps) {
       <div>
         {/* Header con Autore e Data */}
         <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2.5 min-w-0">
+          <Link
+            href={`/profile/${note.author.id}`}
+            className="flex items-center gap-2.5 min-w-0 transition-opacity hover:opacity-85"
+          >
             <PlayerAvatar
               name={note.author.name}
               image={note.author.image}
@@ -46,7 +50,7 @@ export function NoteCard({ note, isAdmin = false, className }: NoteCardProps) {
               size="sm"
             />
             <div className="min-w-0 flex flex-col">
-              <span className="truncate text-xs sm:text-sm font-bold text-white">
+              <span className="truncate text-xs sm:text-sm font-bold text-white transition-colors hover:text-cyan-400">
                 {note.author.name}
               </span>
               <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
@@ -54,7 +58,7 @@ export function NoteCard({ note, isAdmin = false, className }: NoteCardProps) {
                 <span>{note.createdAt}</span>
               </div>
             </div>
-          </div>
+          </Link>
 
           {/* Tasto elimina per l'autore o l'admin */}
           {canDelete && (

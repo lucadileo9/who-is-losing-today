@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { PlayerAvatar } from '@/components/atoms/PlayerAvatar';
 import { RankBadge } from '@/components/atoms/RankBadge';
@@ -49,44 +50,49 @@ export function StandingsRow({
       <div className="flex min-w-0 items-center gap-3">
         <RankBadge rank={rank} isLoser={isLoser} className="shrink-0" />
 
-        <PlayerAvatar
-          name={user.name}
-          image={user.image}
-          color={user.color}
-          size="sm"
-          isWinner={isWinner}
-          isLoser={isLoser}
-          className="shrink-0"
-        />
+        <Link
+          href={`/profile/${user.id}`}
+          className="flex min-w-0 items-center gap-3 transition-opacity hover:opacity-85"
+        >
+          <PlayerAvatar
+            name={user.name}
+            image={user.image}
+            color={user.color}
+            size="sm"
+            isWinner={isWinner}
+            isLoser={isLoser}
+            className="shrink-0"
+          />
 
-        <div className="flex min-w-0 flex-col truncate">
-          <div className="flex items-center gap-1.5">
-            <span
-              className={cn(
-                'truncate text-sm font-bold',
-                isWinner
-                  ? 'text-amber-300'
-                  : isLoser
-                    ? 'text-red-300'
-                    : isCurrentUser
-                      ? 'text-cyan-300'
-                      : 'text-white'
+          <div className="flex min-w-0 flex-col truncate">
+            <div className="flex items-center gap-1.5">
+              <span
+                className={cn(
+                  'truncate text-sm font-bold transition-colors group-hover:text-cyan-300',
+                  isWinner
+                    ? 'text-amber-300'
+                    : isLoser
+                      ? 'text-red-300'
+                      : isCurrentUser
+                        ? 'text-cyan-300'
+                        : 'text-white'
+                )}
+              >
+                {user.name}
+              </span>
+              {isCurrentUser && (
+                <span className="py-0.2 rounded border border-cyan-500/30 bg-cyan-500/20 px-1.5 text-[10px] font-black uppercase text-cyan-300">
+                  Tu
+                </span>
               )}
-            >
-              {user.name}
-            </span>
-            {isCurrentUser && (
-              <span className="py-0.2 rounded border border-cyan-500/30 bg-cyan-500/20 px-1.5 text-[10px] font-black uppercase text-cyan-300">
-                Tu
+            </div>
+            {secondaryInfo && (
+              <span className="truncate text-[11px] text-muted-foreground">
+                {secondaryInfo}
               </span>
             )}
           </div>
-          {secondaryInfo && (
-            <span className="truncate text-[11px] text-muted-foreground">
-              {secondaryInfo}
-            </span>
-          )}
-        </div>
+        </Link>
       </div>
 
       {/* Colonna Destra: Punteggio Normalizzato e Grezzo */}
