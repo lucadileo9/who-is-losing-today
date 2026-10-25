@@ -3,17 +3,8 @@
 import { revalidatePath } from "next/cache"
 import { prisma } from "@/lib/prisma"
 import { getAuthenticatedUser } from "@/lib/auth-guard"
+import { submitScoreSchema } from "@/lib/validations/scores"
 import { calculateNormalizedScore, type Game } from "@/lib/game-data"
-import { z } from "zod"
-
-const SubmitScoreSchema = z.object({
-  gameId: z.enum(["Krilion", "Metazooa", "Chronophoto"]),
-  rawScore: z.number().int().min(0).max(100000),
-  scoreDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Formato data non valido (YYYY-MM-DD)"),
-  rawInputText: z.string().max(2000).optional(),
-})
-
-export type SubmitScoreInput = z.infer<typeof SubmitScoreSchema>
 
 export async function submitScoreAction(formData: unknown) {
   try {
@@ -25,7 +16,7 @@ export async function submitScoreAction(formData: unknown) {
     const user = auth.user
 
     // 2. Validazione Zod
-    const parsed = SubmitScoreSchema.safeParse(formData)
+    const parsed = submitScoreSchema.safeParse(formData)
     if (!parsed.success) {
       const msg = parsed.error.issues.map((i) => i.message).join(", ")
       return { success: false, error: msg || "Dati non validi." }

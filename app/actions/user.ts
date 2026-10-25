@@ -3,11 +3,7 @@
 import { revalidatePath } from "next/cache"
 import { prisma } from "@/lib/prisma"
 import { getAuthenticatedUser } from "@/lib/auth-guard"
-import { z } from "zod"
-
-const UpdateColorSchema = z.object({
-  colorHex: z.string().regex(/^#[0-9a-fA-F]{6}$/, "Formato colore esadecimale non valido (es. #3b82f6)"),
-})
+import { updateUserColorSchema } from "@/lib/validations/user"
 
 export async function updateUserColorAction(colorHex: string) {
   try {
@@ -16,7 +12,7 @@ export async function updateUserColorAction(colorHex: string) {
       return { success: false, error: auth.error }
     }
 
-    const parsed = UpdateColorSchema.safeParse({ colorHex })
+    const parsed = updateUserColorSchema.safeParse({ colorHex })
     if (!parsed.success) {
       return { success: false, error: parsed.error.issues[0]?.message || "Colore non valido." }
     }

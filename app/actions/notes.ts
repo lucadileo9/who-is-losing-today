@@ -3,11 +3,7 @@
 import { revalidatePath } from "next/cache"
 import { prisma } from "@/lib/prisma"
 import { getAuthenticatedUser } from "@/lib/auth-guard"
-import { z } from "zod"
-
-const CreateNoteSchema = z.object({
-  content: z.string().trim().min(1, "Il messaggio non può essere vuoto.").max(500, "Messaggio troppo lungo (max 500 caratteri)."),
-})
+import { createNoteSchema } from "@/lib/validations/notes"
 
 export async function createNoteAction(content: string) {
   try {
@@ -17,7 +13,7 @@ export async function createNoteAction(content: string) {
     }
     const user = auth.user
 
-    const parsed = CreateNoteSchema.safeParse({ content })
+    const parsed = createNoteSchema.safeParse({ content })
     if (!parsed.success) {
       return { success: false, error: parsed.error.issues[0]?.message || "Testo non valido." }
     }

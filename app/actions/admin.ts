@@ -3,26 +3,15 @@
 import { revalidatePath } from "next/cache"
 import { prisma } from "@/lib/prisma"
 import { getAuthenticatedAdmin, getAuthenticatedUser } from "@/lib/auth-guard"
-import { Role, BugCategory, BugPriority, BugStatus } from "@prisma/client"
-import { z } from "zod"
-
-const AddWhitelistSchema = z.object({
-  email: z.string().email("Indirizzo email non valido.").toLowerCase().trim(),
-  role: z.nativeEnum(Role).default(Role.PLAYER),
-})
-
-const SubmitBugSchema = z.object({
-  description: z.string().min(5, "Descrizione troppo breve (min 5 caratteri).").max(2000),
-  category: z.nativeEnum(BugCategory).default(BugCategory.BUG),
-  priority: z.nativeEnum(BugPriority).default(BugPriority.MEDIUM),
-})
+import { addWhitelistSchema, submitBugSchema } from "@/lib/validations/admin"
+import { Role, BugStatus } from "@prisma/client"
 
 export async function addToWhitelistAction(email: string, role: Role = Role.PLAYER) {
   try {
     const auth = await getAuthenticatedAdmin()
     if (!auth.success) return { success: false, error: auth.error }
 
-    const parsed = AddWhitelistSchema.safeParse({ email, role })
+    const parsed = addWhitelistSchema.safeParse({ email, role })
     if (!parsed.success) {
       return { success: false, error: parsed.error.issues[0]?.message || "Email non valida." }
     }
@@ -81,7 +70,7 @@ export async function submitBugReportAction(formData: unknown) {
     const auth = await getAuthenticatedUser()
     if (!auth.success) return { success: false, error: auth.error }
 
-    const parsed = SubmitBugSchema.safeParse(formData)
+    const parsed = submitBugSchema.safeParse(formData)
     if (!parsed.success) {
       return { success: false, error: parsed.error.issues[0]?.message || "Dati non validi." }
     }
