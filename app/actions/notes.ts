@@ -1,9 +1,8 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { getAuthenticatedUser } from "@/lib/auth-guard"
 import { z } from "zod"
 
 const CreateNoteSchema = z.object({
@@ -12,22 +11,15 @@ const CreateNoteSchema = z.object({
 
 export async function createNoteAction(content: string) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user?.email) {
-      return { success: false, error: "Devi aver effettuato l'accesso per pubblicare un messaggio." }
+    const auth = await getAuthenticatedUser()
+    if (!auth.success) {
+      return { success: false, error: auth.error }
     }
+    const user = auth.user
 
     const parsed = CreateNoteSchema.safeParse({ content })
     if (!parsed.success) {
       return { success: false, error: parsed.error.issues[0]?.message || "Testo non valido." }
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email.toLowerCase().trim() },
-    })
-
-    if (!user) {
-      return { success: false, error: "Profilo utente non trovato." }
     }
 
     const note = await prisma.dailyNote.create({
@@ -49,18 +41,11 @@ export async function createNoteAction(content: string) {
 
 export async function deleteNoteAction(noteId: string) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user?.email) {
-      return { success: false, error: "Non autorizzato." }
+    const auth = await getAuthenticatedUser()
+    if (!auth.success) {
+      return { success: false, error: auth.error }
     }
-
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email.toLowerCase().trim() },
-    })
-
-    if (!user) {
-      return { success: false, error: "Utente non trovato." }
-    }
+    const user = auth.user
 
     const note = await prisma.dailyNote.findUnique({
       where: { id: noteId },

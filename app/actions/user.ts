@@ -1,9 +1,8 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { getAuthenticatedUser } from "@/lib/auth-guard"
 import { z } from "zod"
 
 const UpdateColorSchema = z.object({
@@ -12,9 +11,9 @@ const UpdateColorSchema = z.object({
 
 export async function updateUserColorAction(colorHex: string) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user?.email) {
-      return { success: false, error: "Non autorizzato." }
+    const auth = await getAuthenticatedUser()
+    if (!auth.success) {
+      return { success: false, error: auth.error }
     }
 
     const parsed = UpdateColorSchema.safeParse({ colorHex })
@@ -23,7 +22,7 @@ export async function updateUserColorAction(colorHex: string) {
     }
 
     const user = await prisma.user.update({
-      where: { email: session.user.email.toLowerCase().trim() },
+      where: { id: auth.user.id },
       data: { color: parsed.data.colorHex },
     })
 
