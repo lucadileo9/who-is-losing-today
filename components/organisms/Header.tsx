@@ -5,13 +5,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useSession, signIn, signOut } from 'next-auth/react';
-import { useTheme } from 'next-themes';
 import {
   LayoutDashboard,
   MessageSquare,
   PlusCircle,
-  Sun,
-  Moon,
   LogIn,
   LogOut,
   ShieldAlert,
@@ -150,16 +147,6 @@ export function Header() {
                     </Link>
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem asChild>
-                    <Link
-                      href="/bacheca"
-                      className="flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-sm text-muted-foreground hover:bg-white/10 hover:text-white"
-                    >
-                      <MessageSquare className="size-4 text-pink-400" />
-                      <span>Bacheca & Sfottò</span>
-                    </Link>
-                  </DropdownMenuItem>
-
                   {isAdmin && (
                     <DropdownMenuItem asChild>
                       <Link
@@ -172,29 +159,6 @@ export function Header() {
                     </DropdownMenuItem>
                   )}
                 </DropdownMenuGroup>
-
-                <DropdownMenuSeparator className="bg-white/10" />
-
-                {mounted && (
-                  <DropdownMenuItem
-                    onClick={() =>
-                      setTheme(theme === 'dark' ? 'light' : 'dark')
-                    }
-                    className="flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-sm text-muted-foreground hover:bg-white/10 hover:text-white"
-                  >
-                    {theme === 'dark' ? (
-                      <>
-                        <Sun className="size-4 text-amber-400" />
-                        <span>Tema Chiaro</span>
-                      </>
-                    ) : (
-                      <>
-                        <Moon className="size-4 text-cyan-400" />
-                        <span>Tema Scuro</span>
-                      </>
-                    )}
-                  </DropdownMenuItem>
-                )}
 
                 <DropdownMenuSeparator className="bg-white/10" />
 
