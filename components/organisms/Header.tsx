@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
@@ -15,7 +16,6 @@ import {
   LogOut,
   ShieldAlert,
   User,
-  Sparkles,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PlayerAvatar } from '@/components/atoms/PlayerAvatar';
@@ -54,11 +54,17 @@ export function Header() {
         {/* Brand Logo - non si accavalla mai su mobile */}
         <Link
           href="/dashboard"
-          className="flex items-center gap-2 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+          className="flex items-center gap-2.5 transition-transform hover:scale-[1.02] active:scale-[0.98]"
         >
-          <span className="grid size-8 place-items-center rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-black shadow-[0_0_15px_rgba(6,182,212,0.4)] md:size-9">
-            <Sparkles className="size-4 text-white" />
-          </span>
+          <div className="relative size-8 sm:size-9 shrink-0 overflow-hidden rounded-xl border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.35)]">
+            <Image
+              src="/logo.jpeg"
+              alt="Who Is Losing Today"
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
           <div className="flex items-center gap-1.5 whitespace-nowrap">
             <span className="text-sm font-extrabold tracking-tight sm:text-base md:text-lg">
               <span className="text-white">Who Is Losing </span>
@@ -93,15 +99,6 @@ export function Header() {
 
         {/* Right Action Section */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Quick CTA "+ Partita" */}
-          <Link
-            href="/submit"
-            className="flex items-center gap-1.5 rounded-xl border border-cyan-500/40 bg-cyan-500/15 px-2.5 py-1.5 text-xs font-bold text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.25)] transition-all hover:bg-cyan-500/25 active:scale-95"
-            title="Inserisci Punteggio Oggi"
-          >
-            <PlusCircle className="size-3.5" />
-            <span className="xs:inline hidden sm:inline">Gioca</span>
-          </Link>
 
           {/* User Section / Avatar Dropdown */}
           {user ? (
