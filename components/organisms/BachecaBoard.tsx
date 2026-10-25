@@ -54,7 +54,7 @@ export function BachecaBoard({
   return (
     <div className={cn('space-y-8', className)}>
       {/* Box di Inserimento Nuovo Messaggio */}
-      <div className="glass-card relative overflow-hidden rounded-3xl border border-white/10 p-5 sm:p-6 shadow-[0_0_25px_rgba(6,182,212,0.1)]">
+      <div className="glass-card relative overflow-hidden rounded-3xl border border-white/10 p-5 shadow-[0_0_25px_rgba(6,182,212,0.1)] sm:p-6">
         <form onSubmit={handleCreateNote} className="space-y-3">
           <div className="flex items-center justify-between">
             <label
@@ -69,7 +69,7 @@ export function BachecaBoard({
               className={cn(
                 'text-[11px] font-semibold transition-colors',
                 isOverLimit
-                  ? 'text-red-400 font-bold'
+                  ? 'font-bold text-red-400'
                   : remainingChars <= 50
                     ? 'text-amber-400'
                     : 'text-muted-foreground'
@@ -88,7 +88,7 @@ export function BachecaBoard({
               setErrorMsg(null);
             }}
             placeholder="Lascia un commento, prendi in giro il perdente di oggi o incita il gruppo per le prossime sfide..."
-            className="glass-card w-full rounded-2xl border border-white/10 bg-black/40 p-4 text-xs sm:text-sm text-white placeholder:text-muted-foreground outline-none transition-all focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400"
+            className="glass-card w-full rounded-2xl border border-white/10 bg-black/40 p-4 text-xs text-white outline-none transition-all placeholder:text-muted-foreground focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 sm:text-sm"
           />
 
           {errorMsg && (
@@ -104,10 +104,12 @@ export function BachecaBoard({
               variant="primary"
               size="md"
               disabled={!content.trim() || isOverLimit || isPending}
-              className="gap-2 text-xs sm:text-sm font-bold"
+              className="gap-2 text-xs font-bold sm:text-sm"
             >
               <Send className="size-3.5" />
-              <span>{isPending ? 'Pubblicazione...' : 'Pubblica Messaggio'}</span>
+              <span>
+                {isPending ? 'Pubblicazione...' : 'Pubblica Messaggio'}
+              </span>
             </NeonButton>
           </div>
         </form>
@@ -137,11 +139,7 @@ export function BachecaBoard({
         ) : (
           <div className="flex flex-col gap-3 sm:gap-4">
             {notes.map((note) => (
-              <NoteCard
-                key={note.id}
-                note={note}
-                isAdmin={isAdmin}
-              />
+              <NoteCard key={note.id} note={note} isAdmin={isAdmin} />
             ))}
           </div>
         )}

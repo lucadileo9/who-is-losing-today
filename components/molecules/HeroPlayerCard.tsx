@@ -22,7 +22,8 @@ const config = {
     icon: Crown,
     accentColor: 'text-amber-400',
     borderColor: 'border-amber-500/30',
-    bgGradient: 'bg-gradient-to-br from-amber-500/15 via-transparent to-transparent',
+    bgGradient:
+      'bg-gradient-to-br from-amber-500/15 via-transparent to-transparent',
     glowShadow: 'shadow-[0_0_25px_rgba(245,158,11,0.2)]',
     scoreColor: 'text-amber-400',
     iconBadgeBg: 'bg-amber-500/20 border-amber-500/40 text-amber-400',
@@ -36,7 +37,8 @@ const config = {
     icon: Flame,
     accentColor: 'text-red-400',
     borderColor: 'border-red-500/30',
-    bgGradient: 'bg-gradient-to-br from-red-500/15 via-transparent to-transparent',
+    bgGradient:
+      'bg-gradient-to-br from-red-500/15 via-transparent to-transparent',
     glowShadow: 'shadow-[0_0_25px_rgba(239,68,68,0.2)]',
     scoreColor: 'text-red-400',
     iconBadgeBg: 'bg-red-500/20 border-red-500/40 text-red-400',
@@ -65,7 +67,7 @@ export function HeroPlayerCard({
   return (
     <div
       className={cn(
-        'glass-card relative overflow-hidden rounded-3xl p-5 sm:p-6 transition-all duration-300',
+        'glass-card relative overflow-hidden rounded-3xl p-5 transition-all duration-300 sm:p-6',
         cfg.borderColor,
         cfg.bgGradient,
         cfg.glowShadow,
@@ -96,7 +98,7 @@ export function HeroPlayerCard({
         {!hasNoPlayer && (
           <span
             className={cn(
-              'rounded-full px-2.5 py-0.5 text-[10px] font-bold border uppercase',
+              'rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase',
               cfg.iconBadgeBg
             )}
           >
@@ -107,9 +109,9 @@ export function HeroPlayerCard({
 
       {/* Contenuto Card */}
       {hasNoPlayer ? (
-        <div className="my-6 text-center py-4">
+        <div className="my-6 py-4 text-center">
           <h3 className="text-base font-bold text-white">{cfg.emptyTitle}</h3>
-          <p className="mt-1 text-xs text-muted-foreground max-w-xs mx-auto">
+          <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground">
             {cfg.emptyDesc}
           </p>
         </div>
@@ -117,7 +119,7 @@ export function HeroPlayerCard({
         <div className="mt-4 flex items-center gap-4 sm:gap-5">
           <Link
             href={`/profile/${playerScore.user.id}`}
-            className="flex items-center gap-4 sm:gap-5 transition-opacity hover:opacity-85"
+            className="flex items-center gap-4 transition-opacity hover:opacity-85 sm:gap-5"
           >
             <PlayerAvatar
               name={playerScore.user.name}
@@ -129,15 +131,15 @@ export function HeroPlayerCard({
               className="shrink-0"
             />
 
-            <div className="flex flex-col min-w-0">
+            <div className="flex min-w-0 flex-col">
               <div className="flex items-center gap-2">
-                <h3 className="text-lg sm:text-xl font-black text-white truncate transition-colors hover:text-cyan-400">
+                <h3 className="truncate text-lg font-black text-white transition-colors hover:text-cyan-400 sm:text-xl">
                   {playerScore.user.name}
                 </h3>
                 {isMe && (
                   <span
                     className={cn(
-                      'rounded px-1.5 py-0.5 text-[10px] font-black border uppercase',
+                      'rounded border px-1.5 py-0.5 text-[10px] font-black uppercase',
                       cfg.youBadgeBg
                     )}
                   >
@@ -147,19 +149,19 @@ export function HeroPlayerCard({
               </div>
 
               <div className="mt-1 flex items-baseline gap-1.5">
-              <span
-                className={cn(
-                  'text-2xl sm:text-3xl font-black tracking-tight',
-                  cfg.scoreColor
-                )}
-              >
-                {playerScore.normalizedScore}
-              </span>
-              <span className="text-xs font-semibold text-muted-foreground">
-                pt complessivi
-              </span>
+                <span
+                  className={cn(
+                    'text-2xl font-black tracking-tight sm:text-3xl',
+                    cfg.scoreColor
+                  )}
+                >
+                  {playerScore.normalizedScore}
+                </span>
+                <span className="text-xs font-semibold text-muted-foreground">
+                  pt complessivi
+                </span>
+              </div>
             </div>
-          </div>
           </Link>
         </div>
       )}

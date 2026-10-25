@@ -56,4 +56,3 @@ export function DailyHero({ daily, currentUserId }: DailyHeroProps) {
     </div>
   );
 }
-

@@ -24,7 +24,7 @@ export function PlayerCard({
   return (
     <div
       className={cn(
-        'glass-card group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-white/10 p-5 sm:p-6 transition-all duration-300 hover:border-cyan-500/40 hover:shadow-[0_0_25px_rgba(6,182,212,0.15)]',
+        'glass-card group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-white/10 p-5 transition-all duration-300 hover:border-cyan-500/40 hover:shadow-[0_0_25px_rgba(6,182,212,0.15)] sm:p-6',
         className
       )}
     >
@@ -49,12 +49,12 @@ export function PlayerCard({
               className="shrink-0 shadow-md"
             />
             <div className="min-w-0">
-              <div className="flex items-center gap-1.5 flex-wrap">
+              <div className="flex flex-wrap items-center gap-1.5">
                 <h3 className="truncate font-black text-white transition-colors group-hover:text-cyan-400">
                   {player.user.name}
                 </h3>
                 {isSelf && (
-                  <span className="rounded bg-cyan-500/20 px-1.5 py-0.5 text-[9px] font-black text-cyan-300 border border-cyan-500/30">
+                  <span className="rounded border border-cyan-500/30 bg-cyan-500/20 px-1.5 py-0.5 text-[9px] font-black text-cyan-300">
                     TU
                   </span>
                 )}

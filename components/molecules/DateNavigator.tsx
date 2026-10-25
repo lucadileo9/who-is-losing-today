@@ -57,21 +57,21 @@ export function DateNavigator({ currentDate, className }: DateNavigatorProps) {
 
   return (
     <div className={cn('flex justify-center', className)}>
-      <div className="glass-card flex items-center gap-1.5 sm:gap-2 rounded-2xl p-1.5 sm:p-2 shadow-sm">
+      <div className="glass-card flex items-center gap-1.5 rounded-2xl p-1.5 shadow-sm sm:gap-2 sm:p-2">
         {/* Freccia Indietro */}
         <button
           type="button"
           onClick={handlePrevDay}
           title="Giorno precedente"
-          className="flex size-8 sm:size-9 cursor-pointer items-center justify-center rounded-xl bg-white/5 text-muted-foreground transition-all hover:bg-white/10 hover:text-white active:scale-95"
+          className="flex size-8 cursor-pointer items-center justify-center rounded-xl bg-white/5 text-muted-foreground transition-all hover:bg-white/10 hover:text-white active:scale-95 sm:size-9"
         >
           <ChevronLeft className="size-4 sm:size-5" />
         </button>
 
         {/* Display Data Corrente */}
-        <div className="flex items-center gap-2 rounded-xl border border-white/5 bg-white/[0.04] px-3 sm:px-3.5 py-1.5">
-          <CalendarIcon className="size-3.5 sm:size-4 text-cyan-400" />
-          <span className="text-xs sm:text-sm font-bold capitalize text-white">
+        <div className="flex items-center gap-2 rounded-xl border border-white/5 bg-white/[0.04] px-3 py-1.5 sm:px-3.5">
+          <CalendarIcon className="size-3.5 text-cyan-400 sm:size-4" />
+          <span className="text-xs font-bold capitalize text-white sm:text-sm">
             {formattedDate}
           </span>
           {isToday && (
@@ -86,7 +86,7 @@ export function DateNavigator({ currentDate, className }: DateNavigatorProps) {
           type="button"
           onClick={handleNextDay}
           title="Giorno successivo"
-          className="flex size-8 sm:size-9 cursor-pointer items-center justify-center rounded-xl bg-white/5 text-muted-foreground transition-all hover:bg-white/10 hover:text-white active:scale-95"
+          className="flex size-8 cursor-pointer items-center justify-center rounded-xl bg-white/5 text-muted-foreground transition-all hover:bg-white/10 hover:text-white active:scale-95 sm:size-9"
         >
           <ChevronRight className="size-4 sm:size-5" />
         </button>

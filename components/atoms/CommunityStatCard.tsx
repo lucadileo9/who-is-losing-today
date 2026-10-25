@@ -26,7 +26,7 @@ export function CommunityStatCard({
   return (
     <div
       className={cn(
-        'glass-card relative overflow-hidden rounded-2xl border-white/5 p-4 sm:p-5 transition-all hover:border-white/10',
+        'glass-card relative overflow-hidden rounded-2xl border-white/5 p-4 transition-all hover:border-white/10 sm:p-5',
         className
       )}
     >
@@ -38,14 +38,14 @@ export function CommunityStatCard({
       </div>
       <p
         className={cn(
-          'mt-2 text-2xl sm:text-3xl font-black truncate',
+          'mt-2 truncate text-2xl font-black sm:text-3xl',
           valueColor
         )}
       >
         {value}
       </p>
       {subtext && (
-        <span className={cn('text-[11px] block truncate', subtextColor)}>
+        <span className={cn('block truncate text-[11px]', subtextColor)}>
           {subtext}
         </span>
       )}

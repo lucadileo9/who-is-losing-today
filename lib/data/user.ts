@@ -279,10 +279,7 @@ export async function getAllPlayers(): Promise<UserProfileDTO[]> {
     orderBy: { name: 'asc' },
   });
 
-  const profiles = await Promise.all(
-    users.map((u) => getUserProfile(u.id))
-  );
+  const profiles = await Promise.all(users.map((u) => getUserProfile(u.id)));
 
   return profiles.filter((p): p is UserProfileDTO => p !== null);
 }
-

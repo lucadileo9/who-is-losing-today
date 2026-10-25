@@ -7,7 +7,7 @@ import { MobileBottomNav } from '@/components/molecules/MobileBottomNav';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative flex min-h-screen flex-col text-foreground overflow-x-hidden">
+    <div className="relative flex min-h-screen flex-col overflow-x-hidden text-foreground">
       {/* Sfondo fisso cyberpunk con griglia e particelle neon */}
       <div
         className="pointer-events-none fixed inset-0 z-[-2] bg-[#060814] bg-cover bg-center bg-no-repeat"

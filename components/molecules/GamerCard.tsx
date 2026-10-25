@@ -28,7 +28,15 @@ export function GamerCard({
   isSelf = true,
   className,
 }: GamerCardProps) {
-  const { user, role, streak, streakRecord, totalGamesPlayed, dailyWinsCount, woodenSpoonsCount } = profile;
+  const {
+    user,
+    role,
+    streak,
+    streakRecord,
+    totalGamesPlayed,
+    dailyWinsCount,
+    woodenSpoonsCount,
+  } = profile;
   const [currentColor, setCurrentColor] = useState(user.color || '#06b6d4');
   const [isPending, startTransition] = useTransition();
   const [showColorPicker, setShowColorPicker] = useState(false);
@@ -44,7 +52,7 @@ export function GamerCard({
   return (
     <div
       className={cn(
-        'glass-card relative overflow-hidden rounded-3xl border border-white/10 p-6 sm:p-8 transition-all',
+        'glass-card relative overflow-hidden rounded-3xl border border-white/10 p-6 transition-all sm:p-8',
         className
       )}
     >
@@ -65,9 +73,9 @@ export function GamerCard({
             className="shrink-0 shadow-lg"
           />
 
-          <div className="flex flex-col min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="text-xl sm:text-2xl font-black text-white truncate">
+          <div className="flex min-w-0 flex-col">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="truncate text-xl font-black text-white sm:text-2xl">
                 {user.name}
               </h2>
               {role === 'ADMIN' && (
@@ -93,7 +101,7 @@ export function GamerCard({
                   <Palette className="size-3 text-cyan-400" />
                   <span>Personalizza Colore</span>
                   <span
-                    className="size-2.5 rounded-full border border-white/20 ml-1 inline-block"
+                    className="ml-1 inline-block size-2.5 rounded-full border border-white/20"
                     style={{ backgroundColor: currentColor }}
                   />
                 </button>
@@ -138,12 +146,13 @@ export function GamerCard({
       {/* Palette di colori a comparsa */}
       {showColorPicker && isSelf && (
         <div className="mt-6 border-t border-white/10 pt-4 animate-in fade-in">
-          <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2.5">
+          <p className="mb-2.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
             Scegli il tuo colore neon distintivo:
           </p>
           <div className="flex flex-wrap items-center gap-2">
             {USER_PALETTE_PRESETS.map((hex) => {
-              const isSelected = currentColor.toLowerCase() === hex.toLowerCase();
+              const isSelected =
+                currentColor.toLowerCase() === hex.toLowerCase();
               return (
                 <button
                   key={hex}
@@ -152,13 +161,15 @@ export function GamerCard({
                   className={cn(
                     'flex size-8 cursor-pointer items-center justify-center rounded-xl border transition-all active:scale-95',
                     isSelected
-                      ? 'border-white scale-110 shadow-[0_0_12px_rgba(255,255,255,0.4)]'
+                      ? 'scale-110 border-white shadow-[0_0_12px_rgba(255,255,255,0.4)]'
                       : 'border-transparent hover:scale-105'
                   )}
                   style={{ backgroundColor: hex }}
                   title={hex}
                 >
-                  {isSelected && <Check className="size-4 text-black drop-shadow" />}
+                  {isSelected && (
+                    <Check className="size-4 text-black drop-shadow" />
+                  )}
                 </button>
               );
             })}

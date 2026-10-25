@@ -55,14 +55,14 @@ export function SectionHeading({
   return (
     <div
       className={cn(
-        'flex flex-col sm:flex-row sm:items-center justify-between gap-2',
+        'flex flex-col justify-between gap-2 sm:flex-row sm:items-center',
         className
       )}
     >
-      <div className="flex flex-col gap-0.5 min-w-0">
-        <div className="flex items-center gap-2 flex-wrap">
+      <div className="flex min-w-0 flex-col gap-0.5">
+        <div className="flex flex-wrap items-center gap-2">
           {renderIcon()}
-          <h2 className={cn(cfg.title, 'text-white truncate')}>{title}</h2>
+          <h2 className={cn(cfg.title, 'truncate text-white')}>{title}</h2>
           {badge}
         </div>
         {subtitle && (

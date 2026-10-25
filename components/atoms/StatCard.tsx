@@ -21,7 +21,7 @@ export function StatCard({
   return (
     <div
       className={cn(
-        'flex flex-col items-center justify-center rounded-2xl border border-white/5 bg-white/[0.03] p-3 text-center sm:min-w-[85px] transition-all hover:border-white/15 hover:bg-white/[0.05]',
+        'flex flex-col items-center justify-center rounded-2xl border border-white/5 bg-white/[0.03] p-3 text-center transition-all hover:border-white/15 hover:bg-white/[0.05] sm:min-w-[85px]',
         className
       )}
     >
@@ -34,7 +34,7 @@ export function StatCard({
         {Icon && <Icon className="size-3.5" />}
         {label}
       </span>
-      <span className="mt-1 text-xl sm:text-2xl font-black text-white">
+      <span className="mt-1 text-xl font-black text-white sm:text-2xl">
         {value}
       </span>
       {subtext && (

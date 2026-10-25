@@ -31,8 +31,8 @@ export function NoteCard({ note, isAdmin = false, className }: NoteCardProps) {
   return (
     <div
       className={cn(
-        'glass-card group relative flex flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:p-5 transition-all duration-200 hover:border-cyan-500/30 hover:bg-white/[0.05] hover:shadow-[0_0_20px_rgba(6,182,212,0.15)]',
-        isPending && 'opacity-50 pointer-events-none',
+        'glass-card group relative flex flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.03] p-4 transition-all duration-200 hover:border-cyan-500/30 hover:bg-white/[0.05] hover:shadow-[0_0_20px_rgba(6,182,212,0.15)] sm:p-5',
+        isPending && 'pointer-events-none opacity-50',
         className
       )}
     >
@@ -41,7 +41,7 @@ export function NoteCard({ note, isAdmin = false, className }: NoteCardProps) {
         <div className="flex items-center justify-between gap-2">
           <Link
             href={`/profile/${note.author.id}`}
-            className="flex items-center gap-2.5 min-w-0 transition-opacity hover:opacity-85"
+            className="flex min-w-0 items-center gap-2.5 transition-opacity hover:opacity-85"
           >
             <PlayerAvatar
               name={note.author.name}
@@ -49,8 +49,8 @@ export function NoteCard({ note, isAdmin = false, className }: NoteCardProps) {
               color={note.author.color}
               size="sm"
             />
-            <div className="min-w-0 flex flex-col">
-              <span className="truncate text-xs sm:text-sm font-bold text-white transition-colors hover:text-cyan-400">
+            <div className="flex min-w-0 flex-col">
+              <span className="truncate text-xs font-bold text-white transition-colors hover:text-cyan-400 sm:text-sm">
                 {note.author.name}
               </span>
               <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
@@ -75,7 +75,7 @@ export function NoteCard({ note, isAdmin = false, className }: NoteCardProps) {
         </div>
 
         {/* Testo del messaggio */}
-        <p className="mt-3.5 text-xs sm:text-sm leading-relaxed text-zinc-200 whitespace-pre-wrap break-words">
+        <p className="mt-3.5 whitespace-pre-wrap break-words text-xs leading-relaxed text-zinc-200 sm:text-sm">
           {note.content}
         </p>
       </div>

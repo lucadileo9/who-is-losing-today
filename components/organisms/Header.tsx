@@ -54,7 +54,7 @@ export function Header() {
           href="/dashboard"
           className="flex items-center gap-2.5 transition-transform hover:scale-[1.02] active:scale-[0.98]"
         >
-          <div className="relative size-8 sm:size-9 shrink-0 overflow-hidden rounded-xl border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.35)]">
+          <div className="relative size-8 shrink-0 overflow-hidden rounded-xl border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.35)] sm:size-9">
             <Image
               src="/logo.jpeg"
               alt="Who Is Losing Today"
@@ -97,7 +97,6 @@ export function Header() {
 
         {/* Right Action Section */}
         <div className="flex items-center gap-2 sm:gap-3">
-
           {/* User Section / Avatar Dropdown */}
           {user ? (
             <DropdownMenu>

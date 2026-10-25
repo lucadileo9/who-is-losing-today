@@ -32,7 +32,7 @@ export function MobileBottomNav() {
               className={cn(
                 'flex flex-col items-center gap-0.5 rounded-xl px-3 py-1 text-xs font-semibold transition-colors focus:outline-none',
                 isActive
-                  ? 'text-cyan-400 font-bold'
+                  ? 'font-bold text-cyan-400'
                   : 'text-muted-foreground hover:text-white'
               )}
             >

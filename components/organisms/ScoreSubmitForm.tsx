@@ -96,7 +96,7 @@ export function ScoreSubmitForm({
     <div className={cn('space-y-6', className)}>
       {/* Schermata di Successo */}
       {successInfo ? (
-        <div className="glass-card relative overflow-hidden rounded-3xl border border-emerald-500/40 bg-gradient-to-br from-emerald-500/15 via-transparent to-transparent p-6 text-center sm:p-10 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
+        <div className="glass-card relative overflow-hidden rounded-3xl border border-emerald-500/40 bg-gradient-to-br from-emerald-500/15 via-transparent to-transparent p-6 text-center shadow-[0_0_30px_rgba(16,185,129,0.2)] sm:p-10">
           <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-2xl border border-emerald-500/50 bg-emerald-500/20 text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.4)]">
             <CheckCircle2 className="size-8" />
           </div>
@@ -143,11 +143,7 @@ export function ScoreSubmitForm({
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <NeonButton
-              variant="outline"
-              onClick={resetForm}
-              className="gap-2"
-            >
+            <NeonButton variant="outline" onClick={resetForm} className="gap-2">
               <RotateCcw className="size-4" />
               <span>Inserisci un&apos;altra partita</span>
             </NeonButton>
@@ -195,7 +191,8 @@ export function ScoreSubmitForm({
 
                     <div className="mt-3">
                       <p className="text-xs text-muted-foreground">
-                        {g === 'Metazooa' && 'Indovina in meno tentativi (1-20)'}
+                        {g === 'Metazooa' &&
+                          'Indovina in meno tentativi (1-20)'}
                         {g === 'Krilion' && 'Scala fino a 700 punti max'}
                         {g === 'Chronophoto' && 'Scala fino a 5.000 punti max'}
                       </p>
@@ -219,7 +216,7 @@ export function ScoreSubmitForm({
                   className={cn(
                     'rounded-lg px-2.5 py-1 text-xs font-bold transition-all',
                     scoreDate === todayStr
-                      ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
+                      ? 'border border-cyan-500/40 bg-cyan-500/20 text-cyan-300'
                       : 'text-muted-foreground hover:bg-white/5 hover:text-white'
                   )}
                 >
@@ -231,7 +228,7 @@ export function ScoreSubmitForm({
                   className={cn(
                     'rounded-lg px-2.5 py-1 text-xs font-bold transition-all',
                     scoreDate === yesterdayStr
-                      ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
+                      ? 'border border-cyan-500/40 bg-cyan-500/20 text-cyan-300'
                       : 'text-muted-foreground hover:bg-white/5 hover:text-white'
                   )}
                 >

@@ -50,9 +50,7 @@ export function GameStatsOverview({
                   Record
                 </span>
                 <p className="mt-0.5 text-lg font-black text-white">
-                  {hasPlayed
-                    ? stats.bestScore.toLocaleString('it-IT')
-                    : '-'}
+                  {hasPlayed ? stats.bestScore.toLocaleString('it-IT') : '-'}
                   {hasPlayed && (
                     <span className="ml-1 text-[10px] font-normal text-muted-foreground">
                       {config.unit}
