@@ -1,30 +1,40 @@
 # 02. Backend e DAL — Algoritmi di Punteggio e Classifiche
 
-Questo documento descrive formalmente le formule matematiche di normalizzazione, il calcolo della classifica del giorno, le condizioni di assegnazione del perdente e le aggregazioni storiche.
+Questo documento descrive formalmente le formule matematiche di normalizzazione,
+il calcolo della classifica del giorno, le condizioni di assegnazione del
+perdente e le aggregazioni storiche.
 
 ---
 
 ## 1. Il Problema della Normalizzazione
 
-L'applicazione confronta giochi con unità di misura e metriche profondamente disomogenee:
+L'applicazione confronta giochi con unità di misura e metriche profondamente
+disomogenee:
+
 - **Chronophoto**: Punti da 0 a 5.000 (più alto è meglio).
 - **Krilion**: Punti da 0 a circa 700 (più alto è meglio).
-- **Metazooa**: Tentativi da 1 a 20 (meno tentativi è meglio; se fallito, punteggio nullo).
+- **Metazooa**: Tentativi da 1 a 20 (meno tentativi è meglio; se fallito,
+  punteggio nullo).
 
-Sommare i punteggi grezzi favorirebbe in modo sproporzionato Chronophoto, rendendo irrilevanti gli altri due giochi.
-Per questo, ogni punteggio viene scalato in un intervallo standard **`0 - 1000`** prima di qualsiasi aggregazione.
+Sommare i punteggi grezzi favorirebbe in modo sproporzionato Chronophoto,
+rendendo irrilevanti gli altri due giochi. Per questo, ogni punteggio viene
+scalato in un intervallo standard **`0 - 1000`** prima di qualsiasi
+aggregazione.
 
 ---
 
 ## 2. Formule di Normalizzazione per Singolo Gioco
 
-Le funzioni risiedono in [lib/game-data.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/game-data.ts):
+Le funzioni risiedono in
+[lib/game-data.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/game-data.ts):
 
 ### A. Chronophoto (Punti: Higher is Better)
+
 Il punteggio massimo teorico è 5.000:
 $$\text{NormScore}_{\text{Chronophoto}} = \min\left(1000, \max\left(0, \text{round}\left(\frac{\text{rawScore}}{5000} \times 1000\right)\right)\right)$$
 
-*Esempi:*
+_Esempi:_
+
 - `5000` pt $\rightarrow$ **`1000`**
 - `3129` pt $\rightarrow$ **`626`**
 - `0` pt $\rightarrow$ **`0`**
@@ -32,10 +42,12 @@ $$\text{NormScore}_{\text{Chronophoto}} = \min\left(1000, \max\left(0, \text{rou
 ---
 
 ### B. Krilion (Punti: Higher is Better)
+
 Il punteggio di riferimento massimo è 700:
 $$\text{NormScore}_{\text{Krilion}} = \min\left(1000, \max\left(0, \text{round}\left(\frac{\text{rawScore}}{700} \times 1000\right)\right)\right)$$
 
-*Esempi:*
+_Esempi:_
+
 - `700` pt (o superiore) $\rightarrow$ **`1000`**
 - `616` pt $\rightarrow$ **`880`**
 - `350` pt $\rightarrow$ **`500`**
@@ -43,10 +55,13 @@ $$\text{NormScore}_{\text{Krilion}} = \min\left(1000, \max\left(0, \text{round}\
 ---
 
 ### C. Metazooa (Tentativi: Lower is Better)
-Si basa su un massimo di 20 tentativi. Indovinare in 1 tentativo rappresenta la perfezione (1000 pt), 20 tentativi rappresenta il minimo (0 pt):
-$$\text{NormScore}_{\text{Metazooa}} = \begin{cases} 
+
+Si basa su un massimo di 20 tentativi. Indovinare in 1 tentativo rappresenta la
+perfezione (1000 pt), 20 tentativi rappresenta il minimo (0 pt):
+
+$$ \text{NormScore}_{\text{Metazooa}} = \begin{cases}
 0 & \text{se } \text{rawScore} \le 0 \text{ o } \text{rawScore} > 20 \\
-\min\left(1000, \max\left(0, \text{round}\left(\frac{20 - \text{rawScore}}{19} \times 1000\right)\right)\right) & \text{se } 1 \le \text{rawScore} \le 20 
+\min\left(1000, \max\left(0, \text{round}\left(\frac{20 - \text{rawScore}}{19} \times 1000\right)\right)\right) & \text{se } 1 \le \text{rawScore} \le 20
 \end{cases}$$
 
 *Esempi:*
@@ -108,3 +123,4 @@ Estrae i record storici assoluti:
 - **Record Metazooa**: `where: { rawScore: { gt: 0 } }, orderBy: { rawScore: 'asc' }`.
 - **Record Chronophoto**: `orderBy: { rawScore: 'desc' }`.
 - **Record Totale di Sempre**: La combinazione `userId + scoreDate` con la media giornaliera su 3 giochi più alta mai registrata.
+$$

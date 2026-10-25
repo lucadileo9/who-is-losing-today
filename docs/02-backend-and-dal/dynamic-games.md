@@ -1,35 +1,54 @@
 # 02. Backend e DAL — Motore Multi-Gioco Dinamico
 
-Questo documento descrive il funzionamento del motore multi-gioco dinamico introdotto con il refactoring del Data Access Layer e fornisce la guida passo-passo per aggiungere un nuovo gioco alla piattaforma.
+Questo documento descrive il funzionamento del motore multi-gioco dinamico
+introdotto con il refactoring del Data Access Layer e fornisce la guida
+passo-passo per aggiungere un nuovo gioco alla piattaforma.
 
 ---
 
 ## 1. Dall'Hardcoding all'Estensibilità Dinamica
 
-Nel design iniziale dell'applicazione, i giochi (*Krilion*, *Metazooa*, *Chronophoto*) erano cablati rigidamente:
-- La media del Totale divideva tassativamente per `3` (`/ 3`), anche se i giochi fossero stati 4 o se venissero aggiunti nuovi titoli.
-- Le strutture dati usavano proprietà statiche (`krilion`, `metazooa`, `chronophoto`).
+Nel design iniziale dell'applicazione, i giochi (_Krilion_, _Metazooa_,
+_Chronophoto_) erano cablati rigidamente:
+
+- La media del Totale divideva tassativamente per `3` (`/ 3`), anche se i giochi
+  fossero stati 4 o se venissero aggiunti nuovi titoli.
+- Le strutture dati usavano proprietà statiche (`krilion`, `metazooa`,
+  `chronophoto`).
 
 Con il refactoring del DAL:
-1. **Dati guidati dal Database**: La lista dei giochi attivi viene letta dinamicamente dalla tabella `Game` di PostgreSQL.
-2. **DTO Dinamici (`byGame`)**: Tutti i DTO (`DailyResultsDTO`, `PeriodResultsDTO`, `HallOfFameDTO`) espongono la proprietà:
+
+1. **Dati guidati dal Database**: La lista dei giochi attivi viene letta
+   dinamicamente dalla tabella `Game` di PostgreSQL.
+2. **DTO Dinamici (`byGame`)**: Tutti i DTO (`DailyResultsDTO`,
+   `PeriodResultsDTO`, `HallOfFameDTO`) espongono la proprietà:
    ```typescript
-   byGame: Record<string, TData>
+   byGame: Record<string, TData>;
    ```
-   che permette al frontend di generare tab, classifiche e grafici ciclando sui giochi presenti senza modifiche al codice di presentazione.
-3. **Retrocompatibilità**: Per garantire il funzionamento dei componenti frontend esistenti durante la transizione, i DTO mantengono getter o campi opzionali per `krilion`, `metazooa` e `chronophoto`.
+   che permette al frontend di generare tab, classifiche e grafici ciclando sui
+   giochi presenti senza modifiche al codice di presentazione.
+3. **Retrocompatibilità**: Per garantire il funzionamento dei componenti
+   frontend esistenti durante la transizione, i DTO mantengono getter o campi
+   opzionali per `krilion`, `metazooa` e `chronophoto`.
 
 ---
 
 ## 2. Configurazione e Fallback Centralizzati
 
-Nel caso in cui il database sia vuoto o in fase di prima inizializzazione, il DAL utilizza la configurazione centralizzata definita in [lib/theme/colors.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/theme/colors.ts):
+Nel caso in cui il database sia vuoto o in fase di prima inizializzazione, il
+DAL utilizza la configurazione centralizzata definita in
+[lib/theme/colors.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/theme/colors.ts):
 
 ```typescript
 export const DEFAULT_GAME_FALLBACKS = [
   { id: 'Krilion', name: 'Krilion', isLowerBetter: false, color: '#3b82f6' },
   { id: 'Metazooa', name: 'Metazooa', isLowerBetter: true, color: '#10b981' },
-  { id: 'Chronophoto', name: 'Chronophoto', isLowerBetter: false, color: '#f59e0b' },
+  {
+    id: 'Chronophoto',
+    name: 'Chronophoto',
+    isLowerBetter: false,
+    color: '#f59e0b',
+  },
 ] as const;
 ```
 
@@ -37,10 +56,13 @@ export const DEFAULT_GAME_FALLBACKS = [
 
 ## 3. Guida Passo-Passo: Come Aggiungere un Nuovo Gioco
 
-Supponiamo di voler aggiungere un quarto gioco: **Wordle** (gioco a tentativi da 1 a 6, dove meno tentativi è meglio).
+Supponiamo di voler aggiungere un quarto gioco: **Wordle** (gioco a tentativi da
+1 a 6, dove meno tentativi è meglio).
 
 ### Passo 1: Registrare il Gioco nel Database
-Aggiungi il record nel database tramite SQL o aggiornando [prisma/seed.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/prisma/seed.ts):
+
+Aggiungi il record nel database tramite SQL o aggiornando
+[prisma/seed.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/prisma/seed.ts):
 
 ```typescript
 await prisma.game.upsert({
@@ -60,7 +82,10 @@ await prisma.game.upsert({
 ---
 
 ### Passo 2: Definire la Normalizzazione del Punteggio
-In [lib/game-data.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/game-data.ts), estendi la funzione `calculateNormalizedScore`:
+
+In
+[lib/game-data.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/game-data.ts),
+estendi la funzione `calculateNormalizedScore`:
 
 ```typescript
 export function calculateNormalizedScore(game: string, score: number): number {
@@ -79,7 +104,11 @@ export function calculateNormalizedScore(game: string, score: number): number {
 ---
 
 ### Passo 3: Aggiungere il Parser del Testo Incollato
-In [lib/game-data.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/game-data.ts), estendi la funzione `parseScore` per estrarre in automatico il punteggio dal testo copiato da appuntati:
+
+In
+[lib/game-data.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/game-data.ts),
+estendi la funzione `parseScore` per estrarre in automatico il punteggio dal
+testo copiato da appuntati:
 
 ```typescript
 export function parseScore(text: string, game: string): number | null {
@@ -102,7 +131,10 @@ export function parseScore(text: string, game: string): number | null {
 ---
 
 ### Passo 4: Centralizzare i Token Grafici
-Aggiungi la configurazione estetica in [lib/theme/colors.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/theme/colors.ts) e in `GAME_CONFIG`:
+
+Aggiungi la configurazione estetica in
+[lib/theme/colors.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/theme/colors.ts)
+e in `GAME_CONFIG`:
 
 ```typescript
 // In lib/theme/colors.ts:
@@ -128,6 +160,11 @@ Wordle: {
 ## 4. Perché il DAL non richiede modifiche
 
 Grazie all'architettura a dizionario `byGame`:
-- `getDailyResults()` interroga `prisma.game.findMany()`, trova automaticamente anche `Wordle`, aggrega i punteggi per `Wordle` e calcola il divisore del Totale basandosi sul numero di giochi attivi (`activeGames.length`).
-- `getPeriodResults()` genera la classifica e il trend per `Wordle` dentro `periodData.byGame['Wordle']`.
-- L'interfaccia UI cicla su `Object.keys(results.rankings.byGame)` e visualizza automaticamente la nuova tab e la classifica senza refactoring.
+
+- `getDailyResults()` interroga `prisma.game.findMany()`, trova automaticamente
+  anche `Wordle`, aggrega i punteggi per `Wordle` e calcola il divisore del
+  Totale basandosi sul numero di giochi attivi (`activeGames.length`).
+- `getPeriodResults()` genera la classifica e il trend per `Wordle` dentro
+  `periodData.byGame['Wordle']`.
+- L'interfaccia UI cicla su `Object.keys(results.rankings.byGame)` e visualizza
+  automaticamente la nuova tab e la classifica senza refactoring.

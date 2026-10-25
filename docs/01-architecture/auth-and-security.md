@@ -1,12 +1,16 @@
 # 01. Architettura — Autenticazione e Sicurezza
 
-Questo documento descrive il modello di sicurezza multilivello (*Defense in Depth*), il flusso di autenticazione con Google OAuth 2.0, il sistema di autorizzazione basato su Whitelist e il controllo degli accessi basato sui ruoli (RBAC).
+Questo documento descrive il modello di sicurezza multilivello (_Defense in
+Depth_), il flusso di autenticazione con Google OAuth 2.0, il sistema di
+autorizzazione basato su Whitelist e il controllo degli accessi basato sui ruoli
+(RBAC).
 
 ---
 
 ## 1. Architettura di Sicurezza: Defense in Depth
 
-L'applicazione adotta un'architettura di sicurezza a quattro livelli concentrici per garantire che nessuna operazione non autorizzata possa raggiungere i dati:
+L'applicazione adotta un'architettura di sicurezza a quattro livelli concentrici
+per garantire che nessuna operazione non autorizzata possa raggiungere i dati:
 
 ```text
 [ Richiesta Utente ]
@@ -40,7 +44,8 @@ L'applicazione adotta un'architettura di sicurezza a quattro livelli concentrici
 
 ## 2. Flusso di Autenticazione Google OAuth & Whitelist
 
-L'applicazione è riservata a una cerchia ristretta di utenti. Nessun utente esterno può effettuare il login, anche se possiede un account Google valido.
+L'applicazione è riservata a una cerchia ristretta di utenti. Nessun utente
+esterno può effettuare il login, anche se possiede un account Google valido.
 
 ### Diagramma di Sequenza del Login
 
@@ -61,7 +66,7 @@ sequenceDiagram
     Google-->>NextAuth: Redirect con Authorization Code a /api/auth/callback/google
     NextAuth->>Google: Scambio Code per Access Token & ID Token
     Google-->>NextAuth: Ritorna profilo (email, nome, immagine)
-    
+
     rect rgb(20, 25, 40)
         Note over NextAuth,DB: Controllo Whitelist (Gating)
         NextAuth->>DB: prisma.whitelist.findUnique({ where: { email } })
@@ -85,13 +90,16 @@ sequenceDiagram
 
 Il sistema prevede due ruoli definiti nell'enum `Role`:
 
-| Ruolo | Permessi e Capacità |
-| :--- | :--- |
-| **`PLAYER`** | Visualizzare dashboard, inserire e modificare i propri punteggi, pubblicare note sulla bacheca, visualizzare la Hall of Fame, aggiornare le proprie preferenze profilo (colore, avatar). |
-| **`ADMIN`** | Tutti i permessi di `PLAYER`, più: gestione della Whitelist (aggiunta/rimozione email), modifica dei ruoli utente, gestione del triage bug reports (`/admin/bugs`), eliminazione note altrui. |
+| Ruolo        | Permessi e Capacità                                                                                                                                                                           |
+| :----------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`PLAYER`** | Visualizzare dashboard, inserire e modificare i propri punteggi, pubblicare note sulla bacheca, visualizzare la Hall of Fame, aggiornare le proprie preferenze profilo (colore, avatar).      |
+| **`ADMIN`**  | Tutti i permessi di `PLAYER`, più: gestione della Whitelist (aggiunta/rimozione email), modifica dei ruoli utente, gestione del triage bug reports (`/admin/bugs`), eliminazione note altrui. |
 
 ### Sincronizzazione Automatica del Ruolo
-Nel callback `signIn` di [lib/auth.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/auth.ts):
+
+Nel callback `signIn` di
+[lib/auth.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/auth.ts):
+
 ```typescript
 if (allowed) {
   const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -103,16 +111,24 @@ if (allowed) {
   }
 }
 ```
-Se un amministratore promuove un utente in `whitelist` da `PLAYER` ad `ADMIN`, al login successivo il ruolo dell'utente viene sincronizzato istantaneamente senza interventi manuali.
+
+Se un amministratore promuove un utente in `whitelist` da `PLAYER` ad `ADMIN`,
+al login successivo il ruolo dell'utente viene sincronizzato istantaneamente
+senza interventi manuali.
 
 ---
 
 ## 4. Guardie di Sicurezza Centralizzate (`lib/auth-guard.ts`)
 
-Per evitare la duplicazione di chiamate `getServerSession` e controlli di ruolo sparsi in decine di Server Actions, tutte le operazioni di backend utilizzano le utility centralizzate:
+Per evitare la duplicazione di chiamate `getServerSession` e controlli di ruolo
+sparsi in decine di Server Actions, tutte le operazioni di backend utilizzano le
+utility centralizzate:
 
 ### `getAuthenticatedUser()`
-Verifica che la richiesta provenga da una sessione valida ed estrae l'utente tipizzato:
+
+Verifica che la richiesta provenga da una sessione valida ed estrae l'utente
+tipizzato:
+
 ```typescript
 const auth = await getAuthenticatedUser();
 if (!auth.success) {
@@ -122,7 +138,9 @@ if (!auth.success) {
 ```
 
 ### `getAuthenticatedAdmin()`
+
 Estende il controllo verificando esplicitamente che `user.role === 'ADMIN'`:
+
 ```typescript
 const auth = await getAuthenticatedAdmin();
 if (!auth.success) {
@@ -135,11 +153,14 @@ if (!auth.success) {
 
 ## 5. Validazione degli Input a Runtime con Zod
 
-Tutti i dati in ingresso da Server Actions o Route Handlers vengono validati prima di qualsiasi elaborazione o query al database. Gli schemi risiedono in [lib/validations/](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/validations/):
+Tutti i dati in ingresso da Server Actions o Route Handlers vengono validati
+prima di qualsiasi elaborazione o query al database. Gli schemi risiedono in
+[lib/validations/](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/validations/):
 
 ### Esempi di Schemi Principali
 
 #### 1. Inserimento Punteggi ([lib/validations/scores.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/validations/scores.ts))
+
 ```typescript
 export const submitScoreSchema = z.object({
   gameId: z.string().min(1, 'Il gioco è obbligatorio'),
@@ -156,6 +177,7 @@ export const submitScoreSchema = z.object({
 ```
 
 #### 2. Bacheca Note ([lib/validations/notes.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/validations/notes.ts))
+
 ```typescript
 export const createNoteSchema = z.object({
   content: z
@@ -167,6 +189,7 @@ export const createNoteSchema = z.object({
 ```
 
 #### 3. Preferenze Utente ([lib/validations/user.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/validations/user.ts))
+
 ```typescript
 export const updateUserPreferencesSchema = z.object({
   color: z
@@ -180,14 +203,24 @@ export const updateUserPreferencesSchema = z.object({
 
 ## 6. Sicurezza del Secret in Fase di Build vs Runtime
 
-NextAuth richiede un segreto di cifratura (`NEXTAUTH_SECRET`) per firmare i token JWT.
+NextAuth richiede un segreto di cifratura (`NEXTAUTH_SECRET`) per firmare i
+token JWT.
 
-> [!CAUTION]
-> **Build-time trap**: Durante l'esecuzione di `docker build` (`next build`), Next.js raccoglie ed esegue staticamente i file delle route. Se in fase di importazione del modulo viene lanciata un'eccezione in caso di variabile mancante, la compilazione Docker fallisce perché i segreti non sono (e non devono essere) presenti nei layer dell'immagine.
+> [!CAUTION] **Build-time trap**: Durante l'esecuzione di `docker build`
+> (`next build`), Next.js raccoglie ed esegue staticamente i file delle route.
+> Se in fase di importazione del modulo viene lanciata un'eccezione in caso di
+> variabile mancante, la compilazione Docker fallisce perché i segreti non sono
+> (e non devono essere) presenti nei layer dell'immagine.
 
-In [lib/auth.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/auth.ts) il segreto è gestito in modo robusto:
+In
+[lib/auth.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/auth.ts)
+il segreto è gestito in modo robusto:
+
 ```typescript
 secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET || 'super_secret_local_dev_key_12345',
 ```
+
 - **A build-time**: Next.js compila senza blocchi grazie al fallback sicuro.
-- **A runtime**: Il server Node.js avviato tramite Docker Compose legge il vero `NEXTAUTH_SECRET` presente nel file `.env` e cifra i cookie di sessione con crittografia ad alta entropia.
+- **A runtime**: Il server Node.js avviato tramite Docker Compose legge il vero
+  `NEXTAUTH_SECRET` presente nel file `.env` e cifra i cookie di sessione con
+  crittografia ad alta entropia.
