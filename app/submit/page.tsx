@@ -33,7 +33,6 @@ export default async function SubmitPage({ searchParams }: SubmitPageProps) {
       <div className="mx-auto max-w-3xl space-y-6 px-3 py-6 sm:px-6 md:py-10">
         <SectionHeading
           title="Inserisci Partita"
-          subtitle="Registra i tuoi punteggi giornalieri per aggiornare la classifica e scoprire chi è il perdente di oggi."
           icon={PlusCircle}
           iconColor="text-cyan-400"
           size="lg"

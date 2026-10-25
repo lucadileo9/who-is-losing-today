@@ -34,8 +34,7 @@ export default async function BachecaPage() {
     <AppShell>
       <div className="mx-auto max-w-4xl space-y-6 px-3 py-6 sm:px-6 md:py-10">
         <SectionHeading
-          title="Bacheca e Sfottò"
-          subtitle="La lavagna virtuale del gruppo. Commenta i risultati odierni, festeggia il re della giornata o prendi in giro il perdente!"
+          title="Bacheca"
           icon={MessageSquare}
           iconColor="text-cyan-400"
           size="lg"

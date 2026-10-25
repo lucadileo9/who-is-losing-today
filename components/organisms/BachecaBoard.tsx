@@ -119,9 +119,6 @@ export function BachecaBoard({
           <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
             Messaggi Recenti ({notes.length})
           </h2>
-          <span className="text-xs text-muted-foreground">
-            Ultimi 7 giorni
-          </span>
         </div>
 
         {notes.length === 0 ? (
