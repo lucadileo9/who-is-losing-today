@@ -10,7 +10,7 @@ export interface WhitelistDTO {
 
 export interface BugReportDTO {
   id: string;
-  userId: string;
+  userId?: string | null;
   author: UserSummaryDTO;
   description: string;
   category: BugCategory;

@@ -43,12 +43,19 @@ export async function getBugReports(): Promise<BugReportDTO[]> {
   return reports.map((r) => ({
     id: r.id,
     userId: r.userId,
-    author: {
-      id: r.user.id,
-      name: r.user.name || 'Giocatore',
-      color: r.user.color || DEFAULT_USER_COLOR,
-      image: r.user.image,
-    },
+    author: r.user
+      ? {
+          id: r.user.id,
+          name: r.user.name || 'Giocatore',
+          color: r.user.color || DEFAULT_USER_COLOR,
+          image: r.user.image,
+        }
+      : {
+          id: 'anonymous',
+          name: 'Anonimo',
+          color: DEFAULT_USER_COLOR,
+          image: null,
+        },
     description: r.description,
     category: r.category,
     priority: r.priority,

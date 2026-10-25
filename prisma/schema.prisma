@@ -70,11 +70,11 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  accounts      Account[]
-  sessions      Session[]
-  dailyScores   DailyScore[]
-  dailyNotes    DailyNote[]
-  bugReports    BugReport[]
+  accounts    Account[]
+  sessions    Session[]
+  dailyScores DailyScore[]
+  dailyNotes  DailyNote[]
+  bugReports  BugReport[]
 
   @@map("users")
 }
@@ -124,15 +124,15 @@ model VerificationToken {
 // ------------------------------------------------------
 
 model Game {
-  id            String       @id // es: "Krilion", "Metazooa", "Chronophoto"
+  id            String    @id // es: "Krilion", "Metazooa", "Chronophoto"
   name          String
-  shortName     String       // es: "KR", "MZ", "CH"
-  unit          ScoreUnit    @default(POINTS)
-  color         String       @default("#10b981") // Colore iconico del gioco (Hex)
-  isLowerBetter Boolean      @default(false)
-  createdAt     DateTime     @default(now())
+  shortName     String // es: "KR", "MZ", "CH"
+  unit          ScoreUnit @default(POINTS)
+  color         String    @default("#10b981") // Colore iconico del gioco (Hex)
+  isLowerBetter Boolean   @default(false)
+  createdAt     DateTime  @default(now())
 
-  dailyScores   DailyScore[]
+  dailyScores DailyScore[]
 
   @@map("games")
 }
@@ -141,10 +141,10 @@ model DailyScore {
   id              String   @id @default(cuid())
   userId          String
   gameId          String
-  rawScore        Int      // Punteggio grezzo (es. 3129, 3)
-  normalizedScore Int      // Punteggio scalato 0-100
+  rawScore        Int // Punteggio grezzo (es. 3129, 3)
+  normalizedScore Int // Punteggio scalato 0-100
   scoreDate       DateTime @db.Date // Solo data YYYY-MM-DD: zero bug fuso orario UTC/GMT
-  rawInputText    String?  // Testo incollato dall'utente
+  rawInputText    String? // Testo incollato dall'utente
   createdAt       DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -162,7 +162,7 @@ model DailyScore {
 
 model DailyNote {
   id        String   @id @default(cuid())
-  userId    String   // OBBLIGATORIO: legato all'utente autenticato
+  userId    String // OBBLIGATORIO: legato all'utente autenticato
   content   String   @db.Text
   createdAt DateTime @default(now())
 
@@ -178,14 +178,14 @@ model DailyNote {
 
 model BugReport {
   id          String      @id @default(cuid())
-  userId      String      // OBBLIGATORIO: legato all'utente autenticato
+  userId      String? // Opzionale: legato all'utente autenticato se presente
   description String      @db.Text
   category    BugCategory @default(BUG)
   priority    BugPriority @default(MEDIUM)
   status      BugStatus   @default(OPEN)
   createdAt   DateTime    @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([status, priority])
   @@map("bug_reports")
