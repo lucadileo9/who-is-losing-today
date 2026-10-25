@@ -1,12 +1,10 @@
-'use client';
-
 import React from 'react';
 import { cn } from '@/lib/utils';
 
 export interface SectionHeadingProps {
   title: string;
   subtitle?: string;
-  icon?: React.ComponentType<{ className?: string }>;
+  icon?: React.ComponentType<{ className?: string }> | React.ReactNode;
   iconColor?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
   badge?: React.ReactNode;
@@ -36,7 +34,7 @@ const sizeConfig = {
 export function SectionHeading({
   title,
   subtitle,
-  icon: Icon,
+  icon,
   iconColor = 'text-cyan-400',
   size = 'md',
   badge,
@@ -44,6 +42,15 @@ export function SectionHeading({
   className,
 }: SectionHeadingProps) {
   const cfg = sizeConfig[size];
+
+  const renderIcon = () => {
+    if (!icon) return null;
+    if (React.isValidElement(icon)) {
+      return icon;
+    }
+    const IconComponent = icon as React.ComponentType<{ className?: string }>;
+    return <IconComponent className={cn(cfg.icon, iconColor, 'shrink-0')} />;
+  };
 
   return (
     <div
@@ -54,7 +61,7 @@ export function SectionHeading({
     >
       <div className="flex flex-col gap-0.5 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
-          {Icon && <Icon className={cn(cfg.icon, iconColor, 'shrink-0')} />}
+          {renderIcon()}
           <h2 className={cn(cfg.title, 'text-white truncate')}>{title}</h2>
           {badge}
         </div>
