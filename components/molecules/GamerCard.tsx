@@ -13,6 +13,8 @@ import {
 import { cn } from '@/lib/utils';
 import { UserProfileDTO } from '@/lib/types/user';
 import { PlayerAvatar } from '@/components/atoms/PlayerAvatar';
+import { StatCard } from '@/components/atoms/StatCard';
+import { USER_PALETTE_PRESETS } from '@/lib/theme/colors';
 import { updateUserColorAction } from '@/app/actions/user';
 
 interface GamerCardProps {
@@ -20,17 +22,6 @@ interface GamerCardProps {
   isSelf?: boolean;
   className?: string;
 }
-
-const PRESET_COLORS = [
-  '#06b6d4', // Cyan (Default brand)
-  '#3b82f6', // Blue
-  '#8b5cf6', // Violet
-  '#ec4899', // Pink
-  '#f59e0b', // Amber
-  '#10b981', // Emerald
-  '#ef4444', // Red
-  '#14b8a6', // Teal
-];
 
 export function GamerCard({
   profile,
@@ -111,57 +102,36 @@ export function GamerCard({
           </div>
         </div>
 
-        {/* Griglia Statistiche Badge Rapidi */}
+        {/* Griglia Statistiche Badge Rapidi con StatCard */}
         <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
-          {/* Streak Attuale */}
-          <div className="flex flex-col items-center justify-center rounded-2xl border border-white/5 bg-white/[0.03] p-3 text-center sm:min-w-[85px]">
-            <span className="flex items-center gap-1 text-[11px] font-bold text-amber-400 uppercase">
-              <Flame className="size-3.5" />
-              Streak
-            </span>
-            <span className="mt-1 text-xl sm:text-2xl font-black text-white">
-              {streak}
-            </span>
-            <span className="text-[10px] text-muted-foreground">
-              Record: {streakRecord}
-            </span>
-          </div>
-
-          {/* Vittorie Giornaliere */}
-          <div className="flex flex-col items-center justify-center rounded-2xl border border-white/5 bg-white/[0.03] p-3 text-center sm:min-w-[85px]">
-            <span className="flex items-center gap-1 text-[11px] font-bold text-cyan-400 uppercase">
-              <Crown className="size-3.5" />
-              Vittorie
-            </span>
-            <span className="mt-1 text-xl sm:text-2xl font-black text-white">
-              {dailyWinsCount}
-            </span>
-            <span className="text-[10px] text-muted-foreground">1° posto</span>
-          </div>
-
-          {/* Cucchiai di Legno */}
-          <div className="flex flex-col items-center justify-center rounded-2xl border border-white/5 bg-white/[0.03] p-3 text-center sm:min-w-[85px]">
-            <span className="flex items-center gap-1 text-[11px] font-bold text-red-400 uppercase">
-              <Trophy className="size-3.5" />
-              Cucchiai
-            </span>
-            <span className="mt-1 text-xl sm:text-2xl font-black text-white">
-              {woodenSpoonsCount}
-            </span>
-            <span className="text-[10px] text-muted-foreground">Ultimo</span>
-          </div>
-
-          {/* Totale Sfide */}
-          <div className="flex flex-col items-center justify-center rounded-2xl border border-white/5 bg-white/[0.03] p-3 text-center sm:min-w-[85px]">
-            <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-400 uppercase">
-              <Gamepad2 className="size-3.5" />
-              Partite
-            </span>
-            <span className="mt-1 text-xl sm:text-2xl font-black text-white">
-              {totalGamesPlayed}
-            </span>
-            <span className="text-[10px] text-muted-foreground">Totali</span>
-          </div>
+          <StatCard
+            label="Streak"
+            value={streak}
+            icon={Flame}
+            iconColor="text-amber-400"
+            subtext={`Record: ${streakRecord}`}
+          />
+          <StatCard
+            label="Vittorie"
+            value={dailyWinsCount}
+            icon={Crown}
+            iconColor="text-cyan-400"
+            subtext="1° posto"
+          />
+          <StatCard
+            label="Cucchiai"
+            value={woodenSpoonsCount}
+            icon={Trophy}
+            iconColor="text-red-400"
+            subtext="Ultimo"
+          />
+          <StatCard
+            label="Partite"
+            value={totalGamesPlayed}
+            icon={Gamepad2}
+            iconColor="text-emerald-400"
+            subtext="Totali"
+          />
         </div>
       </div>
 
@@ -172,7 +142,7 @@ export function GamerCard({
             Scegli il tuo colore neon distintivo:
           </p>
           <div className="flex flex-wrap items-center gap-2">
-            {PRESET_COLORS.map((hex) => {
+            {USER_PALETTE_PRESETS.map((hex) => {
               const isSelected = currentColor.toLowerCase() === hex.toLowerCase();
               return (
                 <button
