@@ -14,7 +14,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         style={{ backgroundImage: "url('/background.jpg')" }}
       />
       {/* Overlay gradiente per garantire massima leggibilità del testo e delle glass card */}
-      <div className="pointer-events-none fixed inset-0 z-[-1] bg-[#060814]/30" />
+      <div className="pointer-events-none fixed inset-0 z-[-1] bg-[#060814]/60" />
 
       <Header />
       <main className="flex-1 pb-20 md:pb-0">{children}</main>
