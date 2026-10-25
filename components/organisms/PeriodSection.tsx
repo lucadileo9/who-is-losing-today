@@ -52,7 +52,7 @@ export function PeriodSection({
   const handlePeriodChange = (preset: PeriodPreset) => {
     const params = new URLSearchParams(searchParams?.toString() || '');
     params.set('period', preset);
-    router.push(`/dashboard?${params.toString()}`);
+    router.push(`/dashboard?${params.toString()}`, { scroll: false });
   };
 
   const leaderboard = period.totale?.leaderboard || [];
