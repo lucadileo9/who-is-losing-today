@@ -20,6 +20,7 @@ docs/
 │
 ├── 02-backend-and-dal/                # Data Access Layer & Logica di Business
 │   ├── dal-design.md                  # Architettura DAL (daily, period, hall-of-fame, user)
+│   ├── dtos-and-types.md              # Catalogo completo DTO, contratti TypeScript e serializzazione
 │   ├── dynamic-games.md               # Sistema multi-gioco dinamico e guida aggiunta giochi
 │   ├── scoring-and-rankings.md        # Algoritmi di calcolo, divisori dinamici, tie-break e record
 │   └── api-and-actions.md             # Specifica completa di Server Actions e Route Handlers
@@ -50,6 +51,7 @@ docs/
 
 ### [Backend e Data Access Layer](./02-backend-and-dal/)
 - **[Design del DAL](./02-backend-and-dal/dal-design.md)**: Pattern Data Access Layer per query performanti e riutilizzabili (`lib/data/`).
+- **[Modelli DTO e Contratti di Tipo](./02-backend-and-dal/dtos-and-types.md)**: Reference esaustiva di tutti i Data Transfer Objects (`lib/types/`), motivazioni di sicurezza, disaccoppiamento da Prisma e serializzazione JSON per React Client Components.
 - **[Motore Multi-Gioco Dinamico](./02-backend-and-dal/dynamic-games.md)**: Supporto a giochi dinamici (`byGame`), configurazione estendibile e guida passo-passo per aggiungere un nuovo gioco.
 - **[Algoritmi di Punteggio e Classifiche](./02-backend-and-dal/scoring-and-rankings.md)**: Formule per i punteggi aggregati, calcolo del divisore dinamico basato sui giochi effettivamente disputati, regole di spareggio e tracciamento record (Hall of Fame).
 - **[Server Actions e API Reference](./02-backend-and-dal/api-and-actions.md)**: Contratti dettagliati di tutte le Server Actions (`app/actions/`) e Route Handlers (`app/api/`) con schemi Zod.
