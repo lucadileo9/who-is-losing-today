@@ -41,7 +41,7 @@ export function Header() {
 
   const navLinks = [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/submit', label: 'Inserisci Partita', icon: PlusCircle },
+    { href: '/submit', label: 'Gioca', icon: PlusCircle },
     { href: '/bacheca', label: 'Bacheca', icon: MessageSquare },
   ];
 
