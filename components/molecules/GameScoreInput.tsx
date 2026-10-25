@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import { Check, Send } from 'lucide-react';
 import { useSession } from 'next-auth/react';
-import { Button, Input } from '@/components/atoms';
-import { games, parseScore, type Game, gameTone } from '@/lib/game-data';
+import { games, type Game, gameTone } from '@/lib/game-data';
 import { cn, apiFetch } from '@/lib/utils';
 
 export function GameScoreInput() {
@@ -16,17 +15,12 @@ export function GameScoreInput() {
   const [extractedScore, setExtractedScore] = useState<number | null>(null);
   const [error, setError] = useState('');
 
-  const placeholderText =
-    game === 'Metazooa'
-      ? 'Es: "... in 13 guesses!"'
-      : game === 'Chronophoto'
-        ? 'Es: "Final Total: 3129"'
-        : 'Es: "90" o "Ho fatto 90 in Krilion"';
+  const placeholderText = 'Inserisci il punteggio';
 
   async function save() {
-    const score = parseScore(value, game);
-    if (score === null) {
-      setError('Impossibile estrarre un punteggio valido dal testo inserito.');
+    const score = parseInt(value, 10);
+    if (isNaN(score)) {
+      setError('Inserisci un punteggio numerico valido.');
       return;
     }
 

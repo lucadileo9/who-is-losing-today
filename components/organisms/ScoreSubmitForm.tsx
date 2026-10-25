@@ -2,15 +2,12 @@
 
 import React, { useState, useTransition } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import {
   Sparkles,
   Calendar,
   CheckCircle2,
   AlertCircle,
   ArrowRight,
-  ClipboardPaste,
-  HelpCircle,
   RotateCcw,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -18,7 +15,6 @@ import {
   Game,
   GAME_CONFIG,
   games,
-  parseScore,
   calculateNormalizedScore,
 } from '@/lib/game-data';
 import { submitScoreAction } from '@/app/actions/scores';
@@ -36,7 +32,6 @@ export function ScoreSubmitForm({
   defaultGame = 'Krilion',
   className,
 }: ScoreSubmitFormProps) {
-  const router = useRouter();
   const todayStr = new Date().toISOString().split('T')[0];
   const yesterdayStr = (() => {
     const d = new Date();
@@ -46,9 +41,7 @@ export function ScoreSubmitForm({
 
   const [selectedGame, setSelectedGame] = useState<Game>(defaultGame);
   const [scoreDate, setScoreDate] = useState<string>(defaultDate || todayStr);
-  const [rawInputText, setRawInputText] = useState<string>('');
   const [rawScore, setRawScore] = useState<string>('');
-  const [detectedScore, setDetectedScore] = useState<number | null>(null);
 
   const [isPending, startTransition] = useTransition();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -57,39 +50,6 @@ export function ScoreSubmitForm({
     score: number;
     normalized: number;
   } | null>(null);
-
-  // Gestione del testo incollato con parsing automatico
-  const handleRawTextChange = (text: string) => {
-    setRawInputText(text);
-    setErrorMsg(null);
-    if (!text.trim()) {
-      setDetectedScore(null);
-      return;
-    }
-
-    const parsed = parseScore(text, selectedGame);
-    if (parsed !== null && !isNaN(parsed)) {
-      setDetectedScore(parsed);
-      setRawScore(parsed.toString());
-    } else {
-      setDetectedScore(null);
-    }
-  };
-
-  // Cambio gioco: ricalcola eventuale testo incollato
-  const handleGameSelect = (game: Game) => {
-    setSelectedGame(game);
-    setErrorMsg(null);
-    if (rawInputText.trim()) {
-      const parsed = parseScore(rawInputText, game);
-      if (parsed !== null && !isNaN(parsed)) {
-        setDetectedScore(parsed);
-        setRawScore(parsed.toString());
-      } else {
-        setDetectedScore(null);
-      }
-    }
-  };
 
   const parsedNumericScore = parseInt(rawScore, 10);
   const isValidScore = !isNaN(parsedNumericScore) && parsedNumericScore >= 0;
@@ -112,7 +72,6 @@ export function ScoreSubmitForm({
         gameId: selectedGame,
         rawScore: parsedNumericScore,
         scoreDate,
-        rawInputText: rawInputText.trim() || undefined,
       });
 
       if (res.success) {
@@ -129,9 +88,7 @@ export function ScoreSubmitForm({
 
   const resetForm = () => {
     setSuccessInfo(null);
-    setRawInputText('');
     setRawScore('');
-    setDetectedScore(null);
     setErrorMsg(null);
   };
 
@@ -218,7 +175,10 @@ export function ScoreSubmitForm({
                   <button
                     key={g}
                     type="button"
-                    onClick={() => handleGameSelect(g)}
+                    onClick={() => {
+                      setSelectedGame(g);
+                      setErrorMsg(null);
+                    }}
                     className={cn(
                       'glass-card relative flex cursor-pointer flex-col justify-between rounded-2xl p-4 text-left transition-all duration-200 active:scale-[0.98]',
                       isSelected
@@ -294,35 +254,11 @@ export function ScoreSubmitForm({
             </div>
           </div>
 
-          {/* Incolla Messaggio / Condivisione (Smart Parser) */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                <ClipboardPaste className="size-3.5 text-cyan-400" />
-                <span>3. Incolla Risultato (Opzionale con Auto-Parser)</span>
-              </label>
-              {detectedScore !== null && (
-                <span className="flex items-center gap-1 rounded-md border border-emerald-500/40 bg-emerald-500/20 px-2 py-0.5 text-[11px] font-bold text-emerald-300 animate-in fade-in">
-                  <Sparkles className="size-3" />
-                  Rilevato: {detectedScore} {currentGameConfig.unit}
-                </span>
-              )}
-            </div>
-
-            <textarea
-              rows={3}
-              value={rawInputText}
-              onChange={(e) => handleRawTextChange(e.target.value)}
-              placeholder={`Incolla qui il testo di condivisione di ${selectedGame} (es. WhatsApp o clipboard). Il punteggio verrà estratto automaticamente!`}
-              className="glass-card w-full rounded-2xl border border-white/10 bg-black/40 p-3.5 text-xs text-white placeholder:text-muted-foreground outline-none transition-all focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400"
-            />
-          </div>
-
-          {/* Punteggio Effettivo (Manuale o Estratto) */}
+          {/* Punteggio Effettivo Diretto */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                4. Punteggio ({currentGameConfig.unit})
+                3. Punteggio ({currentGameConfig.unit})
               </label>
               <span className="text-[11px] text-muted-foreground">
                 {currentGameConfig.isLowerBetter

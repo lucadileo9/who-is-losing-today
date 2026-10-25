@@ -410,37 +410,6 @@ export function calculateOverallScore(player: Player): number {
   return Math.round((kr + mz + ch) / 3);
 }
 
-export function parseScore(text: string, game: Game): number | null {
-  if (!text) return null;
-  const trimmed = text.trim();
-
-  if (game === 'Metazooa') {
-    const match =
-      trimmed.match(/in\s+(\d+)\s+guesses/i) ||
-      trimmed.match(/(\d+)\s+guesses/i);
-    if (match && match[1]) {
-      return parseInt(match[1], 10);
-    }
-  }
-
-  if (game === 'Chronophoto') {
-    const match = trimmed.match(/Final\s+Total:?\s*(\d+)/i);
-    if (match && match[1]) {
-      return parseInt(match[1], 10);
-    }
-  }
-
-  if (game === 'Krilion') {
-    const match = trimmed.match(/(?:Krilion\s*)?(\d+)/i);
-    if (match && match[1]) {
-      return parseInt(match[1], 10);
-    }
-  }
-
-  const fallback = trimmed.match(/\d+/);
-  return fallback ? parseInt(fallback[0], 10) : null;
-}
-
 export function isLowerBetter(game: Game): boolean {
   return GAME_CONFIG[game]?.isLowerBetter ?? false;
 }
