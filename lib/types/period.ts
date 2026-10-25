@@ -1,5 +1,8 @@
 import { UserSummaryDTO } from "./user"
 
+export const PERIOD_PRESETS = ["week", "month", "last_month", "all"] as const
+export type PeriodPreset = (typeof PERIOD_PRESETS)[number]
+
 export interface PeriodLeaderboardRow {
   user: UserSummaryDTO
   playedCount: number // Quante partite ha completato nel periodo

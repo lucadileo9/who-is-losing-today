@@ -5,10 +5,11 @@ import type {
   PeriodGameData,
   PeriodLeaderboardRow,
   TrendPointDTO,
+  PeriodPreset,
 } from "@/lib/types/period"
 import type { UserSummaryDTO } from "@/lib/types/user"
 
-export type PeriodPreset = "week" | "month" | "last_month" | "all"
+export type { PeriodPreset }
 
 export function resolvePeriodDates(presetOrRange: PeriodPreset | { startDate: Date; endDate: Date }): {
   startDate: Date
