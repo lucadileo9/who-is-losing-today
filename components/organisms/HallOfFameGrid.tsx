@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Crown } from 'lucide-react';
+import { SectionHeading } from '@/components/atoms';
 import { HallOfFameCard } from '@/components/molecules/HallOfFameCard';
 import { HallOfFameDTO } from '@/lib/types/period';
 
@@ -37,12 +38,12 @@ export function HallOfFameGrid({ hallOfFame, className }: HallOfFameGridProps) {
 
   return (
     <div className={className}>
-      <div className="mb-4 flex items-center gap-2">
-        <Crown className="size-5 text-amber-400" />
-        <h2 className="text-lg font-black tracking-tight text-white md:text-xl">
-          Hall of Fame — Record di Sempre
-        </h2>
-      </div>
+      <SectionHeading
+        title="Hall of Fame — Record di Sempre"
+        icon={Crown}
+        iconColor="text-amber-400"
+        className="mb-4"
+      />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {records.map((r) => (

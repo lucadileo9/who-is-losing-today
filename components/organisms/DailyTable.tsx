@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Trophy } from 'lucide-react';
+import { SectionHeading } from '@/components/atoms';
 import { GameTabs, GameTabItem } from '@/components/molecules/GameTabs';
 import { StandingsRow } from '@/components/molecules/StandingsRow';
 import { DailyResultsDTO, DailyPlayerScore } from '@/lib/types/daily';
@@ -75,20 +76,19 @@ export function DailyTable({
   return (
     <div className={className}>
       {/* Header Sezione: Titolo + Game Tabs */}
-      <div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-        <div className="flex items-center gap-2">
-          <Trophy className="size-5 text-cyan-400" />
-          <h2 className="text-lg font-black tracking-tight text-white md:text-xl">
-            Classifica della Giornata
-          </h2>
-        </div>
-
-        <GameTabs
-          games={tabs}
-          activeTab={activeGame}
-          onTabChange={setActiveGame}
-        />
-      </div>
+      <SectionHeading
+        title="Classifica della Giornata"
+        icon={Trophy}
+        iconColor="text-cyan-400"
+        action={
+          <GameTabs
+            games={tabs}
+            activeTab={activeGame}
+            onTabChange={setActiveGame}
+          />
+        }
+        className="mb-4"
+      />
 
       {/* Lista Giocatori */}
       {scores.length === 0 ? (

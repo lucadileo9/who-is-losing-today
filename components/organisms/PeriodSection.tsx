@@ -13,6 +13,7 @@ import {
 } from 'recharts';
 import { BarChart3, Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { SectionHeading } from '@/components/atoms';
 import { StandingsRow } from '@/components/molecules/StandingsRow';
 import {
   PeriodResultsDTO,
@@ -61,36 +62,34 @@ export function PeriodSection({
   return (
     <div className={className}>
       {/* Header Sezione: Titolo + Filtri Periodo */}
-      <div className="mb-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-        <div className="flex items-center gap-2">
-          <BarChart3 className="size-5 text-cyan-400" />
-          <h2 className="text-lg font-black tracking-tight text-white md:text-xl">
-            Andamento e Classifica di Periodo
-          </h2>
-        </div>
-
-        {/* Pulsanti Filtro Periodo */}
-        <div className="glass-card no-scrollbar flex items-center gap-1 overflow-x-auto rounded-xl border-white/5 p-1">
-          {PERIOD_PRESETS.map((p) => {
-            const isActive = currentPeriod === p;
-            return (
-              <button
-                key={p}
-                type="button"
-                onClick={() => handlePeriodChange(p)}
-                className={cn(
-                  'cursor-pointer select-none whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-bold transition-all duration-200',
-                  isActive
-                    ? 'bg-cyan-500 text-black shadow-[0_0_10px_rgba(6,182,212,0.4)]'
-                    : 'text-muted-foreground hover:bg-white/5 hover:text-white'
-                )}
-              >
-                {PRESET_LABELS[p]}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      <SectionHeading
+        title="Andamento e Classifica di Periodo"
+        icon={BarChart3}
+        iconColor="text-cyan-400"
+        action={
+          <div className="glass-card no-scrollbar flex items-center gap-1 overflow-x-auto rounded-xl border-white/5 p-1">
+            {PERIOD_PRESETS.map((p) => {
+              const isActive = currentPeriod === p;
+              return (
+                <button
+                  key={p}
+                  type="button"
+                  onClick={() => handlePeriodChange(p)}
+                  className={cn(
+                    'cursor-pointer select-none whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-bold transition-all duration-200',
+                    isActive
+                      ? 'bg-cyan-500 text-black shadow-[0_0_10px_rgba(6,182,212,0.4)]'
+                      : 'text-muted-foreground hover:bg-white/5 hover:text-white'
+                  )}
+                >
+                  {PRESET_LABELS[p]}
+                </button>
+              );
+            })}
+          </div>
+        }
+        className="mb-4"
+      />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* Colonna SX: Tabella Classifica Periodo (5 colonne su 12) */}

@@ -47,5 +47,6 @@ export { GameBadge } from './GameBadge';
 export { RankBadge } from './RankBadge';
 export { NeonCard } from './NeonCard';
 export { NeonButton } from './NeonButton';
+export { SectionHeading } from './SectionHeading';
 export { ThemeProvider } from './ThemeProvider';
 export { Providers } from './Providers';
