@@ -1,3 +1,5 @@
+const BRAND_COLORS = require('./lib/theme/brand-colors.json');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ['class'],
@@ -9,24 +11,21 @@ module.exports = {
   ],
   theme: {
     screens: {
-      sm: '640px',  // Telefoni in landscape e tablet verticali
-      md: '768px',  // Tablet verticali e piccoli laptop
+      sm: '640px', // Telefoni in landscape e tablet verticali
+      md: '768px', // Tablet verticali e piccoli laptop
       lg: '1024px', // Laptop standard
       xl: '1280px', // Desktop larghi
       '2xl': '1536px', // Schermi ultra-wide
     },
     container: {
-      center: true, // Centra automaticamente il contenitore
+      center: true,
       padding: {
-        center: true,
-        padding: {
-          DEFAULT: '0.5rem', // Padding predefinito
-          sm: '0.5rem',      // Padding per schermi piccoli
-          md: '1rem',        // Padding per tablet
-          lg: '2rem',        // Padding per laptop
-          xl: '3rem',        // Padding per desktop
-          '2xl': '4rem',     // Padding per schermi ultra-wide
-        },
+        DEFAULT: '1rem',
+        sm: '1rem',
+        md: '1.5rem',
+        lg: '2rem',
+        xl: '3rem',
+        '2xl': '4rem',
       },
     },
     extend: {
@@ -71,6 +70,26 @@ module.exports = {
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))',
         },
+        // Synthwave / Cyberpunk Brand Tokens
+        loser: BRAND_COLORS.loser,
+        winner: BRAND_COLORS.winner,
+        surface: BRAND_COLORS.surface,
+        space: BRAND_COLORS.space,
+        game: {
+          krilion: BRAND_COLORS.krilion,
+          metazooa: BRAND_COLORS.metazooa,
+          chronophoto: BRAND_COLORS.chronophoto,
+          totale: BRAND_COLORS.totale,
+        },
+      },
+      boxShadow: {
+        'glow-loser': '0 0 25px rgba(239, 68, 68, 0.4)',
+        'glow-winner': '0 0 25px rgba(245, 158, 11, 0.4)',
+        'glow-krilion': '0 0 20px rgba(16, 185, 129, 0.35)',
+        'glow-metazooa': '0 0 20px rgba(249, 115, 22, 0.35)',
+        'glow-chronophoto': '0 0 20px rgba(139, 92, 246, 0.35)',
+        'glow-cyan': '0 0 20px rgba(6, 182, 212, 0.35)',
+        'glow-card': '0 8px 32px 0 rgba(0, 0, 0, 0.45)',
       },
       backgroundColor: {
         color: 'black',

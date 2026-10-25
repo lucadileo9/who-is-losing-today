@@ -33,25 +33,27 @@
   }
 
   .dark {
-    --background: 224 71.4% 4.1%;
+    /* Deep space background #0a0b14 */
+    --background: 234 33% 6%;
     --foreground: 210 20% 98%;
-    --card: 224 71.4% 10%;
+    /* Glass surface #121526 */
+    --card: 230 35% 11%;
     --card-foreground: 210 20% 98%;
-    --popover: 224 71.4% 10%;
+    --popover: 230 35% 11%;
     --popover-foreground: 210 20% 98%;
     --primary: 210 20% 98%;
-    --primary-foreground: 220.9 39.3% 11%;
-    --secondary: 215 27.9% 16.9%;
+    --primary-foreground: 224 71.4% 4.1%;
+    --secondary: 230 25% 16%;
     --secondary-foreground: 210 20% 98%;
-    --muted: 215 27.9% 16.9%;
-    --muted-foreground: 217.9 10.6% 64.9%;
-    --accent: 215 27.9% 16.9%;
+    --muted: 230 20% 16%;
+    --muted-foreground: 220 13% 65%;
+    --accent: 230 25% 16%;
     --accent-foreground: 210 20% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 210 20% 98%;
-    --border: 215 27.9% 16.9%;
-    --input: 215 27.9% 16.9%;
-    --ring: 216 12.2% 83.9%;
+    --border: 230 20% 18%;
+    --input: 230 20% 18%;
+    --ring: 217 91% 60%;
 
     --chart-1: 217.2 91.2% 59.8%;
     --chart-2: 142.1 70.6% 45.3%;
@@ -64,6 +66,58 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background text-foreground antialiased selection:bg-cyan-500/30 selection:text-cyan-200;
   }
+}
+
+@layer utilities {
+  /* Glassmorphism Surface Card */
+  .glass-card {
+    background: rgba(18, 21, 38, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .glass-panel {
+    background: rgba(10, 11, 20, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  /* Neon Glowing Borders */
+  .border-glow-winner {
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.25);
+  }
+
+  .border-glow-loser {
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.25);
+  }
+
+  /* Glowing Avatar Rings */
+  .glow-ring {
+    box-shadow: 0 0 10px currentColor;
+  }
+}
+
+/* Custom Scrollbar for gaming dashboards */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(10, 11, 20, 0.6);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
 }

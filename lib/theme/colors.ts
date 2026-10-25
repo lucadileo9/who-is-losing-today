@@ -3,16 +3,18 @@
  * Importato da tailwind.config.js, componenti React (Recharts SVG) e DAL.
  */
 
-export const BRAND_COLORS = {
-  loser: '#ef4444', // Neon Crimson (perdente)
-  winner: '#f59e0b', // Cyber Gold (vincente)
-  krilion: '#10b981', // Smeraldo Neon
-  metazooa: '#f97316', // Arancione Safari
-  chronophoto: '#8b5cf6', // Viola Synthwave
-  totale: '#3b82f6', // Blu Zaffiro
-  space: '#0a0b14', // Sfondo dark deep space
-  surface: '#121526', // Superficie card glassmorphism
-} as const;
+import brandColors from './brand-colors.json';
+
+export const BRAND_COLORS = brandColors as {
+  readonly loser: '#ef4444';
+  readonly winner: '#f59e0b';
+  readonly krilion: '#10b981';
+  readonly metazooa: '#f97316';
+  readonly chronophoto: '#8b5cf6';
+  readonly totale: '#3b82f6';
+  readonly space: '#0a0b14';
+  readonly surface: '#121526';
+};
 
 export const DEFAULT_USER_COLOR = '#3b82f6';
 
