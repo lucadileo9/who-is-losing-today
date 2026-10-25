@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { calculateNormalizedScore, type Game } from "@/lib/game-data"
+import { DEFAULT_GAME_FALLBACKS, DEFAULT_USER_COLOR } from "@/lib/theme/colors"
 import type { DailyResultsDTO, DailyPlayerScore } from "@/lib/types/daily"
 
 /**
@@ -21,16 +22,8 @@ export async function getDailyResults(dateStr: string): Promise<DailyResultsDTO>
     },
   })
 
-  // Fallback ai 3 giochi standard nel caso il DB non sia ancora popolato
-  const activeGames =
-    dbGames.length > 0
-      ? dbGames
-      : [
-          { id: "Krilion", name: "Krilion", isLowerBetter: false, color: "#3b82f6" },
-          { id: "Metazooa", name: "Metazooa", isLowerBetter: true, color: "#10b981" },
-          { id: "Chronophoto", name: "Chronophoto", isLowerBetter: false, color: "#f59e0b" },
-        ]
-
+  // Fallback centralizzato ai giochi standard nel caso il DB non sia ancora popolato
+  const activeGames = dbGames.length > 0 ? dbGames : DEFAULT_GAME_FALLBACKS
   const totalGamesCount = activeGames.length
 
   // 2. Singola query mirata per scoreDate (PostgreSQL @db.Date ignora le ore)
@@ -74,7 +67,7 @@ export async function getDailyResults(dateStr: string): Promise<DailyResultsDTO>
         user: {
           id: sc.user.id,
           name: sc.user.name || "Giocatore",
-          color: sc.user.color || "#3b82f6",
+          color: sc.user.color || DEFAULT_USER_COLOR,
           image: sc.user.image,
         },
         rawScores: initialRaw,

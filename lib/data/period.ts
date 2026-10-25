@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { calculateNormalizedScore, type Game } from "@/lib/game-data"
+import { DEFAULT_USER_COLOR } from "@/lib/theme/colors"
 import type {
   PeriodResultsDTO,
   PeriodGameData,
@@ -84,7 +85,7 @@ export async function getPeriodResults(
       usersMap.set(s.userId, {
         id: s.user.id,
         name: s.user.name || "Giocatore",
-        color: s.user.color || "#3b82f6",
+        color: s.user.color || DEFAULT_USER_COLOR,
         image: s.user.image,
       })
     }

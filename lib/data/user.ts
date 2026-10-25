@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { calculateNormalizedScore, type Game } from "@/lib/game-data"
+import { DEFAULT_USER_COLOR } from "@/lib/theme/colors"
 import type { UserProfileDTO, UserPersonalTrendPoint } from "@/lib/types/user"
 
 /**
@@ -194,7 +195,7 @@ export async function getUserProfile(userId: string): Promise<UserProfileDTO | n
     user: {
       id: user.id,
       name: user.name || "Giocatore",
-      color: user.color || "#3b82f6",
+      color: user.color || DEFAULT_USER_COLOR,
       image: user.image,
     },
     role: user.role,

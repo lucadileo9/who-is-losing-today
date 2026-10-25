@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { DEFAULT_USER_COLOR } from "@/lib/theme/colors"
 import type { WhitelistDTO, BugReportDTO } from "@/lib/types/admin"
 
 /**
@@ -45,7 +46,7 @@ export async function getBugReports(): Promise<BugReportDTO[]> {
     author: {
       id: r.user.id,
       name: r.user.name || "Giocatore",
-      color: r.user.color || "#3b82f6",
+      color: r.user.color || DEFAULT_USER_COLOR,
       image: r.user.image,
     },
     description: r.description,

@@ -3,6 +3,7 @@ import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "@/lib/prisma"
+import { DEFAULT_USER_COLOR } from "@/lib/theme/colors"
 import { Adapter } from "next-auth/adapters"
 import { Role } from "@prisma/client"
 
@@ -54,7 +55,7 @@ export const authOptions: NextAuthOptions = {
             email: targetEmail,
             name: targetEmail.split("@")[0],
             initials: targetEmail.substring(0, 2).toUpperCase(),
-            color: "#3b82f6",
+            color: DEFAULT_USER_COLOR,
             role: Role.PLAYER,
           },
         })
@@ -132,7 +133,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = (token.id as string) || (token.sub as string)
         session.user.role = (token.role as Role) || Role.PLAYER
-        session.user.color = (token.color as string) || "#3b82f6"
+        session.user.color = (token.color as string) || DEFAULT_USER_COLOR
       }
       return session
     },

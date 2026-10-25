@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { DEFAULT_USER_COLOR } from "@/lib/theme/colors"
 import type { DailyNoteDTO } from "@/lib/types/notes"
 
 /**
@@ -46,7 +47,7 @@ export async function getActiveNotes(currentUserId?: string): Promise<DailyNoteD
       author: {
         id: n.user.id,
         name: n.user.name || "Giocatore",
-        color: n.user.color || "#3b82f6",
+        color: n.user.color || DEFAULT_USER_COLOR,
         image: n.user.image,
       },
     }

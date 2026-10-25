@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { calculateNormalizedScore, type Game } from "@/lib/game-data"
+import { DEFAULT_USER_COLOR } from "@/lib/theme/colors"
 import type { HallOfFameDTO, AllTimeRecordItem } from "@/lib/types/period"
 
 /**
@@ -65,7 +66,7 @@ export async function getHallOfFame(): Promise<HallOfFameDTO> {
         user: {
           id: sc.user.id,
           name: sc.user.name || "Giocatore",
-          color: sc.user.color || "#3b82f6",
+          color: sc.user.color || DEFAULT_USER_COLOR,
           image: sc.user.image,
         },
         date: dayStr,
@@ -114,7 +115,7 @@ export async function getHallOfFame(): Promise<HallOfFameDTO> {
         holder: {
           id: bestKrilion.user.id,
           name: bestKrilion.user.name || "Giocatore",
-          color: bestKrilion.user.color || "#3b82f6",
+          color: bestKrilion.user.color || DEFAULT_USER_COLOR,
           image: bestKrilion.user.image,
         },
       }
@@ -129,7 +130,7 @@ export async function getHallOfFame(): Promise<HallOfFameDTO> {
         holder: {
           id: bestMetazooa.user.id,
           name: bestMetazooa.user.name || "Giocatore",
-          color: bestMetazooa.user.color || "#3b82f6",
+          color: bestMetazooa.user.color || DEFAULT_USER_COLOR,
           image: bestMetazooa.user.image,
         },
       }
@@ -144,7 +145,7 @@ export async function getHallOfFame(): Promise<HallOfFameDTO> {
         holder: {
           id: bestChronophoto.user.id,
           name: bestChronophoto.user.name || "Giocatore",
-          color: bestChronophoto.user.color || "#3b82f6",
+          color: bestChronophoto.user.color || DEFAULT_USER_COLOR,
           image: bestChronophoto.user.image,
         },
       }
