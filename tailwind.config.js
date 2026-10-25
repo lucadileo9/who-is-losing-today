@@ -1,4 +1,13 @@
-const BRAND_COLORS = require('./lib/theme/brand-colors.json');
+const BRAND_COLORS = {
+  loser: '#ef4444',
+  winner: '#f59e0b',
+  krilion: '#10b981',
+  metazooa: '#f97316',
+  chronophoto: '#8b5cf6',
+  totale: '#3b82f6',
+  space: '#0a0b14',
+  surface: '#121526',
+};
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
