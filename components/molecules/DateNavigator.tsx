@@ -63,11 +63,12 @@ export function DateNavigator({ currentDate, className }: DateNavigatorProps) {
   return (
     <div
       className={cn(
-        'glass-card flex flex-wrap items-center justify-between gap-2 rounded-2xl p-2 md:p-2.5',
+        'glass-card relative flex flex-wrap items-center justify-center gap-2.5 rounded-2xl p-2 md:p-2.5',
         className
       )}
     >
-      <div className="flex items-center gap-1.5">
+      {/* Controlli navigazione data centrati */}
+      <div className="flex items-center gap-1.5 sm:gap-2">
         {/* Freccia Indietro */}
         <button
           type="button"
@@ -79,7 +80,7 @@ export function DateNavigator({ currentDate, className }: DateNavigatorProps) {
         </button>
 
         {/* Display Data Corrente */}
-        <div className="flex items-center gap-2 rounded-xl border border-white/5 bg-white/[0.04] px-3 py-1.5">
+        <div className="flex items-center gap-2 rounded-xl border border-white/5 bg-white/[0.04] px-3.5 py-1.5">
           <CalendarIcon className="size-4 text-cyan-400" />
           <span className="text-xs font-bold capitalize text-white sm:text-sm">
             {formattedDate}
@@ -107,7 +108,7 @@ export function DateNavigator({ currentDate, className }: DateNavigatorProps) {
         <button
           type="button"
           onClick={handleToday}
-          className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-bold text-cyan-400 transition-all hover:bg-cyan-500/20 active:scale-95"
+          className="flex cursor-pointer items-center gap-1.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-bold text-cyan-400 transition-all hover:bg-cyan-500/20 active:scale-95 sm:absolute sm:right-2.5"
         >
           <RotateCcw className="size-3.5" />
           <span>Torna a Oggi</span>
