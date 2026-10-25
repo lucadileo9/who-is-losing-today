@@ -269,3 +269,20 @@ export async function getUserProfile(
     personalTrend,
   };
 }
+
+/**
+ * Recupera l'elenco completo di tutti i giocatori registrati con le loro statistiche e profili.
+ */
+export async function getAllPlayers(): Promise<UserProfileDTO[]> {
+  const users = await prisma.user.findMany({
+    select: { id: true },
+    orderBy: { name: 'asc' },
+  });
+
+  const profiles = await Promise.all(
+    users.map((u) => getUserProfile(u.id))
+  );
+
+  return profiles.filter((p): p is UserProfileDTO => p !== null);
+}
+

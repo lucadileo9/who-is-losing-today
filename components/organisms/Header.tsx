@@ -13,6 +13,7 @@ import {
   LogOut,
   ShieldAlert,
   User,
+  Users,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PlayerAvatar } from '@/components/atoms/PlayerAvatar';
@@ -39,6 +40,7 @@ export function Header() {
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/submit', label: 'Gioca', icon: PlusCircle },
     { href: '/bacheca', label: 'Bacheca', icon: MessageSquare },
+    { href: '/players', label: 'Giocatori', icon: Users },
   ];
 
   const user = session?.user;
@@ -143,6 +145,16 @@ export function Header() {
                     >
                       <User className="size-4 text-cyan-400" />
                       <span>Il mio Profilo</span>
+                    </Link>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href="/players"
+                      className="flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-sm text-muted-foreground hover:bg-white/10 hover:text-white"
+                    >
+                      <Users className="size-4 text-cyan-400" />
+                      <span>Tutti i Giocatori</span>
                     </Link>
                   </DropdownMenuItem>
 
