@@ -21,9 +21,11 @@
     "new-route": "plop route",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "db:reset": "prisma db push --force-reset && prisma db seed",
     "format": "prettier --write .",
-    "validate": "npm run lint && npm run typecheck"
+    "format:check": "prettier --check .",
+    "db:reset": "prisma db push --force-reset && prisma db seed",
+    "validate": "npm run format && npm run lint && npm run typecheck",
+    "check:ci": "npm run lint && npm run typecheck && npm run build"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"
