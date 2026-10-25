@@ -20,9 +20,10 @@
     "new-component": "plop component",
     "new-route": "plop route",
     "lint": "next lint",
+    "typecheck": "tsc --noEmit",
     "db:reset": "prisma db push --force-reset && prisma db seed",
     "format": "prettier --write .",
-    "validate": "npm run lint && npm run format"
+    "validate": "npm run lint && npm run typecheck"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"
