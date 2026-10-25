@@ -27,14 +27,18 @@ flowchart TD
             TunnelContainer["Container: cloudflared\n(Demone Cloudflare Tunnel)"]
             WebContainer["Container: who-is-losing-today-web\n(Next.js 15 Standalone - Porta 3000)"]
             DBContainer[("Container: who-is-losing-today-db\n(PostgreSQL 16 Alpine - Porta 5432)")]
+            BackupContainer["Container: who-is-losing-today-backup\n(pg_dump + gzip - Cron 01:00 AM)"]
 
             TunnelContainer -->|"Proxy HTTP reverse"| WebContainer
             WebContainer -->|"TCP 5432 (Prisma Connection Pool)"| DBContainer
+            BackupContainer -->|"pg_dump su rete interna"| DBContainer
         end
 
-        subgraph StorageHost ["File System Host"]
-            DiskVolume["Volume Persistente Fisico:\n/srv/storage/docker/who-is-losing-today/postgres"]
-            DBContainer -->|"Mount cartella dati"| DiskVolume
+        subgraph StorageHost ["File System Host (/srv/storage)"]
+            DiskVolume["Volume Persistente Database:\n/srv/storage/docker/who-is-losing-today/postgres"]
+            BackupVolume["Archivio Backup (.sql.gz):\n/srv/storage/docker/who-is-losing-today/backups"]
+            DBContainer -->|"Mount dati"| DiskVolume
+            BackupContainer -->|"Salvataggio dump notturno"| BackupVolume
         end
     end
 ```
@@ -140,6 +144,23 @@ All'avvio del container:
   IP statico pubblico necessario).
 - Stabilisce una connessione in uscita cifrata verso i server Cloudflare usando
   il `TUNNEL_TOKEN`.
+
+### Servizio Backup Automatico Database (`who-is-losing-today-backup`)
+
+- **Immagine**: `prodrigestivill/postgres-backup-local:16-alpine`.
+- **Schedulazione**: Ogni notte alle **01:00 AM** (`SCHEDULE: '0 1 * * *'`, fuso
+  orario `TZ: Europe/Rome`).
+- **Retention automatica**:
+  - Ultimi 14 backup giornalieri (`BACKUP_KEEP_DAYS: 14`)
+  - Ultimi 4 backup settimanali (`BACKUP_KEEP_WEEKS: 4`)
+  - Ultimi 6 backup mensili (`BACKUP_KEEP_MONTHS: 6`)
+- **Archiviazione Host**: `/srv/storage/docker/who-is-losing-today/backups`
+  (file compressi `.sql.gz`).
+- **Ripristino Rapido (Disaster Recovery)**: In caso di necessità di
+  ripristinare il database da un backup compresso:
+  ```bash
+  gunzip -c /srv/storage/docker/who-is-losing-today/backups/db_YYYYMMDD_HHMMSS.sql.gz | docker exec -i who-is-losing-today-db psql -U ${POSTGRES_USER} -d ${POSTGRES_DB}
+  ```
 
 ---
 

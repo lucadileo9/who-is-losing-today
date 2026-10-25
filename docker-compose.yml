@@ -42,6 +42,27 @@ services:
     networks:
       - storage_default
 
+  who-is-losing-today-backup:
+    image: prodrigestivill/postgres-backup-local:16-alpine
+    container_name: who-is-losing-today-backup
+    restart: unless-stopped
+    environment:
+      POSTGRES_HOST: who-is-losing-today-db
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      SCHEDULE: '0 1 * * *'
+      BACKUP_KEEP_DAYS: 14
+      BACKUP_KEEP_WEEKS: 4
+      BACKUP_KEEP_MONTHS: 6
+      TZ: 'Europe/Rome'
+    volumes:
+      - /srv/storage/docker/who-is-losing-today/backups:/backups
+    depends_on:
+      - who-is-losing-today-db
+    networks:
+      - storage_default
+
 networks:
   storage_default:
     external: true
