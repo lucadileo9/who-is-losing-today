@@ -59,24 +59,6 @@ export function HeroPlayerCard({
 
   const isMe = currentUserId && playerScore?.user.id === currentUserId;
 
-  // Frasi di commento senza emoji invasive
-  const getSubtext = () => {
-    if (!playerScore) return null;
-    if (isWinner) {
-      return `Miglior punteggio su ${totalPlayers} ${totalPlayers === 1 ? 'giocatore' : 'giocatori'}.`;
-    }
-    if (isMe) {
-      return 'Oggi tocca a te pagare pegno per la prestazione peggiore.';
-    }
-    const taunts = [
-      `Prestazione da dimenticare per ${playerScore.user.name}.`,
-      `Oggi è ${playerScore.user.name} a chiudere la classifica.`,
-      `Punteggio minimo registrato della giornata.`,
-    ];
-    const index = (playerScore.user.name.charCodeAt(0) || 0) % taunts.length;
-    return taunts[index];
-  };
-
   const hasNoPlayer = !playerScore || (!isWinner && totalPlayers < 2);
 
   return (
@@ -172,10 +154,6 @@ export function HeroPlayerCard({
                 pt complessivi
               </span>
             </div>
-
-            <p className="mt-2 text-xs text-muted-foreground line-clamp-2">
-              {getSubtext()}
-            </p>
           </div>
         </div>
       )}
