@@ -1,21 +1,33 @@
 'use client';
 
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useSession, signIn, signOut } from 'next-auth/react';
+import { useTheme } from 'next-themes';
 import {
-  CircleUserRound,
   LayoutDashboard,
-  Sparkles,
+  MessageSquare,
+  PlusCircle,
   Sun,
   Moon,
   LogIn,
   LogOut,
+  ShieldAlert,
+  User,
+  Sparkles,
 } from 'lucide-react';
-import { useTheme } from 'next-themes';
-import { useEffect, useState } from 'react';
-import { useSession, signIn, signOut } from 'next-auth/react';
 import { cn } from '@/lib/utils';
-import { Avatar, Button } from '@/components/atoms';
+import { PlayerAvatar } from '@/components/atoms/PlayerAvatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export function Header() {
   const pathname = usePathname();
@@ -29,116 +41,183 @@ export function Header() {
 
   const navLinks = [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/profile', label: 'Profilo', icon: CircleUserRound },
+    { href: '/submit', label: 'Inserisci Partita', icon: PlusCircle },
+    { href: '/bacheca', label: 'Bacheca', icon: MessageSquare },
   ];
 
-  const userInitials = session?.user?.name
-    ? session.user.name
-        .split(' ')
-        .map((n) => n[0])
-        .join('')
-        .substring(0, 2)
-        .toUpperCase()
-    : 'SB';
+  const user = session?.user;
+  const isAdmin = user?.role === 'ADMIN';
 
   return (
-    <header className="sticky top-0 z-30 w-full border-b bg-card/85 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Brand Logo */}
+    <header className="sticky top-0 z-30 w-full border-b border-white/10 bg-[#0a0b14]/80 backdrop-blur-xl">
+      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-3 sm:px-6 md:h-16 lg:px-8">
+        {/* Brand Logo - non si accavalla mai su mobile */}
         <Link
           href="/dashboard"
-          className="flex items-center gap-2.5 transition-opacity hover:opacity-90"
+          className="flex items-center gap-2 transition-transform hover:scale-[1.02] active:scale-[0.98]"
         >
-          <span className="grid size-9 place-items-center rounded-xl bg-primary text-primary-foreground shadow-sm">
-            <Sparkles className="size-4" />
+          <span className="grid size-8 place-items-center rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 text-black shadow-[0_0_15px_rgba(6,182,212,0.4)] md:size-9">
+            <Sparkles className="size-4 text-white" />
           </span>
-          <div className="flex items-center gap-1.5">
-            <span className="text-base font-bold tracking-tight sm:text-lg">
-              Who Is Losing
+          <div className="flex items-center gap-1.5 whitespace-nowrap">
+            <span className="text-sm font-extrabold tracking-tight sm:text-base md:text-lg">
+              <span className="text-white">Who Is Losing </span>
             </span>
-            <span className="rounded-md bg-chart-2/15 px-1.5 py-0.5 text-xs font-semibold text-chart-2">
-              Today?
+            <span className="rounded-md border border-red-500/40 bg-red-500/15 px-1.5 py-0.5 text-[10px] font-black tracking-wide text-red-400 shadow-[0_0_8px_rgba(239,68,68,0.3)] sm:text-xs">
+              TODAY?
             </span>
           </div>
         </Link>
 
-        {/* Navigation links */}
-        <nav className="flex items-center gap-1 sm:gap-2">
-          {navLinks.map(({ href, label, icon: Icon }) => (
-            <Link
-              key={href}
-              href={href}
-              className={cn(
-                'flex items-center gap-2 rounded-xl px-3.5 py-2 text-sm font-medium text-muted-foreground transition-all hover:bg-muted hover:text-foreground',
-                pathname === href &&
-                  'bg-primary text-primary-foreground shadow-sm hover:bg-primary hover:text-primary-foreground'
-              )}
-            >
-              <Icon className="size-4" />
-              <span>{label}</span>
-            </Link>
-          ))}
+        {/* Desktop Navigation Links */}
+        <nav className="hidden items-center gap-1.5 md:flex">
+          {navLinks.map(({ href, label, icon: Icon }) => {
+            const isActive = pathname === href;
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={cn(
+                  'flex items-center gap-2 rounded-xl px-3.5 py-2 text-sm font-semibold transition-all',
+                  isActive
+                    ? 'border border-cyan-500/30 bg-white/10 text-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.25)]'
+                    : 'text-muted-foreground hover:bg-white/5 hover:text-white'
+                )}
+              >
+                <Icon className="size-4" />
+                <span>{label}</span>
+              </Link>
+            );
+          })}
         </nav>
 
-        {/* User Actions */}
-        <div className="flex items-center gap-3">
-          {mounted && (
-            <button
-              aria-label="Cambia tema"
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="grid size-9 cursor-pointer place-items-center rounded-xl border bg-muted/40 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-            >
-              {theme === 'dark' ? (
-                <Sun className="size-4" />
-              ) : (
-                <Moon className="size-4" />
-              )}
-            </button>
-          )}
+        {/* Right Action Section */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Quick CTA "+ Partita" */}
+          <Link
+            href="/submit"
+            className="flex items-center gap-1.5 rounded-xl border border-cyan-500/40 bg-cyan-500/15 px-2.5 py-1.5 text-xs font-bold text-cyan-300 shadow-[0_0_12px_rgba(6,182,212,0.25)] transition-all hover:bg-cyan-500/25 active:scale-95"
+            title="Inserisci Punteggio Oggi"
+          >
+            <PlusCircle className="size-3.5" />
+            <span className="xs:inline hidden sm:inline">Gioca</span>
+          </Link>
 
-          {session?.user ? (
-            <div className="flex items-center gap-2">
-              <Link
-                href="/profile"
-                title="Vai al profilo"
-                className="flex items-center gap-2"
-              >
-                <Avatar
-                  initials={userInitials}
-                  className="size-9 bg-chart-1 text-xs font-semibold text-primary shadow-sm transition-all hover:ring-2 hover:ring-primary/40"
+          {/* User Section / Avatar Dropdown */}
+          {user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  aria-label="Menu profilo"
+                  className="cursor-pointer rounded-full outline-none transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-cyan-400"
                 >
-                  {session.user.image && (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img
-                      src={session.user.image}
-                      alt={session.user.name || 'User'}
-                      className="size-full rounded-full object-cover"
-                    />
-                  )}
-                </Avatar>
-                <span className="hidden text-xs font-semibold md:inline">
-                  {session.user.name}
-                </span>
-              </Link>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => signOut()}
-                className="h-8 cursor-pointer px-2 text-xs text-muted-foreground hover:text-destructive"
-                title="Disconnetti"
+                  <PlayerAvatar
+                    name={user.name || 'Utente'}
+                    image={user.image}
+                    color={user.color || '#3b82f6'}
+                    size="sm"
+                  />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="glass-card w-56 border-white/10 bg-[#121526] p-1.5 text-foreground shadow-2xl"
               >
-                <LogOut className="size-3.5" />
-              </Button>
-            </div>
+                <DropdownMenuLabel className="p-2 font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-bold leading-none text-white">
+                      {user.name}
+                    </p>
+                    <p className="truncate text-xs leading-none text-muted-foreground">
+                      {user.email}
+                    </p>
+                    {isAdmin && (
+                      <span className="mt-1 inline-flex w-fit items-center gap-1 rounded border border-amber-500/30 bg-amber-500/15 px-1.5 py-0.5 text-[10px] font-bold text-amber-400">
+                        <ShieldAlert className="size-2.5" /> ADMIN
+                      </span>
+                    )}
+                  </div>
+                </DropdownMenuLabel>
+
+                <DropdownMenuSeparator className="bg-white/10" />
+
+                <DropdownMenuGroup>
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href="/profile"
+                      className="flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-sm text-muted-foreground hover:bg-white/10 hover:text-white"
+                    >
+                      <User className="size-4 text-cyan-400" />
+                      <span>Il mio Profilo</span>
+                    </Link>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href="/bacheca"
+                      className="flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-sm text-muted-foreground hover:bg-white/10 hover:text-white"
+                    >
+                      <MessageSquare className="size-4 text-pink-400" />
+                      <span>Bacheca & Sfottò</span>
+                    </Link>
+                  </DropdownMenuItem>
+
+                  {isAdmin && (
+                    <DropdownMenuItem asChild>
+                      <Link
+                        href="/admin/bugs"
+                        className="flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-sm text-amber-400 hover:bg-amber-500/15"
+                      >
+                        <ShieldAlert className="size-4" />
+                        <span>Pannello Admin</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                </DropdownMenuGroup>
+
+                <DropdownMenuSeparator className="bg-white/10" />
+
+                {mounted && (
+                  <DropdownMenuItem
+                    onClick={() =>
+                      setTheme(theme === 'dark' ? 'light' : 'dark')
+                    }
+                    className="flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-sm text-muted-foreground hover:bg-white/10 hover:text-white"
+                  >
+                    {theme === 'dark' ? (
+                      <>
+                        <Sun className="size-4 text-amber-400" />
+                        <span>Tema Chiaro</span>
+                      </>
+                    ) : (
+                      <>
+                        <Moon className="size-4 text-cyan-400" />
+                        <span>Tema Scuro</span>
+                      </>
+                    )}
+                  </DropdownMenuItem>
+                )}
+
+                <DropdownMenuSeparator className="bg-white/10" />
+
+                <DropdownMenuItem
+                  onClick={() => signOut({ callbackUrl: '/dashboard' })}
+                  className="flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-sm text-red-400 hover:bg-red-500/15 focus:text-red-400"
+                >
+                  <LogOut className="size-4" />
+                  <span>Disconnetti</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
-            <Button
-              size="sm"
+            <button
               onClick={() => signIn('google')}
-              className="flex h-9 cursor-pointer items-center gap-1.5 px-3 text-xs font-semibold"
+              className="flex cursor-pointer items-center gap-1.5 rounded-xl bg-cyan-500 px-3 py-1.5 text-xs font-bold text-black shadow-[0_0_12px_rgba(6,182,212,0.4)] transition-all hover:bg-cyan-400 active:scale-95"
             >
               <LogIn className="size-3.5" />
               <span>Accedi</span>
-            </Button>
+            </button>
           )}
         </div>
       </div>
