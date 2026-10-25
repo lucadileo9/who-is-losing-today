@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Trophy, Calendar } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { GameBadge } from '@/components/atoms/GameBadge';
 import { PlayerAvatar } from '@/components/atoms/PlayerAvatar';
@@ -30,7 +30,6 @@ export function HallOfFameCard({
       >
         <div className="flex items-center justify-between">
           <GameBadge gameId={gameId} size="sm" />
-          <Trophy className="size-4 text-muted-foreground" />
         </div>
         <div className="my-4 text-center">
           <p className="text-xs text-muted-foreground">Nessun record ancora</p>
@@ -60,12 +59,9 @@ export function HallOfFameCard({
         className
       )}
     >
-      {/* Top Header: Badge Gioco + Icona Trofeo Oro */}
+      {/* Top Header: Badge Gioco */}
       <div className="flex items-center justify-between">
         <GameBadge gameId={gameId} size="sm" />
-        <span className="flex size-7 items-center justify-center rounded-lg border border-amber-500/30 bg-amber-500/15 text-amber-400 shadow-[0_0_8px_rgba(245,158,11,0.3)]">
-          <Trophy className="size-3.5" />
-        </span>
       </div>
 
       {/* Record Value */}
@@ -78,9 +74,6 @@ export function HallOfFameCard({
             {record.unit}
           </span>
         </div>
-        <span className="text-[11px] font-medium text-muted-foreground">
-          Miglior prestazione di sempre
-        </span>
       </div>
 
       {/* Detentore del Record */}
