@@ -49,5 +49,6 @@ export { NeonCard } from './NeonCard';
 export { NeonButton } from './NeonButton';
 export { StatCard } from './StatCard';
 export { CommunityStatCard } from './CommunityStatCard';
+export { SectionHeading } from './SectionHeading';
 export { ThemeProvider } from './ThemeProvider';
 export { Providers } from './Providers';

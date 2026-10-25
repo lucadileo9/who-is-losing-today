@@ -3,7 +3,13 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, MessageSquare, PlusCircle, User } from 'lucide-react';
+import {
+  LayoutDashboard,
+  MessageSquare,
+  PlusCircle,
+  User,
+  Users,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function MobileBottomNav() {
@@ -13,6 +19,7 @@ export function MobileBottomNav() {
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/submit', label: 'Gioca', icon: PlusCircle },
     { href: '/bacheca', label: 'Bacheca', icon: MessageSquare },
+    { href: '/players', label: 'Giocatori', icon: Users },
     { href: '/profile', label: 'Profilo', icon: User },
   ];
 

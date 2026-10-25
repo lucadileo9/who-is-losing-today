@@ -14,6 +14,8 @@ import {
   ShieldAlert,
   User,
   Users,
+  Menu,
+  X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PlayerAvatar } from '@/components/atoms/PlayerAvatar';
@@ -31,10 +33,16 @@ export function Header() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const [mounted, setMounted] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Chiudi il menu mobile al cambio di rotta
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
 
   const navLinks = [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -190,8 +198,85 @@ export function Header() {
               <span>Accedi</span>
             </button>
           )}
+
+          {/* Hamburger Menu Toggle (visibile solo su mobile) */}
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? 'Chiudi menu' : 'Apri menu'}
+            className="flex size-9 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-white transition-colors hover:bg-white/10 active:scale-95 md:hidden"
+          >
+            {mobileMenuOpen ? (
+              <X className="size-5 text-cyan-400" />
+            ) : (
+              <Menu className="size-5" />
+            )}
+          </button>
         </div>
       </div>
+
+      {/* Menu a tendina per Mobile (apribile dall'header) */}
+      {mobileMenuOpen && (
+        <div className="border-t border-white/10 bg-[#0a0b14]/95 px-4 py-3 backdrop-blur-2xl duration-200 animate-in slide-in-from-top-2 md:hidden">
+          <nav className="flex flex-col gap-1">
+            {navLinks.map(({ href, label, icon: Icon }) => {
+              const isActive = pathname === href;
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={cn(
+                    'flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition-all',
+                    isActive
+                      ? 'border border-cyan-500/30 bg-cyan-500/10 font-bold text-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.2)]'
+                      : 'text-muted-foreground hover:bg-white/5 hover:text-white'
+                  )}
+                >
+                  <Icon className="size-4" />
+                  <span>{label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+
+          {user && (
+            <div className="mt-3 flex flex-col gap-1 border-t border-white/10 pt-3">
+              <Link
+                href="/profile"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 rounded-xl px-3.5 py-2 text-sm font-semibold text-muted-foreground hover:bg-white/5 hover:text-white"
+              >
+                <User className="size-4 text-cyan-400" />
+                <span>Il mio Profilo</span>
+              </Link>
+
+              {isAdmin && (
+                <Link
+                  href="/admin/bugs"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 rounded-xl px-3.5 py-2 text-sm font-semibold text-amber-400 hover:bg-amber-500/10"
+                >
+                  <ShieldAlert className="size-4" />
+                  <span>Pannello Admin</span>
+                </Link>
+              )}
+
+              <button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  signOut({ callbackUrl: '/dashboard' });
+                }}
+                className="flex items-center gap-3 rounded-xl px-3.5 py-2 text-left text-sm font-semibold text-red-400 hover:bg-red-500/10"
+              >
+                <LogOut className="size-4" />
+                <span>Disconnetti</span>
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </header>
   );
 }
