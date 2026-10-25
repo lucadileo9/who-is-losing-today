@@ -1,4 +1,4 @@
-# 03. DevOps — Script e Tooling di Sviluppo
+# DevOps — Script e Tooling di Sviluppo
 
 Questo documento illustra tutti gli script npm configurati in
 [package.json](file:///c:/Users/lucad/my-projects/who-is-losing-today/package.json),
@@ -6,7 +6,7 @@ i tool di qualità del codice e le convenzioni per i commit e il branching Git.
 
 ---
 
-## 1. Mappa Completa degli Script npm
+## Mappa Completa degli Script npm
 
 ```json
 "scripts": {
@@ -27,9 +27,9 @@ i tool di qualità del codice e le convenzioni per i commit e il branching Git.
 
 ---
 
-## 2. Dettaglio dei Comandi
+## Dettaglio dei Comandi
 
-### A. Esecuzione e Compilazione
+### Esecuzione e Compilazione
 
 - **`npm run dev`**: Avvia l'ambiente di sviluppo locale su
   `http://localhost:3000` con Hot Module Reloading (HMR).
@@ -40,7 +40,7 @@ i tool di qualità del codice e le convenzioni per i commit e il branching Git.
 
 ---
 
-### B. Controllo Qualità e Formattazione
+### Controllo Qualità e Formattazione
 
 - **`npm run format`**: Riformatta l'intero codebase (TypeScript, CSS, JSON,
   Markdown) secondo le regole definite nel file
@@ -55,7 +55,7 @@ i tool di qualità del codice e le convenzioni per i commit e il branching Git.
 
 ---
 
-### C. Workflow di Controllo Rapido
+### Workflow di Controllo Rapido
 
 | Comando                | Quando usarlo                   | Cosa fa                                                                                                                                                                    |
 | :--------------------- | :------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -64,7 +64,7 @@ i tool di qualità del codice e le convenzioni per i commit e il branching Git.
 
 ---
 
-### D. Gestione Database
+### Gestione Database
 
 - **`npm run db:reset`**: Esegue il reset distruttivo del database locale
   (`prisma db push --force-reset`), ricrea le tabelle secondo `schema.prisma` e
@@ -74,7 +74,7 @@ i tool di qualità del codice e le convenzioni per i commit e il branching Git.
 
 ---
 
-### E. Scaffolding Automatico (Plop.js)
+### Scaffolding Automatico (Plop.js)
 
 - **`npm run new-component`**: Generatore interattivo da terminale per creare un
   nuovo componente React rispettando la gerarchia Atomic Design (`atoms`,
@@ -84,7 +84,7 @@ i tool di qualità del codice e le convenzioni per i commit e il branching Git.
 
 ---
 
-## 3. Convenzioni Git del Progetto
+## Convenzioni Git del Progetto
 
 1. **Strategia dei Branch**:
    - `master`: Ramo protetto e sempre stabile. I merge avvengono solo tramite

@@ -1,4 +1,4 @@
-# 04. Teoria — Build-time vs Runtime e Gestione dei Segreti
+# Teoria — Build-time vs Runtime e Gestione dei Segreti
 
 Questo documento analizza una delle distinzioni più critiche dello sviluppo
 moderno con Next.js e Docker: la differenza tra **fase di compilazione
@@ -7,7 +7,7 @@ causa e la risoluzione dell'errore di build legato a `NEXTAUTH_SECRET`.
 
 ---
 
-## 1. La Distinzione Fondamentale
+## La Distinzione Fondamentale
 
 Nei framework tradizionali Node.js/Express, il codice viene eseguito solo quando
 il server si avvia. In Next.js (App Router), il ciclo di vita è suddiviso in due
@@ -41,7 +41,7 @@ mondi distinti:
 
 ---
 
-## 2. Perché i Segreti Non Devono Essere Presenti a Build-Time
+## Perché i Segreti Non Devono Essere Presenti a Build-Time
 
 Una regola cardinale di sicurezza nei container Docker è:
 
@@ -61,7 +61,7 @@ d'ambiente (`environment` in `docker-compose.yml`).
 
 ---
 
-## 3. Anatomia del Bug Risolto in `lib/auth.ts`
+## Anatomia del Bug Risolto in `lib/auth.ts`
 
 ### Il Codice Problematico Precedente:
 
@@ -98,7 +98,7 @@ secret: (() => {
 
 ---
 
-## 4. Il Pattern di Risoluzione Corretto
+## Il Pattern di Risoluzione Corretto
 
 La soluzione adottata in
 [lib/auth.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/auth.ts):
@@ -127,7 +127,7 @@ secret:
 
 ---
 
-## 5. Variabili Server-Side vs Client-Side (`NEXT_PUBLIC_*`)
+## Variabili Server-Side vs Client-Side (`NEXT_PUBLIC_*`)
 
 In Next.js la visibilità delle variabili d'ambiente è regolata dal prefisso:
 

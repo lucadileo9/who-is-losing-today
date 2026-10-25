@@ -1,11 +1,11 @@
-# 01. Architettura — Panoramica del Sistema
+# Architettura — Panoramica del Sistema
 
 Questo documento descrive la visione d'insieme, lo stack tecnologico e i pattern
 architetturali di **Who Is Losing Today?**.
 
 ---
 
-## 1. Visione del Progetto
+## Visione del Progetto
 
 **Who Is Losing Today?** è una web application pensata per tracciare e
 confrontare quotidianamente i punteggi di una serie di giochi online
@@ -27,7 +27,7 @@ L'applicazione si occupa di:
 
 ---
 
-## 2. Stack Tecnologico
+## Stack Tecnologico
 
 Il progetto è costruito su tecnologie moderne, stabili e orientate alla
 manutenibilità a lungo termine:
@@ -48,12 +48,12 @@ manutenibilità a lungo termine:
 
 ---
 
-## 3. Pattern Architetturali di Next.js App Router
+## Pattern Architetturali di Next.js App Router
 
 L'architettura dell'applicazione sfrutta appieno i concetti avanzati del Next.js
 App Router:
 
-### A. Server Components vs Client Components
+### Server Components vs Client Components
 
 - **Server Components (RSC) by default**: La maggior parte dell'applicazione
   (es. pagine radice, fetch dei dati, layout strutturali) viene renderizzata sul
@@ -64,7 +64,7 @@ App Router:
   inserimento punteggi `GameScoreInput`, modale segnalazione bug
   `BugReportModal`, grafici animati `TrendChart`).
 
-### B. Mutazioni con Server Actions
+### Mutazioni con Server Actions
 
 Invece di richiedere tradizionali endpoint REST `fetch()` per ogni operazione di
 scrittura, l'applicazione usa **Next.js Server Actions** (collocate in
@@ -80,7 +80,7 @@ scrittura, l'applicazione usa **Next.js Server Actions** (collocate in
 Ogni Server Action valida i dati in ingresso tramite uno schema **Zod** ed
 esegue l'autenticazione tramite la funzione di guardia `getAuthenticatedUser()`.
 
-### C. Route Handlers (`app/api/`)
+### Route Handlers (`app/api/`)
 
 Mantenuti per:
 
@@ -88,7 +88,7 @@ Mantenuti per:
 - API programmatiche o export di dati: `/api/dashboard`, `/api/scores`,
   `/api/notes`, `/api/bugs`.
 
-### D. Middleware di Protezione (`middleware.ts`)
+### Middleware di Protezione (`middleware.ts`)
 
 Un middleware Edge intercetta tutte le rotte applicative protette (es.
 `/dashboard`, `/profile`, `/admin/*`), verificando la presenza di un token di
@@ -96,7 +96,7 @@ sessione valido prima ancora che la richiesta raggiunga il server applicativo.
 
 ---
 
-## 4. Struttura delle Directory
+## Struttura delle Directory
 
 L'albero del codice sorgente segue una rigida separazione delle responsabilità:
 

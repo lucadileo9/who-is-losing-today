@@ -1,4 +1,4 @@
-# 03. DevOps — Pipeline CI/CD (GitHub Actions)
+# DevOps — Pipeline CI/CD (GitHub Actions)
 
 Questo documento descrive il funzionamento della pipeline di **Continuous
 Integration (CI)** configurata con GitHub Actions per garantire la stabilità del
@@ -6,7 +6,7 @@ codice ed evitare fallimenti di build in produzione.
 
 ---
 
-## 1. Obiettivi della Pipeline
+## Obiettivi della Pipeline
 
 La pipeline
 ([.github/workflows/ci.yml](file:///c:/Users/lucad/my-projects/who-is-losing-today/.github/workflows/ci.yml))
@@ -27,7 +27,7 @@ un ambiente vergine Ubuntu:
 
 ---
 
-## 2. Trigger e Concurrency Control
+## Trigger e Concurrency Control
 
 ```yaml
 on:
@@ -54,11 +54,11 @@ concurrency:
 
 ---
 
-## 3. Anatomia degli Step del Workflow
+## Anatomia degli Step del Workflow
 
 Il workflow esegue un singolo job snello (`validate`) su `ubuntu-latest`:
 
-### A. Setup e Caching
+### Setup e Caching
 
 ```yaml
 - name: Setup Node.js 22 LTS
@@ -72,7 +72,7 @@ Configura il runtime Node.js 22 e sfrutta il meccanismo di cache nativo di
 GitHub Actions sulla cartella `~/.npm`. Questo riduce il tempo di download dei
 pacchetti da minuti a pochi secondi.
 
-### B. `npm ci` (Clean Install)
+### `npm ci` (Clean Install)
 
 ```yaml
 - name: Install Dependencies
@@ -85,7 +85,7 @@ pacchetti da minuti a pochi secondi.
 > registrate nel lockfile senza mai alterarlo. In questo modo è impossibile che
 > un aggiornamento imprevisto di una sotto-dipendenza rompa la build sul server.
 
-### C. Generazione Tipi Prisma
+### Generazione Tipi Prisma
 
 ```yaml
 - name: Generate Prisma Client
@@ -96,7 +96,7 @@ Prima di procedere al controllo dei tipi TypeScript, è necessario che i tipi di
 Prisma Client (`@prisma/client`) vengano generati a partire dal file
 `prisma/schema.prisma`.
 
-### D. Controlli Separati di Qualità
+### Controlli Separati di Qualità
 
 Invece di un comando cumulativo opaco, la CI mantiene gli step distinti:
 
@@ -111,7 +111,7 @@ chiaramente riga e file colpevole.
 
 ---
 
-## 4. Gestione delle Variabili d'Ambiente in CI
+## Gestione delle Variabili d'Ambiente in CI
 
 In un ambiente di CI puro non è presente un database PostgreSQL attivo.
 Tuttavia, Next.js a build-time richiede le variabili di ambiente per validare i
@@ -129,7 +129,7 @@ senza esporre credenziali reali.
 
 ---
 
-## 5. Replica del Controllo CI in Locale
+## Replica del Controllo CI in Locale
 
 Prima di effettuare un commit o un push, lo sviluppatore può replicare
 esattamente l'intera pipeline sul proprio computer con il comando:

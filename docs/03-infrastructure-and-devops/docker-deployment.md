@@ -1,4 +1,4 @@
-# 03. DevOps — Deploy con Docker e Cloudflare
+# DevOps — Deploy con Docker e Cloudflare
 
 Questo documento descrive l'architettura di produzione containerizzata, la build
 multi-stage del `Dockerfile`, la modalità standalone di Next.js e l'esposizione
@@ -6,7 +6,7 @@ sicura tramite Cloudflare Tunnel.
 
 ---
 
-## 1. Architettura di Produzione
+## Architettura di Produzione
 
 In ambiente di produzione (su server Linux/Debian), l'infrastruttura è
 orchestrata tramite Docker Compose su una rete interna isolata
@@ -43,7 +43,7 @@ orchestrata tramite Docker Compose su una rete interna isolata
 
 ---
 
-## 2. Il Dockerfile Multi-Stage ([Dockerfile](file:///c:/Users/lucad/my-projects/who-is-losing-today/Dockerfile))
+## Il Dockerfile Multi-Stage ([Dockerfile](file:///c:/Users/lucad/my-projects/who-is-losing-today/Dockerfile))
 
 La compilazione dell'immagine usa la tecnica **Multi-Stage Build** per ridurre
 le dimensioni finali dell'immagine da oltre 1.2 GB a circa 150 MB:
@@ -118,7 +118,7 @@ All'avvio del container:
 
 ---
 
-## 3. Configurazione Docker Compose di Produzione ([docker-compose.yml](file:///c:/Users/lucad/my-projects/who-is-losing-today/docker-compose.yml))
+## Configurazione Docker Compose di Produzione ([docker-compose.yml](file:///c:/Users/lucad/my-projects/who-is-losing-today/docker-compose.yml))
 
 ### Servizio Database (`who-is-losing-today-db`)
 
@@ -145,18 +145,18 @@ All'avvio del container:
 
 ---
 
-## 4. Guida al Deploy e Aggiornamento sul Server
+## Guida al Deploy e Aggiornamento sul Server
 
 Per rilasciare una nuova versione sul server:
 
 ```bash
-# 1. Scaricare il codice aggiornato
+# Scaricare il codice aggiornato
 git pull origin master
 
-# 2. Ricostruire l'immagine ed eseguire il restart dei container con zero downtime prolungato
+# Ricostruire l'immagine ed eseguire il restart dei container con zero downtime prolungato
 docker compose up -d --build
 
-# 3. Verificare i log di avvio
+# Verificare i log di avvio
 docker compose logs -f who-is-losing-today-web
 ```
 

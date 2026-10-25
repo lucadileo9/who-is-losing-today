@@ -1,4 +1,4 @@
-# 04. Teoria — SSO, Protocolli OAuth 2.0 e Gestione Sessioni
+# Teoria — SSO, Protocolli OAuth 2.0 e Gestione Sessioni
 
 Questo documento illustra i fondamenti teorici dell'autenticazione federata
 (SSO), il funzionamento dello standard **OAuth 2.0 / OpenID Connect (OIDC)** e
@@ -7,7 +7,7 @@ stateless basate su **JWT**.
 
 ---
 
-## 1. Cos'è il Single Sign-On (SSO)?
+## Cos'è il Single Sign-On (SSO)?
 
 Il **Single Sign-On (SSO)** è un meccanismo di controllo accessi che consente a
 un utente di autenticarsi una sola volta presso un fornitore di identità
@@ -31,7 +31,7 @@ accedere in modo trasparente a molteplici applicazioni web indipendenti
 
 ---
 
-## 2. Autenticazione (OIDC) vs Autorizzazione (OAuth 2.0)
+## Autenticazione (OIDC) vs Autorizzazione (OAuth 2.0)
 
 Spesso confusi, rappresentano due concetti distinti:
 
@@ -47,7 +47,7 @@ Spesso confusi, rappresentano due concetti distinti:
 
 ---
 
-## 3. Il Flusso "Authorization Code Grant with PKCE"
+## Il Flusso "Authorization Code Grant with PKCE"
 
 È lo standard di sicurezza industriale per applicazioni web per scambiare
 credenziali senza esporre token nel browser:
@@ -92,7 +92,7 @@ credenziali senza esporre token nel browser:
 
 ---
 
-## 4. Strategie di Sessione: Stateful vs Stateless (JWT)
+## Strategie di Sessione: Stateful vs Stateless (JWT)
 
 Dopo che l'utente è stato autenticato da Google, l'applicazione deve ricordare
 che la richiesta successiva proviene da lui. Esistono due approcci:

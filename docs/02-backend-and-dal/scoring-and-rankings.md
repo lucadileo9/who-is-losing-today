@@ -1,4 +1,4 @@
-# 02. Backend e DAL — Algoritmi di Punteggio e Classifiche
+# Backend e DAL — Algoritmi di Punteggio e Classifiche
 
 Questo documento descrive formalmente le formule matematiche di normalizzazione,
 il calcolo della classifica del giorno, le condizioni di assegnazione del
@@ -6,7 +6,7 @@ perdente e le aggregazioni storiche.
 
 ---
 
-## 1. Il Problema della Normalizzazione
+## Il Problema della Normalizzazione
 
 L'applicazione confronta giochi con unità di misura e metriche profondamente
 disomogenee:
@@ -23,12 +23,12 @@ aggregazione.
 
 ---
 
-## 2. Formule di Normalizzazione per Singolo Gioco
+## Formule di Normalizzazione per Singolo Gioco
 
 Le funzioni risiedono in
 [lib/game-data.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/game-data.ts):
 
-### A. Chronophoto (Punti: Higher is Better)
+### Chronophoto (Punti: Higher is Better)
 
 Il punteggio massimo teorico è 5.000:
 $$\text{NormScore}_{\text{Chronophoto}} = \min\left(1000, \max\left(0, \text{round}\left(\frac{\text{rawScore}}{5000} \times 1000\right)\right)\right)$$
@@ -41,7 +41,7 @@ _Esempi:_
 
 ---
 
-### B. Krilion (Punti: Higher is Better)
+### Krilion (Punti: Higher is Better)
 
 Il punteggio di riferimento massimo è 700:
 $$\text{NormScore}_{\text{Krilion}} = \min\left(1000, \max\left(0, \text{round}\left(\frac{\text{rawScore}}{700} \times 1000\right)\right)\right)$$
@@ -54,7 +54,7 @@ _Esempi:_
 
 ---
 
-### C. Metazooa (Tentativi: Lower is Better)
+### Metazooa (Tentativi: Lower is Better)
 
 Si basa su un massimo di 20 tentativi. Indovinare in 1 tentativo rappresenta la
 perfezione (1000 pt), 20 tentativi rappresenta il minimo (0 pt):
@@ -72,7 +72,7 @@ $$ \text{NormScore}_{\text{Metazooa}} = \begin{cases}
 
 ---
 
-## 3. Punteggio Complessivo Giornaliero ("Totale")
+## Punteggio Complessivo Giornaliero ("Totale")
 
 Il punteggio del Totale giornaliero per ciascun giocatore è la media aritmetica dei punteggi normalizzati di tutti i giochi attivi configurati nel sistema:
 
@@ -84,7 +84,7 @@ dove $N$ è il numero totale di giochi attivi nella giornata.
 
 ---
 
-## 4. Assegnazione di Vincitore e Perdente del Giorno
+## Assegnazione di Vincitore e Perdente del Giorno
 
 In [lib/data/daily.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/data/daily.ts):
 
@@ -100,7 +100,7 @@ In [lib/data/daily.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/li
 
 ---
 
-## 5. Algoritmo di Spareggio (Tie-Breaking)
+## Algoritmo di Spareggio (Tie-Breaking)
 
 Quando due o più giocatori ottengono lo stesso punteggio normalizzato:
 - **Nei singoli giochi**: Viene confrontato il punteggio grezzo (`rawScore`):
@@ -110,7 +110,7 @@ Quando due o più giocatori ottengono lo stesso punteggio normalizzato:
 
 ---
 
-## 6. Statistiche di Periodo e Hall of Fame
+## Statistiche di Periodo e Hall of Fame
 
 ### Classifiche di Periodo ([lib/data/period.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/data/period.ts))
 Nei filtri per periodo (`week`, `month`, `last_month`, `all`), l'ordinamento primario è determinato da:

@@ -1,4 +1,4 @@
-# 02. Backend e DAL — Motore Multi-Gioco Dinamico
+# Backend e DAL — Motore Multi-Gioco Dinamico
 
 Questo documento descrive il funzionamento del motore multi-gioco dinamico
 introdotto con il refactoring del Data Access Layer e fornisce la guida
@@ -6,7 +6,7 @@ passo-passo per aggiungere un nuovo gioco alla piattaforma.
 
 ---
 
-## 1. Dall'Hardcoding all'Estensibilità Dinamica
+## Dall'Hardcoding all'Estensibilità Dinamica
 
 Nel design iniziale dell'applicazione, i giochi (_Krilion_, _Metazooa_,
 _Chronophoto_) erano cablati rigidamente:
@@ -33,7 +33,7 @@ Con il refactoring del DAL:
 
 ---
 
-## 2. Configurazione e Fallback Centralizzati
+## Configurazione e Fallback Centralizzati
 
 Nel caso in cui il database sia vuoto o in fase di prima inizializzazione, il
 DAL utilizza la configurazione centralizzata definita in
@@ -54,7 +54,7 @@ export const DEFAULT_GAME_FALLBACKS = [
 
 ---
 
-## 3. Guida Passo-Passo: Come Aggiungere un Nuovo Gioco
+## Guida Passo-Passo: Come Aggiungere un Nuovo Gioco
 
 Supponiamo di voler aggiungere un quarto gioco: **Wordle** (gioco a tentativi da
 1 a 6, dove meno tentativi è meglio).
@@ -157,7 +157,7 @@ Wordle: {
 
 ---
 
-## 4. Perché il DAL non richiede modifiche
+## Perché il DAL non richiede modifiche
 
 Grazie all'architettura a dizionario `byGame`:
 

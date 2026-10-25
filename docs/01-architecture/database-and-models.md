@@ -1,4 +1,4 @@
-# 01. Architettura — Database e Modelli
+# Architettura — Database e Modelli
 
 Questo documento descrive la struttura del database relazionale, le scelte di
 modellazione con **Prisma ORM v6**, le enumerazioni, i vincoli di unicità e la
@@ -6,7 +6,7 @@ gestione dell'integrità referenziale.
 
 ---
 
-## 1. Architettura del Database
+## Architettura del Database
 
 Il database dell'applicazione è **PostgreSQL 16**. La configurazione Prisma
 ([prisma/schema.prisma](file:///c:/Users/lucad/my-projects/who-is-losing-today/prisma/schema.prisma))
@@ -27,7 +27,7 @@ datasource db {
 
 ---
 
-## 2. Diagramma Entità-Relazione (ER)
+## Diagramma Entità-Relazione (ER)
 
 ```mermaid
 erDiagram
@@ -104,7 +104,7 @@ erDiagram
 
 ---
 
-## 3. Enumerazioni (Enums)
+## Enumerazioni (Enums)
 
 Per evitare stringhe arbitrarie ("magic strings") e garantire type-safety sia
 nel DB che in TypeScript:
@@ -119,11 +119,11 @@ nel DB che in TypeScript:
 
 ---
 
-## 4. Modelli di Dettaglio
+## Modelli di Dettaglio
 
-### A. Accesso e Autenticazione: `Whitelist`, `User`, `Account`, `Session`
+### Accesso e Autenticazione: `Whitelist`, `User`, `Account`, `Session`
 
-#### 1. `Whitelist` (`@@map("whitelist")`)
+#### `Whitelist` (`@@map("whitelist")`)
 
 Implementa il modello ad **inviti ristretti**: nessun account può registrarsi o
 accedere se la sua email non è pre-autorizzata in questa tabella.
@@ -132,7 +132,7 @@ accedere se la sua email non è pre-autorizzata in questa tabella.
 - `role`: `Role @default(PLAYER)` — Ruolo che verrà ereditato dall'utente al
   momento del primo accesso.
 
-#### 2. `User` (`@@map("users")`)
+#### `User` (`@@map("users")`)
 
 Rappresenta il profilo del giocatore nell'applicazione.
 
@@ -143,7 +143,7 @@ Rappresenta il profilo del giocatore nell'applicazione.
   profilo Google non è disponibile.
 - `role`: `Role @default(PLAYER)` — Ruolo effettivo nel sistema.
 
-#### 3. Modelli NextAuth Adapter (`Account`, `Session`, `VerificationToken`)
+#### Modelli NextAuth Adapter (`Account`, `Session`, `VerificationToken`)
 
 Rispettano fedelmente la specifica ufficiale di `@auth/prisma-adapter`.
 
@@ -154,9 +154,9 @@ Rispettano fedelmente la specifica ufficiale di `@auth/prisma-adapter`.
 
 ---
 
-### B. Motore di Gioco: `Game` e `DailyScore`
+### Motore di Gioco: `Game` e `DailyScore`
 
-#### 1. `Game` (`@@map("games")`)
+#### `Game` (`@@map("games")`)
 
 Configurazione del catalogo dei giochi supportati.
 
@@ -170,7 +170,7 @@ Configurazione del catalogo dei giochi supportati.
     1.200).
 - `color`: Colore iconico del gioco per badge e tab.
 
-#### 2. `DailyScore` (`@@map("daily_scores")`)
+#### `DailyScore` (`@@map("daily_scores")`)
 
 La tabella con il volume di dati più consistente dell'applicazione.
 
@@ -204,9 +204,9 @@ La tabella con il volume di dati più consistente dell'applicazione.
 
 ---
 
-### C. Collaborazione e Manutenzione: `DailyNote` e `BugReport`
+### Collaborazione e Manutenzione: `DailyNote` e `BugReport`
 
-#### 1. `DailyNote` (`@@map("daily_notes")`)
+#### `DailyNote` (`@@map("daily_notes")`)
 
 Bacheca temporanea (chalkboard) per sfottò e commenti della community.
 
@@ -216,7 +216,7 @@ Bacheca temporanea (chalkboard) per sfottò e commenti della community.
 - `createdAt`: `DateTime @default(now())` con indice `@@index([createdAt])` per
   estrarre rapidamente solo i messaggi degli ultimi 7 giorni.
 
-#### 2. `BugReport` (`@@map("bug_reports")`)
+#### `BugReport` (`@@map("bug_reports")`)
 
 Piattaforma di issue tracking integrata nell'applicazione.
 
@@ -228,7 +228,7 @@ Piattaforma di issue tracking integrata nell'applicazione.
 
 ---
 
-## 5. Regole di Integrità Referenziale
+## Regole di Integrità Referenziale
 
 Tutte le relazioni tra modelli figli (`DailyScore`, `DailyNote`, `BugReport`,
 `Account`, `Session`) e il modello padre `User` definiscono:

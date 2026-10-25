@@ -1,11 +1,11 @@
-# 03. DevOps — Ambiente di Sviluppo Locale
+# DevOps — Ambiente di Sviluppo Locale
 
 Questo documento è la guida operativa per configurare, avviare e manutenere
 l'ambiente di sviluppo locale di **Who Is Losing Today?**.
 
 ---
 
-## 1. Prerequisiti di Sistema
+## Prerequisiti di Sistema
 
 Prima di iniziare, verificare che siano installati sul proprio computer:
 
@@ -17,7 +17,7 @@ Prima di iniziare, verificare che siano installati sul proprio computer:
 
 ---
 
-## 2. Configurazione delle Variabili d'Ambiente
+## Configurazione delle Variabili d'Ambiente
 
 Creare o modificare i file
 [.env](file:///c:/Users/lucad/my-projects/who-is-losing-today/.env) e
@@ -54,7 +54,7 @@ GOOGLE_CLIENT_SECRET="il-tuo-client-secret"
 
 ---
 
-## 3. Modalità di Avvio
+## Modalità di Avvio
 
 ### Modalità A: Hybrid (Consigliata)
 
@@ -119,7 +119,7 @@ docker compose -f docker-compose.local.yml up --build
 
 ---
 
-## 4. Reset Rapido del Database Locale
+## Reset Rapido del Database Locale
 
 Se si desidera cancellare tutti i dati e ricreare il database da zero con i seed
 iniziali:
@@ -133,7 +133,7 @@ Questo comando esegue internamente:
 
 ---
 
-## 5. Risoluzione Problemi Comuni (Troubleshooting)
+## Risoluzione Problemi Comuni (Troubleshooting)
 
 ### Errore: `Port 5432 is already allocated`
 

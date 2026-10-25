@@ -1,4 +1,4 @@
-# 02. Backend e DAL — Design del Data Access Layer
+# Backend e DAL — Design del Data Access Layer
 
 Questo documento descrive il pattern architetturale del **Data Access Layer
 (DAL)** adottato in **Who Is Losing Today?**, la separazione dei domini
@@ -7,7 +7,7 @@ ottimizzazione delle query.
 
 ---
 
-## 1. Perché un Data Access Layer (DAL)?
+## Perché un Data Access Layer (DAL)?
 
 Nel Next.js App Router, i Server Components e le Server Actions hanno accesso
 diretto al database. Tuttavia, scrivere query Prisma direttamente all'interno
@@ -41,7 +41,7 @@ Il **DAL** risiede interamente in
 
 ---
 
-## 2. Suddivisione dei Moduli del DAL
+## Suddivisione dei Moduli del DAL
 
 Il DAL è strutturato per domini di responsabilità indipendenti:
 
@@ -56,7 +56,7 @@ Il DAL è strutturato per domini di responsabilità indipendenti:
 
 ---
 
-## 3. Disaccoppiamento tramite DTO (Data Transfer Objects)
+## Disaccoppiamento tramite DTO (Data Transfer Objects)
 
 I modelli Prisma non vengono mai restituiti "puri" al frontend. Il DAL trasforma
 i risultati in **DTO tipizzati** definiti in
@@ -94,7 +94,7 @@ export interface DailyResultsDTO {
 
 ---
 
-## 4. Ottimizzazione delle Query ed Eliminazione di N+1
+## Ottimizzazione delle Query ed Eliminazione di N+1
 
 Nel DAL ogni funzione è progettata per eseguire il numero minimo di query
 PostgreSQL:
@@ -127,7 +127,7 @@ registrati.
 
 ---
 
-## 5. Gestione del Connection Pooling
+## Gestione del Connection Pooling
 
 Le query passano attraverso il client Prisma configurato come singleton in
 [lib/prisma.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/prisma.ts):

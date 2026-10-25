@@ -1,4 +1,4 @@
-# 04. Teoria — Gestione Pacchetti, SemVer e Sicurezza
+# Teoria — Gestione Pacchetti, SemVer e Sicurezza
 
 Questo documento spiega le regole del **Semantic Versioning**, il ruolo
 fondamentale del lockfile, la differenza tra i comandi di installazione e la
@@ -6,7 +6,7 @@ guida pratica per interpretare i report di `npm outdated` e `npm audit`.
 
 ---
 
-## 1. Semantic Versioning (SemVer: `MAJOR.MINOR.PATCH`)
+## Semantic Versioning (SemVer: `MAJOR.MINOR.PATCH`)
 
 Tutte le librerie moderne JavaScript/TypeScript adottano lo standard SemVer:
 
@@ -23,7 +23,7 @@ $$\text{versione} = \text{MAJOR}.\text{MINOR}.\text{PATCH}$$ _(Esempio:
 
 ---
 
-## 2. I Simboli di Vincolo in `package.json`
+## I Simboli di Vincolo in `package.json`
 
 Quando una dipendenza è dichiarata in `package.json`:
 
@@ -35,7 +35,7 @@ Quando una dipendenza è dichiarata in `package.json`:
 
 ---
 
-## 3. Il Ruolo Vitale di `package-lock.json`
+## Il Ruolo Vitale di `package-lock.json`
 
 Mentre `package.json` definisce solo i vincoli ammissibili delle tue librerie
 dirette, **`package-lock.json` memorizza l'albero esatto al bit di tutte le
@@ -51,7 +51,7 @@ hash crittografici (`integrity: sha512-...`).
 
 ---
 
-## 4. `npm install` vs `npm ci`
+## `npm install` vs `npm ci`
 
 | Proprietà                   | `npm install`                                                          | `npm ci` (Clean Install)                                                                                                         |
 | :-------------------------- | :--------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------- |
@@ -63,7 +63,7 @@ hash crittografici (`integrity: sha512-...`).
 
 ---
 
-## 5. Come Leggere la Tabella di `npm outdated`
+## Come Leggere la Tabella di `npm outdated`
 
 Eseguendo `npm outdated` nel terminale si ottiene:
 
@@ -92,7 +92,7 @@ tailwindcss                3.4.19    3.4.19   4.3.3
 
 ---
 
-## 6. Sicurezza e Vulnerabilità con `npm audit`
+## Sicurezza e Vulnerabilità con `npm audit`
 
 `npm audit` scansiona l'albero delle dipendenze alla ricerca di vulnerabilità
 note (CVE).

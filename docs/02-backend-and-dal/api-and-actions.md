@@ -1,4 +1,4 @@
-# 02. Backend e DAL — Server Actions e API Reference
+# Backend e DAL — Server Actions e API Reference
 
 Questo documento descrive le **Server Actions** e i **Route Handlers** REST
 disponibili nell'applicazione, con i rispettivi payload Zod, controlli di
@@ -6,7 +6,7 @@ autorizzazione e codici di ritorno.
 
 ---
 
-## 1. Server Actions (`app/actions/`)
+## Server Actions (`app/actions/`)
 
 Le Server Actions costituiscono il canale primario di mutazione dati nel Next.js
 App Router. Ogni action esegue la guardia di autorizzazione
@@ -15,7 +15,7 @@ tramite `revalidatePath()`.
 
 ---
 
-### A. Dominio Punteggi ([app/actions/scores.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/app/actions/scores.ts))
+### Dominio Punteggi ([app/actions/scores.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/app/actions/scores.ts))
 
 #### `submitScoreAction(formData: unknown)`
 
@@ -43,7 +43,7 @@ data solare.
 
 ---
 
-### B. Dominio Bacheca ([app/actions/notes.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/app/actions/notes.ts))
+### Dominio Bacheca ([app/actions/notes.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/app/actions/notes.ts))
 
 #### `createNoteAction(content: string)`
 
@@ -64,7 +64,7 @@ Elimina un messaggio dalla bacheca.
 
 ---
 
-### C. Dominio Profilo Utente ([app/actions/user.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/app/actions/user.ts))
+### Dominio Profilo Utente ([app/actions/user.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/app/actions/user.ts))
 
 #### `updateUserPreferencesAction(data: unknown)`
 
@@ -84,7 +84,7 @@ avatar) e le iniziali.
 
 ---
 
-### D. Dominio Amministrazione ([app/actions/admin.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/app/actions/admin.ts))
+### Dominio Amministrazione ([app/actions/admin.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/app/actions/admin.ts))
 
 > [!CAUTION] Tutte le action di questo dominio richiedono la guardia
 > `getAuthenticatedAdmin()`. Se l'utente non ha ruolo `ADMIN`, l'operazione
@@ -99,7 +99,7 @@ avatar) e le iniziali.
 
 ---
 
-## 2. Route Handlers REST (`app/api/`)
+## Route Handlers REST (`app/api/`)
 
 Utilizzati per interrogazioni programmatiche, esportazioni o chiamate da
 componenti client.

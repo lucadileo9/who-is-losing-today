@@ -1,4 +1,4 @@
-# 04. Teoria — ORM, Prisma Client e Gestione del Database
+# Teoria — ORM, Prisma Client e Gestione del Database
 
 Questo documento esplora i principi teorici dei sistemi **Object-Relational
 Mapping (ORM)**, il funzionamento del motore di **Prisma v6**, il confronto tra
@@ -7,7 +7,7 @@ architetture Next.js.
 
 ---
 
-## 1. Cos'è un ORM e il "Disallineamento di Impedenza"
+## Cos'è un ORM e il "Disallineamento di Impedenza"
 
 Nello sviluppo software esiste una fondamentale divergenza di paradigma nota
 come **Object-Relational Impedance Mismatch**:
@@ -33,7 +33,7 @@ questi due mondi:
 
 ---
 
-## 2. Come Funziona Prisma: Dal Modello al TypeScript
+## Come Funziona Prisma: Dal Modello al TypeScript
 
 L'architettura di Prisma si fonda su tre componenti:
 
@@ -65,7 +65,7 @@ Quando si esegue `npx prisma generate`:
 
 ---
 
-## 3. `prisma db push` vs `prisma migrate`: Quale Scegliere?
+## `prisma db push` vs `prisma migrate`: Quale Scegliere?
 
 Prisma offre due diverse strategie per aggiornare la struttura del database
 PostgreSQL:
@@ -80,7 +80,7 @@ PostgreSQL:
 
 ---
 
-## 4. Il Problema del Connection Pooling con Next.js (HMR)
+## Il Problema del Connection Pooling con Next.js (HMR)
 
 In ambiente di sviluppo locale, Next.js utilizza l'**Hot Module Replacement
 (HMR)** per aggiornare il codice nel browser senza riavviare il server.
@@ -124,7 +124,7 @@ istanza del client e lo stesso pool di connessioni.
 
 ---
 
-## 5. Seeding e Popolamento Dati
+## Seeding e Popolamento Dati
 
 Il file
 [prisma/seed.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/prisma/seed.ts)

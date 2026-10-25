@@ -1,4 +1,4 @@
-# 01. Architettura — Autenticazione e Sicurezza
+# Architettura — Autenticazione e Sicurezza
 
 Questo documento descrive il modello di sicurezza multilivello (_Defense in
 Depth_), il flusso di autenticazione con Google OAuth 2.0, il sistema di
@@ -7,7 +7,7 @@ autorizzazione basato su Whitelist e il controllo degli accessi basato sui ruoli
 
 ---
 
-## 1. Architettura di Sicurezza: Defense in Depth
+## Architettura di Sicurezza: Defense in Depth
 
 L'applicazione adotta un'architettura di sicurezza a quattro livelli concentrici
 per garantire che nessuna operazione non autorizzata possa raggiungere i dati:
@@ -42,7 +42,7 @@ per garantire che nessuna operazione non autorizzata possa raggiungere i dati:
 
 ---
 
-## 2. Flusso di Autenticazione Google OAuth & Whitelist
+## Flusso di Autenticazione Google OAuth & Whitelist
 
 L'applicazione è riservata a una cerchia ristretta di utenti. Nessun utente
 esterno può effettuare il login, anche se possiede un account Google valido.
@@ -86,7 +86,7 @@ sequenceDiagram
 
 ---
 
-## 3. Gestione di Ruoli e Permessi (RBAC)
+## Gestione di Ruoli e Permessi (RBAC)
 
 Il sistema prevede due ruoli definiti nell'enum `Role`:
 
@@ -118,7 +118,7 @@ senza interventi manuali.
 
 ---
 
-## 4. Guardie di Sicurezza Centralizzate (`lib/auth-guard.ts`)
+## Guardie di Sicurezza Centralizzate (`lib/auth-guard.ts`)
 
 Per evitare la duplicazione di chiamate `getServerSession` e controlli di ruolo
 sparsi in decine di Server Actions, tutte le operazioni di backend utilizzano le
@@ -151,7 +151,7 @@ if (!auth.success) {
 
 ---
 
-## 5. Validazione degli Input a Runtime con Zod
+## Validazione degli Input a Runtime con Zod
 
 Tutti i dati in ingresso da Server Actions o Route Handlers vengono validati
 prima di qualsiasi elaborazione o query al database. Gli schemi risiedono in
@@ -159,7 +159,7 @@ prima di qualsiasi elaborazione o query al database. Gli schemi risiedono in
 
 ### Esempi di Schemi Principali
 
-#### 1. Inserimento Punteggi ([lib/validations/scores.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/validations/scores.ts))
+#### Inserimento Punteggi ([lib/validations/scores.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/validations/scores.ts))
 
 ```typescript
 export const submitScoreSchema = z.object({
@@ -176,7 +176,7 @@ export const submitScoreSchema = z.object({
 });
 ```
 
-#### 2. Bacheca Note ([lib/validations/notes.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/validations/notes.ts))
+#### Bacheca Note ([lib/validations/notes.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/validations/notes.ts))
 
 ```typescript
 export const createNoteSchema = z.object({
@@ -188,7 +188,7 @@ export const createNoteSchema = z.object({
 });
 ```
 
-#### 3. Preferenze Utente ([lib/validations/user.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/validations/user.ts))
+#### Preferenze Utente ([lib/validations/user.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/validations/user.ts))
 
 ```typescript
 export const updateUserPreferencesSchema = z.object({
@@ -201,7 +201,7 @@ export const updateUserPreferencesSchema = z.object({
 
 ---
 
-## 6. Sicurezza del Secret in Fase di Build vs Runtime
+## Sicurezza del Secret in Fase di Build vs Runtime
 
 NextAuth richiede un segreto di cifratura (`NEXTAUTH_SECRET`) per firmare i
 token JWT.
