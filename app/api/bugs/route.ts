@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { BugCategory, BugPriority } from "@prisma/client"
 
 // GET /api/bugs - Recupera la lista dei bug segnalati
 export async function GET() {
@@ -47,8 +48,8 @@ export async function POST(request: Request) {
       data: {
         userId: dbUser.id,
         description: description.trim(),
-        category: safeCategory as any,
-        priority: safePriority as any,
+        category: safeCategory as BugCategory,
+        priority: safePriority as BugPriority,
         status: "OPEN",
       },
     })

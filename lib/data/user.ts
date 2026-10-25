@@ -98,7 +98,7 @@ export async function getUserProfile(userId: string): Promise<UserProfileDTO | n
     const mostRecentDate = uniqueDatesDesc[0]
     // La streak è attiva se l'utente ha giocato oggi o ieri
     if (mostRecentDate === todayStr || mostRecentDate === yesterdayStr) {
-      let checkDate = new Date(mostRecentDate)
+      const checkDate = new Date(mostRecentDate)
 
       for (const dStr of uniqueDatesDesc) {
         const expectedStr = checkDate.toISOString().split("T")[0]
