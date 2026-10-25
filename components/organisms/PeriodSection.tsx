@@ -63,7 +63,7 @@ export function PeriodSection({
     <div className={className}>
       {/* Header Sezione: Titolo + Filtri Periodo */}
       <SectionHeading
-        title="Andamento e Classifica di Periodo"
+        title="Andamento storico"
         icon={BarChart3}
         iconColor="text-cyan-400"
         action={
