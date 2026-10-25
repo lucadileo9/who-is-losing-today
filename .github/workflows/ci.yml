@@ -1,0 +1,50 @@
+name: CI / Build & Typecheck
+
+on:
+  push:
+    branches:
+      - master
+      - 'feat/**'
+      - 'fix/**'
+  pull_request:
+    branches:
+      - master
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Lint, Typecheck & Build
+    runs-on: ubuntu-latest
+
+    env:
+      DATABASE_URL: "postgresql://ci_dummy_user:ci_dummy_pass@localhost:5432/ci_db?schema=public"
+      NEXTAUTH_SECRET: "ci_secret_only_for_build_validation_purposes_32chars"
+      NEXTAUTH_URL: "http://localhost:3000"
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run TypeScript Strict Check
+        run: npx tsc --noEmit
+
+      - name: Build Next.js Production Bundle
+        run: npm run build
