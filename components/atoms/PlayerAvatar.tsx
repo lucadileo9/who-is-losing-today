@@ -77,24 +77,6 @@ export function PlayerAvatar({
           {initials}
         </span>
       )}
-
-      {/* Mini badge icon per status vincente o perdente */}
-      {isWinner && size !== 'xs' && (
-        <span
-          aria-label="Vincitore"
-          className="absolute -right-1 -top-1 flex size-5 items-center justify-center rounded-full bg-amber-500 text-[11px] text-black shadow-md"
-        >
-          🥇
-        </span>
-      )}
-      {isLoser && size !== 'xs' && (
-        <span
-          aria-label="Perdente"
-          className="absolute -bottom-1 -right-1 flex size-5 items-center justify-center rounded-full bg-red-600 text-[11px] text-white shadow-md"
-        >
-          🥄
-        </span>
-      )}
     </div>
   );
 }
