@@ -28,7 +28,6 @@ import {
 
 export function Header() {
   const pathname = usePathname();
-  const { theme, setTheme } = useTheme();
   const { data: session } = useSession();
   const [mounted, setMounted] = useState(false);
 
