@@ -24,19 +24,22 @@ Il **DAL** risiede interamente in
 [lib/data/](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/data/) ed
 è l'unico modulo autorizzato a eseguire query Prisma di lettura:
 
-```text
-[ Client / Browser ]
-        ▲
-        │  DTO serializzati (JSON)
-        ▼
-[ Server Components (app/*) ] ───▶ [ Server Actions (app/actions/*) ]
-        │                                  │
-        └───────────────┬──────────────────┘
-                        ▼
-            [ Data Access Layer (lib/data/) ]
-                        │
-                        ▼ (Prisma Client)
-            [ PostgreSQL Database ]
+```mermaid
+flowchart TD
+    Client["Client / Browser (React Components)"]
+    SC["Server Components (app/*)"]
+    SA["Server Actions (app/actions/*)"]
+    DAL["Data Access Layer (lib/data/*)"]
+    Prisma["Prisma Client Singleton (lib/prisma.ts)"]
+    DB[("PostgreSQL Database")]
+
+    Client <-->|"DTO serializzati (JSON puro)"| SC
+    Client -->|"Invocazione diretta con payload"| SA
+    SC -->|"Chiamate a funzioni DAL (Read-only)"| DAL
+    SA -->|"Letture DAL pre/post mutazione"| DAL
+    DAL -->|"Query ottimizzate type-safe"| Prisma
+    SA -->|"Mutazioni atomiche (upsert / delete)"| Prisma
+    Prisma <-->|"Connessione TCP / Pool"| DB
 ```
 
 ---
@@ -45,14 +48,14 @@ Il **DAL** risiede interamente in
 
 Il DAL è strutturato per domini di responsabilità indipendenti:
 
-| Modulo           | File                                                                                               | Responsabilità                                                                                  | Funzioni Principali                                |
-| :--------------- | :------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------- | :------------------------------------------------- |
-| **Daily**        | [daily.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/data/daily.ts)               | Risultati di una singola data solare (`YYYY-MM-DD`).                                            | `getDailyResults(dateStr)`                         |
-| **Period**       | [period.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/data/period.ts)             | Classifiche aggregate e andamenti temporali per periodo (`week`, `month`, `last_month`, `all`). | `getPeriodResults(preset, customRange?)`           |
-| **Hall of Fame** | [hall-of-fame.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/data/hall-of-fame.ts) | Record storici assoluti per ciascun gioco e punteggio totale.                                   | `getHallOfFame()`                                  |
-| **User Profile** | [user.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/data/user.ts)                 | Gamer Card dell'utente, serie temporali personali, streak e statistiche trofei.                 | `getUserProfile(userId)`, `getUserSummary(userId)` |
-| **Notes**        | [notes.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/data/notes.ts)               | Bacheca e messaggi degli ultimi 7 giorni.                                                       | `getRecentNotes(limit)`                            |
-| **Admin**        | [admin.ts](file:///c:/Users/lucad/my-projects/who-is-losing-today/lib/data/admin.ts)               | Dati per la dashboard amministrativa (Whitelist e Bug Reports).                                 | `getWhitelistUsers()`, `getBugReports(status?)`    |
+| Modulo           | File                                              | Responsabilità                                                                                  | Funzioni Principali                                |
+| :--------------- | :------------------------------------------------ | :---------------------------------------------------------------------------------------------- | :------------------------------------------------- |
+| **Daily**        | [daily.ts](../../lib/data/daily.ts)               | Risultati di una singola data solare (`YYYY-MM-DD`).                                            | `getDailyResults(dateStr)`                         |
+| **Period**       | [period.ts](../../lib/data/period.ts)             | Classifiche aggregate e andamenti temporali per periodo (`week`, `month`, `last_month`, `all`). | `getPeriodResults(preset, customRange?)`           |
+| **Hall of Fame** | [hall-of-fame.ts](../../lib/data/hall-of-fame.ts) | Record storici assoluti per ciascun gioco e punteggio totale.                                   | `getHallOfFame()`                                  |
+| **User Profile** | [user.ts](../../lib/data/user.ts)                 | Gamer Card dell'utente, serie temporali personali, streak e statistiche trofei.                 | `getUserProfile(userId)`, `getUserSummary(userId)` |
+| **Notes**        | [notes.ts](../../lib/data/notes.ts)               | Bacheca e messaggi degli ultimi 7 giorni.                                                       | `getRecentNotes(limit)`                            |
+| **Admin**        | [admin.ts](../../lib/data/admin.ts)               | Dati per la dashboard amministrativa (Whitelist e Bug Reports).                                 | `getWhitelistUsers()`, `getBugReports(status?)`    |
 
 ---
 

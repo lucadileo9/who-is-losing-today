@@ -53,6 +53,54 @@ manutenibilità a lungo termine:
 L'architettura dell'applicazione sfrutta appieno i concetti avanzati del Next.js
 App Router:
 
+```mermaid
+flowchart TD
+    subgraph ClientLayer ["Client / Browser"]
+        Browser["Utente / Browser"]
+        ClientComp["Client Components ('use client')<br/><i>DatePicker, Modali, Form, Recharts</i>"]
+    end
+
+    subgraph EdgeLayer ["Edge Infrastructure"]
+        Middleware["Next.js Edge Middleware<br/><code>middleware.ts</code><br/>Filtro Sessioni & RBAC Guard"]
+    end
+
+    subgraph ServerLayer ["Server Runtime (Node.js 22)"]
+        RSC["Server Components (RSC)<br/><i>Layout, Dashboard Page, Profile Page</i>"]
+        Actions["Server Actions (app/actions/*)<br/><i>submitScore, saveDailyNote, admin</i>"]
+        API["Route Handlers (app/api/*)<br/><i>/api/auth, /api/dashboard</i>"]
+        Guard["Security Guard (lib/auth-guard.ts)<br/><i>getAuthenticatedUser() / Admin</i>"]
+        Zod["Zod Validation (lib/validations/*)"]
+        DAL["Data Access Layer (lib/data/*)<br/><i>daily, period, hall-of-fame, user</i>"]
+    end
+
+    subgraph DataLayer ["Data Storage"]
+        Prisma["Prisma ORM Client v6<br/><code>lib/prisma.ts (Singleton)</code>"]
+        Postgres[("PostgreSQL 16 Database<br/><code>who_is_losing_today</code>")]
+    end
+
+    Browser -->|Richiesta HTTP| Middleware
+    Middleware -->|Rotte Protette OK| RSC
+    Middleware -->|Rotte API OK| API
+    ClientComp -->|Invocazione RPC| Actions
+    RSC --> DAL
+    API --> DAL
+    Actions --> Guard
+    Guard --> Zod
+    Zod --> DAL
+    DAL --> Prisma
+    Prisma --> Postgres
+
+    classDef client fill:#0f172a,stroke:#38bdf8,stroke-width:1px,color:#f8fafc;
+    classDef edge fill:#1e1e2e,stroke:#a855f7,stroke-width:1px,color:#f8fafc;
+    classDef server fill:#181825,stroke:#3b82f6,stroke-width:2px,color:#f8fafc;
+    classDef data fill:#064e3b,stroke:#10b981,stroke-width:2px,color:#f8fafc;
+
+    class Browser,ClientComp client;
+    class Middleware edge;
+    class RSC,Actions,API,Guard,Zod,DAL server;
+    class Prisma,Postgres data;
+```
+
 ### Server Components vs Client Components
 
 - **Server Components (RSC) by default**: La maggior parte dell'applicazione

@@ -52,36 +52,26 @@ Spesso confusi, rappresentano due concetti distinti:
 È lo standard di sicurezza industriale per applicazioni web per scambiare
 credenziali senza esporre token nel browser:
 
-```text
-[ Utente / Browser ]           [ Web App (Next.js) ]           [ Google Identity ]
-         │                              │                              │
-     (1) │ Clicca "Accedi con Google"   │                              │
-         │─────────────────────────────▶│                              │
-         │                              │ (2) Genera state & PKCE      │
-         │◀─────────────────────────────│     Redirect verso Google    │
-         │                              │                              │
-     (3) │ Browser naviga su accounts.google.com/o/oauth2/v2/auth      │
-         │────────────────────────────────────────────────────────────▶│
-         │                                                             │ (4) Mostra prompt
-         │◀────────────────────────────────────────────────────────────│     di consenso
-     (5) │ Utente acconsente                                           │
-         │────────────────────────────────────────────────────────────▶│
-         │                                                             │ (6) Genera
-         │◀────────────────────────────────────────────────────────────│     Authorization Code
-         │   Redirect 302 a /api/auth/callback/google?code=XYZ&state=...│
-         │                                                             │
-     (7) │ Browser chiama /api/auth/callback/google?code=XYZ           │
-         │─────────────────────────────▶│                              │
-         │                              │ (8) POST /token (Server-to-Server)
-         │                              │     Invia Code + Client Secret
-         │                              │─────────────────────────────▶│
-         │                              │◀─────────────────────────────│
-         │                              │     Riceve id_token & access_token
-         │                              │                              │
-         │                              │ (9) Verifica firma crittografica
-         │                              │     e Whitelist locale       │
-         │◀─────────────────────────────│                              │
-         │   Set-Cookie: session_token  │                              │
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Utente as Utente / Browser
+    participant App as Web App (Next.js)
+    participant Google as Google Identity (OIDC)
+
+    Utente->>App: Clicca "Accedi con Google"
+    Note over App: Genera state crittografico & PKCE
+    App-->>Utente: Redirect 302 verso Google Auth
+    Utente->>Google: Naviga su accounts.google.com/o/oauth2/v2/auth
+    Google-->>Utente: Mostra schermata di consenso account
+    Utente->>Google: Conferma consenso e seleziona account
+    Google-->>Utente: Redirect 302 su /api/auth/callback/google?code=XYZ&state=...
+    Utente->>App: Chiama callback con Authorization Code
+    Note over App,Google: Scambio Server-to-Server protetto
+    App->>Google: POST /token (Code + Client Secret + Code Verifier)
+    Google-->>App: Restituisce id_token (JWT) & access_token
+    Note over App: Valida firma JWT, claims e Whitelist locale
+    App-->>Utente: Set-Cookie: session_token (HttpOnly, Secure)
 ```
 
 > [!IMPORTANT] **Perché lo scambio (step 8) avviene Server-to-Server?**  

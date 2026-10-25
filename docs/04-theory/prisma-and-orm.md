@@ -37,21 +37,18 @@ questi due mondi:
 
 L'architettura di Prisma si fonda su tre componenti:
 
-```text
-┌──────────────────────────┐
-│   schema.prisma          │ (Modellazione dichiarativa delle entità)
-└────────────┬─────────────┘
-             │ npx prisma generate
-             ▼
-┌──────────────────────────┐
-│   Prisma Query Engine    │ (Motore ad alte prestazioni scritto in Rust)
-│   + @prisma/client       │ (Codice TypeScript generato su misura)
-└────────────┬─────────────┘
-             │ Import in lib/prisma.ts
-             ▼
-┌──────────────────────────┐
-│   Codice Applicativo     │ (Autocompletamento completo dei tipi nell'IDE)
-└──────────────────────────┘
+```mermaid
+flowchart TD
+    Schema["schema.prisma\n(Modellazione dichiarativa delle entità e relazioni)"]
+    Generator["Prisma Generator Engine (Rust)\nnpx prisma generate"]
+    Client["@prisma/client (node_modules)\n(Tipi TypeScript generati su misura e client ORM)"]
+    Singleton["lib/prisma.ts\n(Singleton globale con gestione del connection pool)"]
+    AppCode["Codice Applicativo\n(Server Components, Server Actions, DAL con piena type-safety)"]
+
+    Schema -->|"Analisi schema"| Generator
+    Generator -->|"Compilazione tipi TS"| Client
+    Client -->|"Inizializzazione PrismaClient"| Singleton
+    Singleton -->|"Query type-safe & autocompletamento IDE"| AppCode
 ```
 
 Quando si esegue `npx prisma generate`:

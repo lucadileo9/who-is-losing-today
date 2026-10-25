@@ -12,33 +12,31 @@ In ambiente di produzione (su server Linux/Debian), l'infrastruttura è
 orchestrata tramite Docker Compose su una rete interna isolata
 (`storage_default`):
 
-```text
-[ Utente Web / Smartphone ]
-              │ HTTPS (Porta 443)
-              ▼
-    [ Rete Cloudflare Edge ]
-              │ Cloudflare Tunnel cifrato (Zero Open Ports)
-              ▼
-   ┌────────────────────────────────────────────────────────┐
-   │ SERVER HOST (Docker Environment)                       │
-   │                                                        │
-   │  ┌──────────────────┐                                  │
-   │  │   cloudflared    │ (Container Tunnel)               │
-   │  └────────┬─────────┘                                  │
-   │           │ HTTP (Rete storage_default interna)        │
-   │           ▼                                            │
-   │  ┌───────────────────────────┐                         │
-   │  │  who-is-losing-today-web  │ (Next.js 15 Standalone) │
-   │  └────────┬──────────────────┘                         │
-   │           │ TCP 5432 (Rete storage_default interna)    │
-   │           ▼                                            │
-   │  ┌───────────────────────────┐                         │
-   │  │   who-is-losing-today-db  │ (PostgreSQL 16 Alpine)  │
-   │  └────────┬──────────────────┘                         │
-   │           │ Volume Fisico Persistente                  │
-   │           ▼                                            │
-   │   /srv/storage/docker/who-is-losing-today/postgres     │
-   └────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    subgraph Internet ["Rete Pubblica & Edge"]
+        User["Client Web / Smartphone"]
+        CF["Cloudflare Edge\n(HTTPS / 443, Certificato SSL gestito)"]
+        User -->|"HTTPS (Porta 443)"| CF
+    end
+
+    CF -->|"Tunnel crittografato outbound (Zero Open Ports)"| TunnelContainer
+
+    subgraph ServerHost ["Server Host (Docker Compose)"]
+        subgraph DockerNet ["Rete Docker Interna (storage_default)"]
+            TunnelContainer["Container: cloudflared\n(Demone Cloudflare Tunnel)"]
+            WebContainer["Container: who-is-losing-today-web\n(Next.js 15 Standalone - Porta 3000)"]
+            DBContainer[("Container: who-is-losing-today-db\n(PostgreSQL 16 Alpine - Porta 5432)")]
+
+            TunnelContainer -->|"Proxy HTTP reverse"| WebContainer
+            WebContainer -->|"TCP 5432 (Prisma Connection Pool)"| DBContainer
+        end
+
+        subgraph StorageHost ["File System Host"]
+            DiskVolume["Volume Persistente Fisico:\n/srv/storage/docker/who-is-losing-today/postgres"]
+            DBContainer -->|"Mount cartella dati"| DiskVolume
+        end
+    end
 ```
 
 ---

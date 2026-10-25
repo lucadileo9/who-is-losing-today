@@ -25,6 +25,17 @@ un ambiente vergine Ubuntu:
 4. **Compilazione di Produzione (Build)**: La compilazione `next build` genera
    con successo tutte le route e i bundle JavaScript.
 
+```mermaid
+flowchart LR
+    Push["Git Push / PR\n(master, feat/**, fix/**)"] --> Setup["Setup Node.js 22 LTS\n(cache npm)"]
+    Setup --> Install["npm ci\n(Installazione deterministica)"]
+    Install --> PrismaGen["npx prisma generate\n(Generazione client)"]
+    PrismaGen --> Lint["npm run lint\n(ESLint 9)"]
+    Lint --> TypeCheck["npm run typecheck\n(tsc --noEmit)"]
+    TypeCheck --> Build["npm run build\n(next build)"]
+    Build --> Success["✅ Successo CI\n(Pronto al deploy)"]
+```
+
 ---
 
 ## Trigger e Concurrency Control

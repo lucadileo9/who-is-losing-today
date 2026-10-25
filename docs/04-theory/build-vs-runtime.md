@@ -13,30 +13,25 @@ Nei framework tradizionali Node.js/Express, il codice viene eseguito solo quando
 il server si avvia. In Next.js (App Router), il ciclo di vita è suddiviso in due
 mondi distinti:
 
-```text
-┌────────────────────────────────────────────────────────┐
-│ FASE 1: BUILD-TIME (next build / docker build)          │
-│                                                        │
-│ - Parsing TypeScript e transpilazione                  │
-│ - Tree-shaking e ottimizzazione bundle CSS/JS          │
-│ - "Collecting page data": Next.js importa ed esegue     │
-│   lo scope globale di tutte le route (page.tsx,        │
-│   route.ts) per rilevare rotte statiche (○) e          │
-│   dinamiche (ƒ).                                       │
-│                                                        │
-│ ⚠️ I segreti di produzione NON sono presenti qui!       │
-└───────────────────────────┬────────────────────────────┘
-                            │ Produce artefatti (.next)
-                            ▼
-┌────────────────────────────────────────────────────────┐
-│ FASE 2: RUNTIME (node server.js / docker compose up)   │
-│                                                        │
-│ - Il container riceve le chiamate HTTP degli utenti    │
-│ - Docker inietta le variabili d'ambiente (.env) reali  │
-│ - Esecuzione delle query PostgreSQL e verifica sessioni│
-│                                                        │
-│ 🔒 I veri segreti (password DB, OAuth) vivono qui!     │
-└────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    subgraph BuildTime ["FASE 1: Build-Time (next build / docker build)"]
+        direction TB
+        B1["Parsing TypeScript e Typechecking"] --> B2["Transpilazione & Bundle Optimization (Tree-shaking, CSS/JS)"]
+        B2 --> B3["Page Data Collection: Import ed esecuzione scope globale delle route"]
+        B3 --> B4["Generazione artefatti compilati (.next/standalone)"]
+        B_Warn["⚠️ I SEGRETI DI PRODUZIONE NON SONO PRESENTI!"]
+    end
+
+    BuildTime -->|"Produce bundle statici compilati"| Runtime
+
+    subgraph Runtime ["FASE 2: Runtime (node server.js / docker compose up)"]
+        direction TB
+        R1["Avvio container Node.js e binding porta HTTP 3000"] --> R2["Docker inietta le variabili d'ambiente reali (.env)"]
+        R2 --> R3["Risoluzione richieste HTTP e Server Rendering dinamico"]
+        R3 --> R4["Esecuzione query PostgreSQL e verifica crittografica sessioni"]
+        R_Sec["🔒 I veri segreti (DATABASE_URL, NEXTAUTH_SECRET, OAuth) vivono solo qui!"]
+    end
 ```
 
 ---

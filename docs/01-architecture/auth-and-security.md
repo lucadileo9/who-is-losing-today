@@ -12,32 +12,26 @@ autorizzazione basato su Whitelist e il controllo degli accessi basato sui ruoli
 L'applicazione adotta un'architettura di sicurezza a quattro livelli concentrici
 per garantire che nessuna operazione non autorizzata possa raggiungere i dati:
 
-```text
-[ Richiesta Utente ]
-       │
-       ▼
-┌──────────────────────────────────────────────┐
-│  LIVELLO 1: Next.js Edge Middleware          │  Intercetta le rotte protette prima del server
-│  (middleware.ts)                             │  Verifica la presenza del token di sessione JWT
-└──────────────────────┬───────────────────────┘
-                       │
-                       ▼
-┌──────────────────────────────────────────────┐
-│  LIVELLO 2: Whitelist Gating                 │  Callback signIn() in NextAuth
-│  (lib/auth.ts)                               │  Permette l'accesso solo ad email autorizzate nel DB
-└──────────────────────┬───────────────────────┘
-                       │
-                       ▼
-┌──────────────────────────────────────────────┐
-│  LIVELLO 3: Guardie di Sicurezza Applicativa │  getAuthenticatedUser() / getAuthenticatedAdmin()
-│  (lib/auth-guard.ts)                         │  Verifica identità e permessi RBAC nelle Server Actions
-└──────────────────────┬───────────────────────┘
-                       │
-                       ▼
-┌──────────────────────────────────────────────┐
-│  LIVELLO 4: Validazione Rigorosa degli Input │  Schemi Zod runtime (lib/validations/*)
-│  (Zod Schemas)                               │  Sanitizzazione e controllo formati di tutti i payload
-└──────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    Req["Richiesta Utente / Client"] --> L1["LIVELLO 1: Next.js Edge Middleware<br/><code>middleware.ts</code><br/>Filtra le rotte protette (/dashboard, /profile, /admin) verificando il token JWT"]
+    L1 -->|Token Valido| L2["LIVELLO 2: Whitelist Gating<br/><code>lib/auth.ts (callback signIn)</code><br/>Verifica preventiva dell'email contro la tabella Whitelist"]
+    L2 -->|Email Autorizzata| L3["LIVELLO 3: Guardie Applicative<br/><code>lib/auth-guard.ts</code><br/>getAuthenticatedUser() e getAuthenticatedAdmin() per Server Actions"]
+    L3 -->|Sessione e Ruolo OK| L4["LIVELLO 4: Validazione Rigorosa<br/><code>lib/validations/*</code><br/>Schemi Zod a runtime per sanitizzare e convalidare ogni payload"]
+    L4 --> DB[("PostgreSQL Database<br/>Operazioni CRUD Sicure")]
+
+    L1 -.->|Token Assente| R1["Redirect a /dashboard (Login)"]
+    L2 -.->|Email Non in Whitelist| R2["Redirect a /auth/unauthorized"]
+    L3 -.->|Ruolo Insufficiente| R3["Errore 403 Forbidden"]
+    L4 -.->|Payload Non Valido| R4["Errore 400 Bad Request"]
+
+    classDef safe fill:#1e1e2e,stroke:#3b82f6,stroke-width:2px,color:#f8fafc;
+    classDef reject fill:#450a0a,stroke:#ef4444,stroke-width:1px,color:#fca5a5;
+    classDef db fill:#064e3b,stroke:#10b981,stroke-width:2px,color:#f8fafc;
+
+    class L1,L2,L3,L4 safe;
+    class R1,R2,R3,R4 reject;
+    class DB db;
 ```
 
 ---
