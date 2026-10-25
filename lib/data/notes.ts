@@ -1,14 +1,16 @@
-import { prisma } from "@/lib/prisma"
-import { DEFAULT_USER_COLOR } from "@/lib/theme/colors"
-import type { DailyNoteDTO } from "@/lib/types/notes"
+import { prisma } from '@/lib/prisma';
+import { DEFAULT_USER_COLOR } from '@/lib/theme/colors';
+import type { DailyNoteDTO } from '@/lib/types/notes';
 
 /**
  * Recupera tutte le note della bacheca create negli ultimi 7 giorni.
  * Inietta il flag isAuthor per permettere la cancellazione se l'utente corrente è l'autore.
  */
-export async function getActiveNotes(currentUserId?: string): Promise<DailyNoteDTO[]> {
-  const sevenDaysAgo = new Date()
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+export async function getActiveNotes(
+  currentUserId?: string
+): Promise<DailyNoteDTO[]> {
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
   const notes = await prisma.dailyNote.findMany({
     where: {
@@ -26,17 +28,17 @@ export async function getActiveNotes(currentUserId?: string): Promise<DailyNoteD
         },
       },
     },
-    orderBy: { createdAt: "desc" },
-  })
+    orderBy: { createdAt: 'desc' },
+  });
 
   return notes.map((n) => {
-    const d = new Date(n.createdAt)
-    const formattedDate = d.toLocaleDateString("it-IT", {
-      day: "numeric",
-      month: "short",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
+    const d = new Date(n.createdAt);
+    const formattedDate = d.toLocaleDateString('it-IT', {
+      day: 'numeric',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
 
     return {
       id: n.id,
@@ -46,10 +48,10 @@ export async function getActiveNotes(currentUserId?: string): Promise<DailyNoteD
       isAuthor: Boolean(currentUserId && n.userId === currentUserId),
       author: {
         id: n.user.id,
-        name: n.user.name || "Giocatore",
+        name: n.user.name || 'Giocatore',
         color: n.user.color || DEFAULT_USER_COLOR,
         image: n.user.image,
       },
-    }
-  })
+    };
+  });
 }

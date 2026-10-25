@@ -1,4 +1,4 @@
-import { Avatar, Badge } from "@/components/atoms"
+import { Avatar, Badge } from '@/components/atoms';
 
 export function ProfileHeader() {
   return (
@@ -10,5 +10,5 @@ export function ProfileHeader() {
       </div>
       <Badge variant="secondary">Giocatore</Badge>
     </div>
-  )
+  );
 }

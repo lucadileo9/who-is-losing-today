@@ -1,7 +1,7 @@
-import Link from "next/link"
-import { AppShell } from "@/components/molecules/AppShell"
-import { Button } from "@/components/atoms"
-import { FileQuestion } from "lucide-react"
+import Link from 'next/link';
+import { AppShell } from '@/components/molecules/AppShell';
+import { Button } from '@/components/atoms';
+import { FileQuestion } from 'lucide-react';
 
 export default function NotFound() {
   return (
@@ -10,7 +10,9 @@ export default function NotFound() {
         <div className="grid size-16 place-items-center rounded-2xl bg-amber-500/10 text-amber-500">
           <FileQuestion className="size-8" />
         </div>
-        <h1 className="text-3xl font-bold tracking-tight">Pagina non trovata</h1>
+        <h1 className="text-3xl font-bold tracking-tight">
+          Pagina non trovata
+        </h1>
         <p className="max-w-md text-sm text-muted-foreground">
           La pagina che stai cercando non esiste o è stata spostata.
         </p>
@@ -19,5 +21,5 @@ export default function NotFound() {
         </Button>
       </div>
     </AppShell>
-  )
+  );
 }

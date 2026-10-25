@@ -1,6 +1,8 @@
 # Atomi (Atoms)
 
-Gli **Atomi** sono gli elementi base indivisibili dell'interfaccia utente. Non contengono logica di business e dipendono unicamente dalle `props` ricevute dal genitore.
+Gli **Atomi** sono gli elementi base indivisibili dell'interfaccia utente. Non
+contengono logica di business e dipendono unicamente dalle `props` ricevute dal
+genitore.
 
 ---
 
@@ -9,9 +11,11 @@ Gli **Atomi** sono gli elementi base indivisibili dell'interfaccia utente. Non c
 Wrapper stilizzato sul componente `Button` fornito dalla libreria Shadcn UI.
 
 ### **Responsabilità**:
+
 - Fornisce lo stile visivo dei pulsanti nell'applicazione.
-- Supporta diverse varianti di stile (`default`, `destructive`, `outline`, `secondary`, `ghost`, `link`) e dimensioni (`default`, `sm`, `lg`, `icon`).
-- Fornisce feedback visivo per le interazioni (*hover*, *active*, *disabled*).
+- Supporta diverse varianti di stile (`default`, `destructive`, `outline`,
+  `secondary`, `ghost`, `link`) e dimensioni (`default`, `sm`, `lg`, `icon`).
+- Fornisce feedback visivo per le interazioni (_hover_, _active_, _disabled_).
 
 ---
 
@@ -20,8 +24,10 @@ Wrapper stilizzato sul componente `Button` fornito dalla libreria Shadcn UI.
 Campo di testo nativo HTML racchiuso in classi Tailwind unificate.
 
 ### **Responsabilità**:
+
 - Gestisce la cattura dell'input testuale dell'utente.
-- Applica lo stile visivo per il bordo (`border-input`), il focus (`focus-visible:ring-2`) e la disabilitazione.
+- Applica lo stile visivo per il bordo (`border-input`), il focus
+  (`focus-visible:ring-2`) e la disabilitazione.
 
 ---
 
@@ -30,17 +36,23 @@ Campo di testo nativo HTML racchiuso in classi Tailwind unificate.
 Etichetta o pillola di testo compatta.
 
 ### **Responsabilità**:
-- Evidenziare stati secondari, come il 1° posto in classifica o il codice identificativo del gioco (es. `KR`, `MZ`, `CH`).
+
+- Evidenziare stati secondari, come il 1° posto in classifica o il codice
+  identificativo del gioco (es. `KR`, `MZ`, `CH`).
 
 ---
 
 ## 4. `Avatar` ([`components/atoms/index.tsx`](../../components/atoms/index.tsx))
 
-Componente per la visualizzazione dell'immagine di profilo o delle iniziali dell'utente.
+Componente per la visualizzazione dell'immagine di profilo o delle iniziali
+dell'utente.
 
 ### **Responsabilità**:
-- Se l'utente dispone di un'URL immagine (es. da Google OAuth), la visualizza all'interno di un contenitore circolare.
-- In caso contrario, genera un fallback visivo con le sue iniziali (es. "SB") su sfondo colorato.
+
+- Se l'utente dispone di un'URL immagine (es. da Google OAuth), la visualizza
+  all'interno di un contenitore circolare.
+- In caso contrario, genera un fallback visivo con le sue iniziali (es. "SB") su
+  sfondo colorato.
 
 ---
 
@@ -49,7 +61,9 @@ Componente per la visualizzazione dell'immagine di profilo o delle iniziali dell
 Provider per il tema grafico basato sulla libreria `next-themes`.
 
 ### **Responsabilità**:
-- Gestisce il cambio dinamico della modalità scura (*Dark Mode*) e chiara (*Light Mode*) tramite la classe `dark` applicata al tag `<html>`.
+
+- Gestisce il cambio dinamico della modalità scura (_Dark Mode_) e chiara
+  (_Light Mode_) tramite la classe `dark` applicata al tag `<html>`.
 
 ---
 
@@ -58,4 +72,6 @@ Provider per il tema grafico basato sulla libreria `next-themes`.
 Wrapper per il `SessionProvider` di NextAuth.
 
 ### **Responsabilità**:
-- Mantiene sincronizzato lo stato dell'autenticazione utente su tutti i componenti client dell'applicazione.
+
+- Mantiene sincronizzato lo stato dell'autenticazione utente su tutti i
+  componenti client dell'applicazione.

@@ -11,7 +11,7 @@ services:
     volumes:
       - /srv/storage/docker/who-is-losing-today/postgres:/var/lib/postgresql/data
     networks:
-      - storage_default 
+      - storage_default
 
   who-is-losing-today-web:
     build:
@@ -20,28 +20,27 @@ services:
     container_name: who-is-losing-today-web
     restart: unless-stopped
     environment:
-      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@who-is-losing-today-db:5432/${POSTGRES_DB}?schema=public"
-      DIRECT_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@who-is-losing-today-db:5432/${POSTGRES_DB}?schema=public"
+      DATABASE_URL: 'postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@who-is-losing-today-db:5432/${POSTGRES_DB}?schema=public'
+      DIRECT_URL: 'postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@who-is-losing-today-db:5432/${POSTGRES_DB}?schema=public'
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
       AUTH_SECRET: ${NEXTAUTH_SECRET}
       NEXTAUTH_URL: ${NEXTAUTH_URL}
       AUTH_URL: ${NEXTAUTH_URL}
-      AUTH_TRUST_HOST: "true"
+      AUTH_TRUST_HOST: 'true'
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
     depends_on:
       - who-is-losing-today-db
     networks:
       - storage_default
- 
+
   cloudflared:
     image: cloudflare/cloudflared:latest
     container_name: cloudflared-tunnel
     restart: unless-stopped
-    command: tunnel --no-autoupdate run --token ${TUNNEL_TOKEN} 
+    command: tunnel --no-autoupdate run --token ${TUNNEL_TOKEN}
     networks:
       - storage_default
-
 
 networks:
   storage_default:

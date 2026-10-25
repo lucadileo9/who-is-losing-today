@@ -1,12 +1,12 @@
-import { NextResponse } from "next/server"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
-import { prisma } from "@/lib/prisma"
+import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
 
 // GET /api/notes
 export async function GET() {
   try {
-    const sevenDaysAgo = new Date(Date.now() - 7 * 86400000)
+    const sevenDaysAgo = new Date(Date.now() - 7 * 86400000);
 
     // 1. Auto-pulizia automatica dal DB: cancella i messaggi più vecchi di 7 giorni
     await prisma.dailyNote.deleteMany({
@@ -15,7 +15,7 @@ export async function GET() {
           lt: sevenDaysAgo,
         },
       },
-    })
+    });
 
     // 2. Recupera tutti i messaggi degli ultimi 7 giorni
     const notes = await prisma.dailyNote.findMany({
@@ -35,24 +35,32 @@ export async function GET() {
           },
         },
       },
-      orderBy: { createdAt: "desc" },
-    })
+      orderBy: { createdAt: 'desc' },
+    });
 
-    const todayStr = new Date().toISOString().split("T")[0]
-    const yesterdayStr = new Date(Date.now() - 86400000).toISOString().split("T")[0]
+    const todayStr = new Date().toISOString().split('T')[0];
+    const yesterdayStr = new Date(Date.now() - 86400000)
+      .toISOString()
+      .split('T')[0];
 
     const formattedNotes = notes.map((n) => {
-      const noteDateStr = n.createdAt.toISOString().split("T")[0]
-      let dateLabel = n.createdAt.toLocaleDateString("it-IT", { day: "numeric", month: "short" })
+      const noteDateStr = n.createdAt.toISOString().split('T')[0];
+      let dateLabel = n.createdAt.toLocaleDateString('it-IT', {
+        day: 'numeric',
+        month: 'short',
+      });
 
       if (noteDateStr === todayStr) {
-        dateLabel = "Oggi"
+        dateLabel = 'Oggi';
       } else if (noteDateStr === yesterdayStr) {
-        dateLabel = "Ieri"
+        dateLabel = 'Ieri';
       }
 
-      const timeStr = n.createdAt.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })
-      const name = n.user?.name || "Giocatore"
+      const timeStr = n.createdAt.toLocaleTimeString('it-IT', {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+      const name = n.user?.name || 'Giocatore';
 
       return {
         id: n.id,
@@ -62,50 +70,70 @@ export async function GET() {
         author: {
           name,
           initials: name
-            .split(" ")
+            .split(' ')
             .map((s: string) => s[0])
-            .join("")
+            .join('')
             .substring(0, 2)
             .toUpperCase(),
-          color: n.user?.color || "#EC4899",
+          color: n.user?.color || '#EC4899',
           image: n.user?.image || null,
         },
-      }
-    })
+      };
+    });
 
-    return NextResponse.json({ notes: formattedNotes })
+    return NextResponse.json({ notes: formattedNotes });
   } catch (error) {
-    console.error("Errore API GET /api/notes:", error)
-    return NextResponse.json({ error: "Errore durante il recupero dei messaggi." }, { status: 500 })
+    console.error('Errore API GET /api/notes:', error);
+    return NextResponse.json(
+      { error: 'Errore durante il recupero dei messaggi.' },
+      { status: 500 }
+    );
   }
 }
 
 // POST /api/notes
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions);
 
     // Obbligo di autenticazione per pubblicare sulla lavagna
     if (!session?.user?.email) {
-      return NextResponse.json({ error: "Devi essere autenticato con Google per pubblicare sulla lavagna." }, { status: 401 })
+      return NextResponse.json(
+        {
+          error:
+            'Devi essere autenticato con Google per pubblicare sulla lavagna.',
+        },
+        { status: 401 }
+      );
     }
 
-    const body = await request.json()
-    const content = body?.content?.trim()
+    const body = await request.json();
+    const content = body?.content?.trim();
 
     if (!content || content.length === 0) {
-      return NextResponse.json({ error: "Il testo del messaggio non può essere vuoto." }, { status: 400 })
+      return NextResponse.json(
+        { error: 'Il testo del messaggio non può essere vuoto.' },
+        { status: 400 }
+      );
     }
 
     if (content.length > 280) {
-      return NextResponse.json({ error: "Il messaggio supera il limite di 280 caratteri." }, { status: 400 })
+      return NextResponse.json(
+        { error: 'Il messaggio supera il limite di 280 caratteri.' },
+        { status: 400 }
+      );
     }
 
     // Trova l'utente nel DB
-    const dbUser = await prisma.user.findUnique({ where: { email: session.user.email } })
+    const dbUser = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
 
     if (!dbUser) {
-      return NextResponse.json({ error: "Utente non trovato." }, { status: 404 })
+      return NextResponse.json(
+        { error: 'Utente non trovato.' },
+        { status: 404 }
+      );
     }
 
     const note = await prisma.dailyNote.create({
@@ -124,32 +152,38 @@ export async function POST(request: Request) {
           },
         },
       },
-    })
+    });
 
-    const timeStr = note.createdAt.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })
-    const name = note.user?.name || "Giocatore"
+    const timeStr = note.createdAt.toLocaleTimeString('it-IT', {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+    const name = note.user?.name || 'Giocatore';
 
     return NextResponse.json({
       note: {
         id: note.id,
         content: note.content,
-        dateLabel: "Oggi",
+        dateLabel: 'Oggi',
         time: timeStr,
         author: {
           name,
           initials: name
-            .split(" ")
+            .split(' ')
             .map((s: string) => s[0])
-            .join("")
+            .join('')
             .substring(0, 2)
             .toUpperCase(),
-          color: note.user?.color || "#EC4899",
+          color: note.user?.color || '#EC4899',
           image: note.user?.image || null,
         },
       },
-    })
+    });
   } catch (error) {
-    console.error("Errore API POST /api/notes:", error)
-    return NextResponse.json({ error: "Impossibile salvare il messaggio sulla lavagna." }, { status: 500 })
+    console.error('Errore API POST /api/notes:', error);
+    return NextResponse.json(
+      { error: 'Impossibile salvare il messaggio sulla lavagna.' },
+      { status: 500 }
+    );
   }
 }

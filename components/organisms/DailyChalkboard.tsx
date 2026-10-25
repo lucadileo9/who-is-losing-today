@@ -1,94 +1,102 @@
-"use client"
+'use client';
 
-import { useEffect, useState, useCallback } from "react"
-import { useSession } from "next-auth/react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button, Avatar } from "@/components/atoms"
-import { apiFetch } from "@/lib/utils"
-import { MessageSquare, Send, Sparkles, Trash2, LogIn } from "lucide-react"
+import { useEffect, useState, useCallback } from 'react';
+import { useSession } from 'next-auth/react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Button, Avatar } from '@/components/atoms';
+import { apiFetch } from '@/lib/utils';
+import { MessageSquare, Send, Sparkles, Trash2, LogIn } from 'lucide-react';
 
 export interface ChalkboardNote {
-  id: string
-  content: string
-  dateLabel: string
-  time: string
+  id: string;
+  content: string;
+  dateLabel: string;
+  time: string;
   author: {
-    name: string
-    initials: string
-    color: string
-    image?: string | null
-  }
+    name: string;
+    initials: string;
+    color: string;
+    image?: string | null;
+  };
 }
 
 export function DailyChalkboard() {
-  const { data: session } = useSession()
-  const [notes, setNotes] = useState<ChalkboardNote[]>([])
-  const [inputText, setInputText] = useState("")
-  const [isLoading, setIsLoading] = useState(true)
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const { data: session } = useSession();
+  const [notes, setNotes] = useState<ChalkboardNote[]>([]);
+  const [inputText, setInputText] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchNotes = useCallback(async () => {
     try {
-      const res = await apiFetch("/api/notes")
+      const res = await apiFetch('/api/notes');
       if (res.ok) {
-        const json = await res.json()
-        setNotes(json.notes || [])
+        const json = await res.json();
+        setNotes(json.notes || []);
       }
     } catch (err) {
-      console.error("Errore recupero messaggi bacheca:", err)
+      console.error('Errore recupero messaggi bacheca:', err);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    fetchNotes()
-  }, [fetchNotes])
+    fetchNotes();
+  }, [fetchNotes]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!inputText.trim() || isSubmitting || !session) return
+    e.preventDefault();
+    if (!inputText.trim() || isSubmitting || !session) return;
 
-    setIsSubmitting(true)
-    setError(null)
+    setIsSubmitting(true);
+    setError(null);
 
     try {
-      const res = await apiFetch("/api/notes", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await apiFetch('/api/notes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content: inputText }),
-      })
+      });
 
-      const json = await res.json()
+      const json = await res.json();
 
       if (!res.ok) {
-        setError(json.error || "Impossibile inviare il messaggio.")
+        setError(json.error || 'Impossibile inviare il messaggio.');
       } else {
-        setInputText("")
-        setNotes((prev) => [json.note, ...prev])
+        setInputText('');
+        setNotes((prev) => [json.note, ...prev]);
       }
     } catch (err) {
-      console.error("Errore invio messaggio bacheca:", err)
-      setError("Errore di connessione.")
+      console.error('Errore invio messaggio bacheca:', err);
+      setError('Errore di connessione.');
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
-    <Card className="border-amber-500/20 bg-gradient-to-br from-card via-card to-amber-500/5 shadow-xs">
+    <Card className="shadow-xs border-amber-500/20 bg-gradient-to-br from-card via-card to-amber-500/5">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Sparkles className="size-5 text-amber-500" />
             <CardTitle>Bacheca del Gruppo</CardTitle>
           </div>
-          <span className="flex items-center gap-1 text-[10px] font-semibold tracking-wider uppercase text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+          <span className="flex items-center gap-1 rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-amber-500">
             <Trash2 className="size-3" /> Auto-pulizia 7 gg
           </span>
         </div>
-        <CardDescription>Lavagna riservata ai giocatori per sfottò e commenti della settimana.</CardDescription>
+        <CardDescription>
+          Lavagna riservata ai giocatori per sfottò e commenti della settimana.
+        </CardDescription>
       </CardHeader>
 
       <CardContent className="flex flex-col gap-4">
@@ -107,13 +115,15 @@ export function DailyChalkboard() {
               <Button
                 type="submit"
                 disabled={!inputText.trim() || isSubmitting}
-                className="bg-amber-500 hover:bg-amber-600 text-white cursor-pointer"
+                className="cursor-pointer bg-amber-500 text-white hover:bg-amber-600"
               >
-                <Send className="size-4 mr-1.5" />
+                <Send className="mr-1.5 size-4" />
                 Invia
               </Button>
             </div>
-            {error && <p className="text-xs font-medium text-destructive">{error}</p>}
+            {error && (
+              <p className="text-xs font-medium text-destructive">{error}</p>
+            )}
           </form>
         ) : (
           <div className="flex items-center justify-between gap-3 rounded-xl border border-amber-500/20 bg-amber-500/5 p-3 text-xs text-muted-foreground">
@@ -125,41 +135,54 @@ export function DailyChalkboard() {
         )}
 
         {/* Lista dei Messaggi della Settimana */}
-        <div className="flex flex-col gap-2.5 max-h-[260px] overflow-y-auto pt-1 pr-1">
+        <div className="flex max-h-[260px] flex-col gap-2.5 overflow-y-auto pr-1 pt-1">
           {isLoading ? (
-            <div className="h-16 w-full rounded-xl bg-muted/20 animate-pulse" />
+            <div className="h-16 w-full animate-pulse rounded-xl bg-muted/20" />
           ) : notes.length > 0 ? (
             notes.map((note) => (
               <div
                 key={note.id}
-                className="flex items-start gap-3 rounded-xl border bg-card/80 p-3 shadow-2xs backdrop-blur-xs transition-all hover:border-amber-500/30"
+                className="shadow-2xs backdrop-blur-xs flex items-start gap-3 rounded-xl border bg-card/80 p-3 transition-all hover:border-amber-500/30"
               >
-                <Avatar initials={note.author.initials} className={`size-8 text-xs font-bold ${note.author.color} text-white shrink-0`}>
+                <Avatar
+                  initials={note.author.initials}
+                  className={`size-8 text-xs font-bold ${note.author.color} shrink-0 text-white`}
+                >
                   {note.author.image && (
                     /* eslint-disable-next-line @next/next/no-img-element */
-                    <img src={note.author.image} alt={note.author.name} className="size-full object-cover rounded-full" />
+                    <img
+                      src={note.author.image}
+                      alt={note.author.name}
+                      className="size-full rounded-full object-cover"
+                    />
                   )}
                 </Avatar>
-                <div className="flex-1 min-w-0">
+                <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-semibold truncate">{note.author.name}</span>
-                    <span className="text-[10px] text-muted-foreground shrink-0">
+                    <span className="truncate text-xs font-semibold">
+                      {note.author.name}
+                    </span>
+                    <span className="shrink-0 text-[10px] text-muted-foreground">
                       {note.dateLabel} · {note.time}
                     </span>
                   </div>
-                  <p className="mt-0.5 text-xs text-foreground/90 break-words">{note.content}</p>
+                  <p className="mt-0.5 break-words text-xs text-foreground/90">
+                    {note.content}
+                  </p>
                 </div>
               </div>
             ))
           ) : (
             <div className="flex flex-col items-center justify-center gap-1.5 py-6 text-center text-muted-foreground">
               <MessageSquare className="size-7 opacity-30" />
-              <p className="text-xs font-medium">La lavagna è vuota questa settimana.</p>
+              <p className="text-xs font-medium">
+                La lavagna è vuota questa settimana.
+              </p>
               <p className="text-[11px]">Accedi e scrivi il primo messaggio!</p>
             </div>
           )}
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

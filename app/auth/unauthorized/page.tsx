@@ -1,5 +1,5 @@
-import Link from "next/link"
-import { ShieldAlert, ArrowLeft } from "lucide-react"
+import Link from 'next/link';
+import { ShieldAlert, ArrowLeft } from 'lucide-react';
 
 export default function UnauthorizedPage() {
   return (
@@ -9,15 +9,19 @@ export default function UnauthorizedPage() {
           <ShieldAlert className="size-8" />
         </div>
 
-        <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">Accesso Riservato</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
+          Accesso Riservato
+        </h1>
 
         <p className="mt-3 text-sm leading-relaxed text-gray-400">
           Questa applicazione è privata e accessibile esclusivamente su invito.
-          L&apos;indirizzo email con cui hai tentato l&apos;accesso non risulta attualmente registrato nella lista degli utenti autorizzati.
+          L&apos;indirizzo email con cui hai tentato l&apos;accesso non risulta
+          attualmente registrato nella lista degli utenti autorizzati.
         </p>
 
         <div className="mt-6 rounded-xl border border-white/5 bg-white/5 p-3 text-xs text-gray-300">
-          💡 Chiedi a un amministratore del gruppo di aggiungere la tua email Google alla Whitelist per accedere.
+          💡 Chiedi a un amministratore del gruppo di aggiungere la tua email
+          Google alla Whitelist per accedere.
         </div>
 
         <div className="mt-8">
@@ -31,5 +35,5 @@ export default function UnauthorizedPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

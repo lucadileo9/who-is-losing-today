@@ -1,6 +1,7 @@
 # Organismi (Organisms)
 
-Gli **Organismi** sono sezioni articolate dell'interfaccia utente che uniscono molecole e atomi per gestire interi blocchi di funzionalità dell'applicazione.
+Gli **Organismi** sono sezioni articolate dell'interfaccia utente che uniscono
+molecole e atomi per gestire interi blocchi di funzionalità dell'applicazione.
 
 ---
 

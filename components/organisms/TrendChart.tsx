@@ -1,67 +1,77 @@
-"use client"
+'use client';
 
-import { useEffect, useState, useCallback } from "react"
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { type LeaderboardTab, type Player } from "@/lib/game-data"
-import { ChartTooltip } from "@/components/molecules/ChartTooltip"
-import { apiFetch } from "@/lib/utils"
-import { BarChart3 } from "lucide-react"
+import { useEffect, useState, useCallback } from 'react';
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { type LeaderboardTab, type Player } from '@/lib/game-data';
+import { ChartTooltip } from '@/components/molecules/ChartTooltip';
+import { apiFetch } from '@/lib/utils';
+import { BarChart3 } from 'lucide-react';
 
 // DEAD-01 FIX: palette di colori distinti generata per indice (non più nomi hardcoded)
 const PLAYER_PALETTE = [
-  "#8b5cf6", // viola
-  "#3b82f6", // blu
-  "#10b981", // verde
-  "#f59e0b", // ambra
-  "#ec4899", // rosa
-  "#ef4444", // rosso
-  "#06b6d4", // cyan
-  "#f97316", // arancio
-]
+  '#8b5cf6', // viola
+  '#3b82f6', // blu
+  '#10b981', // verde
+  '#f59e0b', // ambra
+  '#ec4899', // rosa
+  '#ef4444', // rosso
+  '#06b6d4', // cyan
+  '#f97316', // arancio
+];
 
 export function TrendChart({ tab }: { tab: LeaderboardTab }) {
-  const [mounted, setMounted] = useState(false)
-  const [chartData, setChartData] = useState<{ day: string; [key: string]: string | number }[]>([])
-  const [activePlayers, setActivePlayers] = useState<Player[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [mounted, setMounted] = useState(false);
+  const [chartData, setChartData] = useState<
+    { day: string; [key: string]: string | number }[]
+  >([]);
+  const [activePlayers, setActivePlayers] = useState<Player[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const loadTrendData = useCallback(async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const res = await apiFetch("/api/dashboard")
+      const res = await apiFetch('/api/dashboard');
       if (res.ok) {
-        const json = await res.json()
-        setChartData(json?.groupTrend?.[tab] || [])
-        setActivePlayers(json?.players || [])
+        const json = await res.json();
+        setChartData(json?.groupTrend?.[tab] || []);
+        setActivePlayers(json?.players || []);
       }
     } catch (err) {
-      console.error("Errore recupero trend dal DB:", err)
+      console.error('Errore recupero trend dal DB:', err);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }, [tab])
+  }, [tab]);
 
   useEffect(() => {
-    setMounted(true)
-    loadTrendData()
+    setMounted(true);
+    loadTrendData();
 
     const handleScoreUpdated = () => {
-      loadTrendData()
-    }
+      loadTrendData();
+    };
 
-    if (typeof window !== "undefined") {
-      window.addEventListener("scoreUpdated", handleScoreUpdated)
+    if (typeof window !== 'undefined') {
+      window.addEventListener('scoreUpdated', handleScoreUpdated);
     }
 
     return () => {
-      if (typeof window !== "undefined") {
-        window.removeEventListener("scoreUpdated", handleScoreUpdated)
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('scoreUpdated', handleScoreUpdated);
       }
-    }
-  }, [loadTrendData])
+    };
+  }, [loadTrendData]);
 
-  const hasData = chartData.length > 0 && activePlayers.length > 0
+  const hasData = chartData.length > 0 && activePlayers.length > 0;
 
   return (
     <Card>
@@ -71,17 +81,33 @@ export function TrendChart({ tab }: { tab: LeaderboardTab }) {
       <CardContent>
         <div className="h-[260px] w-full">
           {!mounted || isLoading ? (
-            <div className="h-full w-full rounded-xl bg-muted/20 animate-pulse" />
+            <div className="h-full w-full animate-pulse rounded-xl bg-muted/20" />
           ) : hasData ? (
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-border" />
-                <XAxis dataKey="day" axisLine={false} tickLine={false} className="text-xs text-muted-foreground" />
-                <YAxis axisLine={false} tickLine={false} className="text-xs text-muted-foreground" />
+              <LineChart
+                data={chartData}
+                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  className="stroke-border"
+                />
+                <XAxis
+                  dataKey="day"
+                  axisLine={false}
+                  tickLine={false}
+                  className="text-xs text-muted-foreground"
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  className="text-xs text-muted-foreground"
+                />
                 <Tooltip content={<ChartTooltip />} />
                 {activePlayers.map((player, idx) => {
                   // DEAD-01 FIX: colore basato sull'indice, funziona con qualsiasi utente reale
-                  const color = PLAYER_PALETTE[idx % PLAYER_PALETTE.length]
+                  const color = PLAYER_PALETTE[idx % PLAYER_PALETTE.length];
                   return (
                     <Line
                       key={player.id}
@@ -93,19 +119,24 @@ export function TrendChart({ tab }: { tab: LeaderboardTab }) {
                       dot={{ r: 3, fill: color }}
                       activeDot={{ r: 5 }}
                     />
-                  )
+                  );
                 })}
               </LineChart>
             </ResponsiveContainer>
           ) : (
             <div className="flex h-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed p-6 text-center text-muted-foreground">
               <BarChart3 className="size-8 opacity-40" />
-              <p className="text-xs font-medium">Nessun andamento disponibile nel database.</p>
-              <p className="text-[11px]">I grafici comparativi si popoleranno dopo la registrazione dei primi punteggi!</p>
+              <p className="text-xs font-medium">
+                Nessun andamento disponibile nel database.
+              </p>
+              <p className="text-[11px]">
+                I grafici comparativi si popoleranno dopo la registrazione dei
+                primi punteggi!
+              </p>
             </div>
           )}
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -1,6 +1,7 @@
 # Molecole (Molecules)
 
-Le **Molecole** assemblano due o più atomi per creare unità funzionali riutilizzabili.
+Le **Molecole** assemblano due o più atomi per creare unità funzionali
+riutilizzabili.
 
 ---
 
@@ -12,13 +13,15 @@ Tooltip personalizzato ad alto contrasto per i grafici Recharts.
 
 ## 2. `DatePicker` ([`components/molecules/DatePicker.tsx`](../../components/molecules/DatePicker.tsx))
 
-Selettore di data stilizzato composto da un'icona `Calendar` ed un campo `<input type="date">`.
+Selettore di data stilizzato composto da un'icona `Calendar` ed un campo
+`<input type="date">`.
 
 ---
 
 ## 3. `GameTabFilter` ([`components/molecules/GameTabFilter.tsx`](../../components/molecules/GameTabFilter.tsx))
 
-Barra di navigazione orizzontale a schede per filtrare la classifica ed i grafici.
+Barra di navigazione orizzontale a schede per filtrare la classifica ed i
+grafici.
 
 ---
 

@@ -1,6 +1,8 @@
 # Guida alla Configurazione di PostgreSQL (Docker Locale & Supabase Cloud)
 
-Questa guida illustra come avviare il database PostgreSQL in **locale tramite Docker** e come effettuare la migrazione online su **Supabase Cloud** tramite Prisma ORM.
+Questa guida illustra come avviare il database PostgreSQL in **locale tramite
+Docker** e come effettuare la migrazione online su **Supabase Cloud** tramite
+Prisma ORM.
 
 ---
 
@@ -9,15 +11,19 @@ Questa guida illustra come avviare il database PostgreSQL in **locale tramite Do
 Se vuoi sviluppare e testare offline sul tuo computer in locale:
 
 ### 1. Avvia il container Docker
-Assicurati che **Docker Desktop** sia in esecuzione sul tuo PC, poi apri il terminale nella cartella del progetto ed esegui:
+
+Assicurati che **Docker Desktop** sia in esecuzione sul tuo PC, poi apri il
+terminale nella cartella del progetto ed esegui:
 
 ```bash
 docker compose up -d
 ```
 
-*(Questo comando scaricherà l'immagine di PostgreSQL 16 ed avvierà un database sulla porta `5432`)*.
+_(Questo comando scaricherà l'immagine di PostgreSQL 16 ed avvierà un database
+sulla porta `5432`)_.
 
 ### 2. Configura le variabili in `.env.local`
+
 Nel file `.env.local` inserisci i parametri di connessione locali:
 
 ```env
@@ -26,6 +32,7 @@ DIRECT_URL="postgresql://postgres:mysecretpassword@localhost:5432/who_is_losing_
 ```
 
 ### 3. Crea le tabelle ed inserisci i dati di test
+
 Esegui da terminale:
 
 ```bash
@@ -37,10 +44,13 @@ npx prisma db seed
 ```
 
 ### 4. Esplora il DB con Prisma Studio
+
 Per aprire la dashboard visiva del tuo database locale:
+
 ```bash
 npx prisma studio
 ```
+
 Si aprirà nel browser a `http://localhost:5555`.
 
 ---
@@ -50,18 +60,24 @@ Si aprirà nel browser a `http://localhost:5555`.
 Se vuoi pubblicare il database online su Supabase:
 
 ### 1. Crea il progetto su Supabase
+
 1. Vai su **[supabase.com](https://supabase.com)** e fai il login.
 2. Clicca su **New Project**:
- - **Name**: `who-is-losing-today`
- - **Database Password**: Scegli una password sicura e salvala.
- - **Region**: Frankfurt (EU).
+
+- **Name**: `who-is-losing-today`
+- **Database Password**: Scegli una password sicura e salvala.
+- **Region**: Frankfurt (EU).
 
 ### 2. Copia le chiavi di connessione
+
 1. Vai in **Project Settings** **Database**.
-2. Copia la **Pooled Connection String** (porta `6543`) ed incollala in `DATABASE_URL`.
-3. Copia la **Direct Connection String** (porta `5432`) ed incollala in `DIRECT_URL`.
+2. Copia la **Pooled Connection String** (porta `6543`) ed incollala in
+   `DATABASE_URL`.
+3. Copia la **Direct Connection String** (porta `5432`) ed incollala in
+   `DIRECT_URL`.
 
 ### 3. Effettua la migrazione con 1 comando
+
 Incolla le chiavi nel tuo `.env.local` e lancia:
 
 ```bash

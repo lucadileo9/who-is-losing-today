@@ -20,9 +20,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      DATABASE_URL: "postgresql://ci_dummy_user:ci_dummy_pass@localhost:5432/ci_db?schema=public"
-      NEXTAUTH_SECRET: "ci_secret_only_for_build_validation_purposes_32chars"
-      NEXTAUTH_URL: "http://localhost:3000"
+      DATABASE_URL: 'postgresql://ci_dummy_user:ci_dummy_pass@localhost:5432/ci_db?schema=public'
+      NEXTAUTH_SECRET: 'ci_secret_only_for_build_validation_purposes_32chars'
+      NEXTAUTH_URL: 'http://localhost:3000'
 
     steps:
       - name: Checkout Repository

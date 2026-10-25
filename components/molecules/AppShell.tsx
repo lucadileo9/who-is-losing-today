@@ -1,8 +1,8 @@
-"use client"
+'use client';
 
-import React from "react"
-import { Header } from "@/components/organisms/Header"
-import { Footer } from "@/components/molecules/Footer"
+import React from 'react';
+import { Header } from '@/components/organisms/Header';
+import { Footer } from '@/components/molecules/Footer';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
@@ -11,5 +11,5 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <main className="flex-1">{children}</main>
       <Footer />
     </div>
-  )
+  );
 }
