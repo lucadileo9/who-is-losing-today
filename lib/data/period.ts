@@ -250,6 +250,11 @@ export async function getPeriodResults(
     endDate: endDate.toISOString().split("T")[0],
     players,
     totale: totaleData,
+    byGame: {
+      Krilion: krilionData,
+      Metazooa: metazooaData,
+      Chronophoto: chronophotoData,
+    },
     krilion: krilionData,
     metazooa: metazooaData,
     chronophoto: chronophotoData,

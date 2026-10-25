@@ -11,7 +11,29 @@ export async function getDailyResults(dateStr: string): Promise<DailyResultsDTO>
   const targetDate = new Date(dateStr)
   targetDate.setHours(0, 0, 0, 0)
 
-  // 1. Singola query mirata per scoreDate (PostgreSQL @db.Date ignora le ore)
+  // 1. Recupera i giochi configurati dal DB per supportare N giochi dinamicamente
+  const dbGames = await prisma.game.findMany({
+    select: {
+      id: true,
+      name: true,
+      isLowerBetter: true,
+      color: true,
+    },
+  })
+
+  // Fallback ai 3 giochi standard nel caso il DB non sia ancora popolato
+  const activeGames =
+    dbGames.length > 0
+      ? dbGames
+      : [
+          { id: "Krilion", name: "Krilion", isLowerBetter: false, color: "#3b82f6" },
+          { id: "Metazooa", name: "Metazooa", isLowerBetter: true, color: "#10b981" },
+          { id: "Chronophoto", name: "Chronophoto", isLowerBetter: false, color: "#f59e0b" },
+        ]
+
+  const totalGamesCount = activeGames.length
+
+  // 2. Singola query mirata per scoreDate (PostgreSQL @db.Date ignora le ore)
   const scores = await prisma.dailyScore.findMany({
     where: {
       scoreDate: targetDate,
@@ -28,19 +50,26 @@ export async function getDailyResults(dateStr: string): Promise<DailyResultsDTO>
     },
   })
 
-  // Mappa temporanea per aggregare i 3 giochi per ciascun utente
+  // Mappa temporanea per aggregare i giochi dinamici per ciascun utente
   const userMap = new Map<
     string,
     {
       user: { id: string; name: string; color: string; image?: string | null }
-      rawScores: Record<Game, number>
-      normScores: Record<Game, number>
+      rawScores: Record<string, number>
+      normScores: Record<string, number>
     }
   >()
 
   scores.forEach((sc) => {
     const userId = sc.userId
     if (!userMap.has(userId)) {
+      const initialRaw: Record<string, number> = {}
+      const initialNorm: Record<string, number> = {}
+      activeGames.forEach((g) => {
+        initialRaw[g.id] = 0
+        initialNorm[g.id] = 0
+      })
+
       userMap.set(userId, {
         user: {
           id: sc.user.id,
@@ -48,17 +77,15 @@ export async function getDailyResults(dateStr: string): Promise<DailyResultsDTO>
           color: sc.user.color || "#3b82f6",
           image: sc.user.image,
         },
-        rawScores: { Krilion: 0, Metazooa: 0, Chronophoto: 0 },
-        normScores: { Krilion: 0, Metazooa: 0, Chronophoto: 0 },
+        rawScores: initialRaw,
+        normScores: initialNorm,
       })
     }
 
     const userData = userMap.get(userId)!
-    const gameKey = sc.gameId as Game
-    if (gameKey in userData.rawScores) {
-      userData.rawScores[gameKey] = sc.rawScore
-      userData.normScores[gameKey] = sc.normalizedScore || calculateNormalizedScore(gameKey, sc.rawScore)
-    }
+    userData.rawScores[sc.gameId] = sc.rawScore
+    userData.normScores[sc.gameId] =
+      sc.normalizedScore || calculateNormalizedScore(sc.gameId as Game, sc.rawScore)
   })
 
   const usersList = Array.from(userMap.values())
@@ -87,46 +114,30 @@ export async function getDailyResults(dateStr: string): Promise<DailyResultsDTO>
     }))
   }
 
-  // 1. Classifica Krilion
-  const krilionPlayers = sortAndRank(
-    usersList
-      .filter((u) => u.rawScores.Krilion > 0)
-      .map((u) => ({
-        user: u.user,
-        rawScore: u.rawScores.Krilion,
-        normalizedScore: u.normScores.Krilion,
-      }))
-  )
+  // 3. Costruzione dinamica delle classifiche per ciascun gioco configurato
+  const byGame: Record<string, DailyPlayerScore[]> = {}
 
-  // 2. Classifica Metazooa (meno tentativi = migliore)
-  const metazooaPlayers = sortAndRank(
-    usersList
-      .filter((u) => u.rawScores.Metazooa > 0)
-      .map((u) => ({
-        user: u.user,
-        rawScore: u.rawScores.Metazooa,
-        normalizedScore: u.normScores.Metazooa,
-      })),
-    true
-  )
+  activeGames.forEach((g) => {
+    byGame[g.id] = sortAndRank(
+      usersList
+        .filter((u) => (u.rawScores[g.id] ?? 0) > 0)
+        .map((u) => ({
+          user: u.user,
+          rawScore: u.rawScores[g.id] ?? 0,
+          normalizedScore: u.normScores[g.id] ?? 0,
+        })),
+      g.isLowerBetter
+    )
+  })
 
-  // 3. Classifica Chronophoto
-  const chronophotoPlayers = sortAndRank(
-    usersList
-      .filter((u) => u.rawScores.Chronophoto > 0)
-      .map((u) => ({
-        user: u.user,
-        rawScore: u.rawScores.Chronophoto,
-        normalizedScore: u.normScores.Chronophoto,
-      }))
-  )
-
-  // 4. Classifica Totale Giornaliera: REGOLA: sempre divisa per 3! Chi non gioca prende 0.
+  // 4. Classifica Totale Giornaliera: REGOLA: divisa per il numero totale di giochi attivi! Chi non gioca prende 0.
   const totalePlayers = sortAndRank(
     usersList.map((u) => {
-      const overallNorm = Math.round(
-        (u.normScores.Krilion + u.normScores.Metazooa + u.normScores.Chronophoto) / 3
-      )
+      let sumNorm = 0
+      activeGames.forEach((g) => {
+        sumNorm += u.normScores[g.id] ?? 0
+      })
+      const overallNorm = Math.round(sumNorm / totalGamesCount)
       return {
         user: u.user,
         rawScore: overallNorm, // Nel totale, raw e norm coincidono con la media ponderata
@@ -147,9 +158,10 @@ export async function getDailyResults(dateStr: string): Promise<DailyResultsDTO>
     loser,
     rankings: {
       totale: totalePlayers,
-      krilion: krilionPlayers,
-      metazooa: metazooaPlayers,
-      chronophoto: chronophotoPlayers,
+      byGame,
+      krilion: byGame["Krilion"] || [],
+      metazooa: byGame["Metazooa"] || [],
+      chronophoto: byGame["Chronophoto"] || [],
     },
   }
 }

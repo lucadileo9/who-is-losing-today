@@ -27,9 +27,10 @@ export interface PeriodResultsDTO {
   endDate: string
   players: UserSummaryDTO[] // Lista giocatori per associare Line stroke={player.color}
   totale: PeriodGameData
-  krilion: PeriodGameData
-  metazooa: PeriodGameData
-  chronophoto: PeriodGameData
+  byGame: Record<string, PeriodGameData>
+  krilion?: PeriodGameData
+  metazooa?: PeriodGameData
+  chronophoto?: PeriodGameData
 }
 
 export interface AllTimeRecordItem {
@@ -41,8 +42,9 @@ export interface AllTimeRecordItem {
 }
 
 export interface HallOfFameDTO {
-  krilion: AllTimeRecordItem | null
-  metazooa: AllTimeRecordItem | null
-  chronophoto: AllTimeRecordItem | null
   totale: AllTimeRecordItem | null
+  byGame: Record<string, AllTimeRecordItem>
+  krilion?: AllTimeRecordItem | null
+  metazooa?: AllTimeRecordItem | null
+  chronophoto?: AllTimeRecordItem | null
 }

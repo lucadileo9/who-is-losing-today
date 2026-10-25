@@ -105,49 +105,61 @@ export async function getHallOfFame(): Promise<HallOfFameDTO> {
     }
   })
 
+  const krilionRecord = bestKrilion
+    ? {
+        gameId: "Krilion",
+        score: bestKrilion.rawScore,
+        unit: "pts",
+        date: bestKrilion.scoreDate.toISOString().split("T")[0],
+        holder: {
+          id: bestKrilion.user.id,
+          name: bestKrilion.user.name || "Giocatore",
+          color: bestKrilion.user.color || "#3b82f6",
+          image: bestKrilion.user.image,
+        },
+      }
+    : null
+
+  const metazooaRecord = bestMetazooa
+    ? {
+        gameId: "Metazooa",
+        score: bestMetazooa.rawScore,
+        unit: "tentativi",
+        date: bestMetazooa.scoreDate.toISOString().split("T")[0],
+        holder: {
+          id: bestMetazooa.user.id,
+          name: bestMetazooa.user.name || "Giocatore",
+          color: bestMetazooa.user.color || "#3b82f6",
+          image: bestMetazooa.user.image,
+        },
+      }
+    : null
+
+  const chronophotoRecord = bestChronophoto
+    ? {
+        gameId: "Chronophoto",
+        score: bestChronophoto.rawScore,
+        unit: "pts",
+        date: bestChronophoto.scoreDate.toISOString().split("T")[0],
+        holder: {
+          id: bestChronophoto.user.id,
+          name: bestChronophoto.user.name || "Giocatore",
+          color: bestChronophoto.user.color || "#3b82f6",
+          image: bestChronophoto.user.image,
+        },
+      }
+    : null
+
+  const byGame: Record<string, AllTimeRecordItem> = {}
+  if (krilionRecord) byGame["Krilion"] = krilionRecord
+  if (metazooaRecord) byGame["Metazooa"] = metazooaRecord
+  if (chronophotoRecord) byGame["Chronophoto"] = chronophotoRecord
+
   return {
-    krilion: bestKrilion
-      ? {
-          gameId: "Krilion",
-          score: bestKrilion.rawScore,
-          unit: "pts",
-          date: bestKrilion.scoreDate.toISOString().split("T")[0],
-          holder: {
-            id: bestKrilion.user.id,
-            name: bestKrilion.user.name || "Giocatore",
-            color: bestKrilion.user.color || "#3b82f6",
-            image: bestKrilion.user.image,
-          },
-        }
-      : null,
-    metazooa: bestMetazooa
-      ? {
-          gameId: "Metazooa",
-          score: bestMetazooa.rawScore,
-          unit: "tentativi",
-          date: bestMetazooa.scoreDate.toISOString().split("T")[0],
-          holder: {
-            id: bestMetazooa.user.id,
-            name: bestMetazooa.user.name || "Giocatore",
-            color: bestMetazooa.user.color || "#3b82f6",
-            image: bestMetazooa.user.image,
-          },
-        }
-      : null,
-    chronophoto: bestChronophoto
-      ? {
-          gameId: "Chronophoto",
-          score: bestChronophoto.rawScore,
-          unit: "pts",
-          date: bestChronophoto.scoreDate.toISOString().split("T")[0],
-          holder: {
-            id: bestChronophoto.user.id,
-            name: bestChronophoto.user.name || "Giocatore",
-            color: bestChronophoto.user.color || "#3b82f6",
-            image: bestChronophoto.user.image,
-          },
-        }
-      : null,
     totale: bestTotaleHolder,
+    byGame,
+    krilion: krilionRecord,
+    metazooa: metazooaRecord,
+    chronophoto: chronophotoRecord,
   }
 }

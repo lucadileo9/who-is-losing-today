@@ -14,8 +14,10 @@ export interface DailyResultsDTO {
   loser: DailyPlayerScore | null // null se totalPlayers < 2
   rankings: {
     totale: DailyPlayerScore[]
-    krilion: DailyPlayerScore[]
-    metazooa: DailyPlayerScore[]
-    chronophoto: DailyPlayerScore[]
+    byGame: Record<string, DailyPlayerScore[]>
+    krilion?: DailyPlayerScore[]
+    metazooa?: DailyPlayerScore[]
+    chronophoto?: DailyPlayerScore[]
+    [key: string]: DailyPlayerScore[] | Record<string, DailyPlayerScore[]> | undefined
   }
 }
