@@ -1,4 +1,5 @@
 import { PrismaClient, ScoreUnit, Role } from '@prisma/client';
+import { GAME_CONFIG } from '../lib/game-data';
 
 type GameId = 'Krilion' | 'Metazooa' | 'Chronophoto';
 
@@ -21,31 +22,31 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Avvio popolamento base del database...');
 
-  // 1. Inserimento / Aggiornamento dei Giochi con colori ufficiali ed enum ScoreUnit
+  // 1. Inserimento / Aggiornamento dei Giochi con configurazione e colori ufficiali da GAME_CONFIG
   const games = [
     {
-      id: 'Krilion',
-      name: 'Krilion',
-      shortName: 'KR',
+      id: GAME_CONFIG.Krilion.id,
+      name: GAME_CONFIG.Krilion.name,
+      shortName: GAME_CONFIG.Krilion.shortName,
       unit: ScoreUnit.POINTS,
-      color: '#10b981',
-      isLowerBetter: false,
+      color: GAME_CONFIG.Krilion.color,
+      isLowerBetter: GAME_CONFIG.Krilion.isLowerBetter,
     },
     {
-      id: 'Metazooa',
-      name: 'Metazooa',
-      shortName: 'MZ',
+      id: GAME_CONFIG.Metazooa.id,
+      name: GAME_CONFIG.Metazooa.name,
+      shortName: GAME_CONFIG.Metazooa.shortName,
       unit: ScoreUnit.ATTEMPTS,
-      color: '#f97316',
-      isLowerBetter: true,
+      color: GAME_CONFIG.Metazooa.color,
+      isLowerBetter: GAME_CONFIG.Metazooa.isLowerBetter,
     },
     {
-      id: 'Chronophoto',
-      name: 'Chronophoto',
-      shortName: 'CH',
+      id: GAME_CONFIG.Chronophoto.id,
+      name: GAME_CONFIG.Chronophoto.name,
+      shortName: GAME_CONFIG.Chronophoto.shortName,
       unit: ScoreUnit.POINTS,
-      color: '#8b5cf6',
-      isLowerBetter: false,
+      color: GAME_CONFIG.Chronophoto.color,
+      isLowerBetter: GAME_CONFIG.Chronophoto.isLowerBetter,
     },
   ];
 
