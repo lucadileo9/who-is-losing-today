@@ -26,8 +26,8 @@ export async function submitScoreAction(formData: unknown) {
 
     // 4. Calcolo punteggio normalizzato
     const normalizedScore = calculateNormalizedScore(gameId as Game, rawScore);
-    const targetDate = new Date(scoreDate);
-    targetDate.setHours(0, 0, 0, 0);
+    // Garantisce data a mezzanotte UTC senza sfasamenti dovuti al fuso orario del server
+    const targetDate = new Date(`${scoreDate}T00:00:00.000Z`);
 
     // 5. Upsert su PostgreSQL con @db.Date per evitare duplicati
     const saved = await prisma.dailyScore.upsert({
