@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { getAuthenticatedUser } from '@/lib/auth-guard';
 import { calculateNormalizedScore, type Game } from '@/lib/game-data';
 
 export async function GET() {
@@ -26,53 +25,22 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession(authOptions);
+    const auth = await getAuthenticatedUser();
+    if (!auth.success) {
+      return NextResponse.json(
+        { error: 'Autenticazione richiesta per registrare un punteggio.' },
+        { status: 401 }
+      );
+    }
+    const user = auth.user;
+
     const body = await request.json();
-    const { game, score, text, userEmail } = body;
+    const { game, score, text } = body;
 
     if (!game || typeof score !== 'number') {
       return NextResponse.json(
         { error: 'Gioco e punteggio numerico sono obbligatori.' },
         { status: 400 }
-      );
-    }
-
-    const targetEmail = userEmail || session?.user?.email || null;
-    let user = null;
-
-    // 1. Cerca l'utente nel DB tramite email
-    if (targetEmail) {
-      user = await prisma.user.findUnique({
-        where: { email: targetEmail },
-      });
-
-      // Se l'utente si è loggato con Google ma non è ancora presente nella tabella users, crealo al volo
-      if (!user) {
-        const userName = session?.user?.name || targetEmail.split('@')[0];
-        const initials = userName
-          .split(' ')
-          .map((s: string) => s[0])
-          .join('')
-          .substring(0, 2)
-          .toUpperCase();
-
-        user = await prisma.user.create({
-          data: {
-            email: targetEmail,
-            name: userName,
-            image: session?.user?.image || null,
-            initials,
-            color: 'bg-chart-1',
-          },
-        });
-      }
-    }
-
-    // BUG-05 FIX: se non c'è sessione né email, rifiuta la richiesta con 401
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Autenticazione richiesta per registrare un punteggio.' },
-        { status: 401 }
       );
     }
 
