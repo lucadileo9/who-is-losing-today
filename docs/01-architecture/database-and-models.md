@@ -156,7 +156,7 @@ nel DB che in TypeScript:
 | Enum          | Valori                              | Descrizione e Utilizzo                                                                                     |
 | :------------ | :---------------------------------- | :--------------------------------------------------------------------------------------------------------- |
 | `Role`        | `ADMIN`, `PLAYER`                   | Controllo accessi basato sui ruoli (RBAC). `ADMIN` gestisce whitelist e bug; `PLAYER` partecipa ai giochi. |
-| `ScoreUnit`   | `POINTS`, `ATTEMPTS`                | Specifica l'unità di misura del gioco: punti (Chronophoto) o tentativi (Krilion, Metazooa).                |
+| `ScoreUnit`   | `POINTS`, `ATTEMPTS`                | Specifica l'unità di misura del gioco: punti (Chronophoto, Krilion) o tentativi (Metazooa).                |
 | `BugCategory` | `BUG`, `UI_UX`, `FEATURE`, `OTHER`  | Classificazione funzionale delle segnalazioni inviate dagli utenti.                                        |
 | `BugPriority` | `LOW`, `MEDIUM`, `HIGH`, `CRITICAL` | Grado di urgenza per il triage delle segnalazioni da parte degli amministratori.                           |
 | `BugStatus`   | `OPEN`, `RESOLVED`, `CLOSED`        | Ciclo di vita della segnalazione (`OPEN` = aperta, `RESOLVED` = risolta, `CLOSED` = chiusa).               |

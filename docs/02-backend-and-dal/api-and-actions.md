@@ -144,11 +144,11 @@ attualmente autenticato.
 
 ---
 
-### `POST /api/bugs` e `PATCH /api/bugs/[id]`
+### Endpoint Segnalazioni Bug (`/api/bugs`)
 
-Sistema di gestione segnalazioni bug:
+Sistema di gestione e triage delle segnalazioni bug con controllo dei ruoli (RBAC):
 
-- `POST /api/bugs`: Invio di una segnalazione (`description`, `category`,
-  `priority`).
-- `PATCH /api/bugs/[id]`: Aggiornamento dello stato (riservato agli
-  amministratori).
+- `GET /api/bugs`: Recupera l'elenco delle ultime 50 segnalazioni con dati anagrafici dell'autore (`userName`, `userEmail`). **Riservato agli amministratori (`ADMIN`)**.
+- `POST /api/bugs`: Invio di una nuova segnalazione (`description`, `category`, `priority`). Richiede autenticazione di sessione e associa in modo verificato il `userId` dell'utente loggato.
+- `PATCH /api/bugs/[id]`: Aggiornamento dello stato (`OPEN`, `RESOLVED`, `CLOSED`), priorità o categoria del ticket. **Riservato agli amministratori (`ADMIN`)**.
+- `DELETE /api/bugs/[id]`: Eliminazione definitiva di una segnalazione dal database. **Riservato agli amministratori (`ADMIN`)**.
