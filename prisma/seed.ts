@@ -1,21 +1,9 @@
 import { PrismaClient, ScoreUnit, Role } from '@prisma/client';
-import { GAME_CONFIG } from '../lib/game-data';
-
-type GameId = 'Krilion' | 'Metazooa' | 'Chronophoto';
-
-function calculateNormalizedScore(game: GameId, score: number): number {
-  if (game === 'Metazooa') {
-    if (score <= 0 || score > 20) return 0;
-    return Math.max(0, Math.min(100, Math.round(((20 - score) / 19) * 100)));
-  }
-  if (game === 'Chronophoto') {
-    return Math.max(0, Math.min(100, Math.round((score / 5000) * 100)));
-  }
-  if (game === 'Krilion') {
-    return Math.max(0, Math.min(100, Math.round((score / 700) * 100)));
-  }
-  return Math.min(100, score);
-}
+import {
+  GAME_CONFIG,
+  calculateNormalizedScore,
+  type Game,
+} from '../lib/game-data';
 
 const prisma = new PrismaClient();
 
@@ -158,15 +146,15 @@ async function main() {
 
       const dailyScoresToInsert = [
         {
-          gameId: 'Krilion' as GameId,
+          gameId: 'Krilion' as Game,
           raw: krilionScore,
         },
         {
-          gameId: 'Metazooa' as GameId,
+          gameId: 'Metazooa' as Game,
           raw: metazooaAttempts,
         },
         {
-          gameId: 'Chronophoto' as GameId,
+          gameId: 'Chronophoto' as Game,
           raw: chronophotoScore,
         },
       ];
