@@ -12,10 +12,32 @@ export async function GET() {
       return NextResponse.json({ error: auth.error }, { status });
     }
 
-    const bugs = await prisma.bugReport.findMany({
+    const rawBugs = await prisma.bugReport.findMany({
       orderBy: { createdAt: 'desc' },
       take: 50,
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
     });
+
+    const bugs = rawBugs.map((bug) => ({
+      id: bug.id,
+      userId: bug.userId,
+      userName: bug.user?.name ?? null,
+      userEmail: bug.user?.email ?? null,
+      description: bug.description,
+      category: bug.category,
+      priority: bug.priority,
+      status: bug.status,
+      createdAt: bug.createdAt.toISOString(),
+    }));
+
     return NextResponse.json({ bugs });
   } catch (error) {
     console.error('Errore GET /api/bugs:', error);
