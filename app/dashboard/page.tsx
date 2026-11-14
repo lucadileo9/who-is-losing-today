@@ -1,6 +1,5 @@
 import React from 'react';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { requireAuthPage } from '@/lib/auth-guard';
 import { getDailyResults } from '@/lib/data/daily';
 import { getPeriodResults } from '@/lib/data/period';
 import { getHallOfFame } from '@/lib/data/hall-of-fame';
@@ -19,20 +18,22 @@ interface PageProps {
 }
 
 export default async function DashboardPage({ searchParams }: PageProps) {
+  // 1. Controllo Server-Side Autenticazione (Defense-in-depth)
+  const session = await requireAuthPage();
+
   const resolvedParams = await searchParams;
   const todayStr = new Date().toISOString().split('T')[0];
   const selectedDate = resolvedParams.date || todayStr;
   const selectedPeriod = (resolvedParams.period as PeriodPreset) || 'month';
 
-  // Caricamento parallelo sul server tramite Data Access Layer (DTO puri)
-  const [daily, periodData, hallOfFame, session] = await Promise.all([
+  // 2. Caricamento parallelo sul server tramite Data Access Layer (DTO puri)
+  const [daily, periodData, hallOfFame] = await Promise.all([
     getDailyResults(selectedDate),
     getPeriodResults(selectedPeriod),
     getHallOfFame(),
-    getServerSession(authOptions),
   ]);
 
-  const currentUserId = session?.user?.id;
+  const currentUserId = session.user.id;
 
   return (
     <AppShell>

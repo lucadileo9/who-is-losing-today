@@ -1,9 +1,7 @@
 import React from 'react';
 import { Metadata } from 'next';
-import { redirect } from 'next/navigation';
-import { getServerSession } from 'next-auth';
 import { PlusCircle } from 'lucide-react';
-import { authOptions } from '@/lib/auth';
+import { requireAuthPage } from '@/lib/auth-guard';
 import { AppShell } from '@/components/molecules/AppShell';
 import { SectionHeading } from '@/components/atoms/SectionHeading';
 import { ScoreSubmitForm } from '@/components/organisms/ScoreSubmitForm';
@@ -19,11 +17,7 @@ interface SubmitPageProps {
 }
 
 export default async function SubmitPage({ searchParams }: SubmitPageProps) {
-  const session = await getServerSession(authOptions);
-
-  if (!session?.user) {
-    redirect('/auth/signin?callbackUrl=/submit');
-  }
+  await requireAuthPage();
 
   const resolvedParams = await searchParams;
   const initialDate = resolvedParams.date;
