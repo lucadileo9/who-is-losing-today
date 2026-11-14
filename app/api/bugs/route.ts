@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getAuthenticatedAdmin, getAuthenticatedUser } from '@/lib/auth-guard';
 import { BugCategory, BugPriority } from '@prisma/client';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 // GET /api/bugs - Recupera la lista dei bug segnalati (Solo ADMIN)
 export async function GET() {
@@ -56,6 +57,15 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: 'Devi essere autenticato per inviare una segnalazione.' },
         { status: 401 }
+      );
+    }
+
+    // Protezione Rate Limiting (max 5 segnalazioni ogni 5 minuti per utente)
+    const rateLimit = checkRateLimit(`bug:${auth.user.id}`, { limit: 5, windowMs: 300_000 });
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { error: 'Hai inviato troppe segnalazioni di recente. Attendi qualche minuto prima di riprovare.' },
+        { status: 429 }
       );
     }
 

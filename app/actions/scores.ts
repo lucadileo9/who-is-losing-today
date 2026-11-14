@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { getAuthenticatedUser } from '@/lib/auth-guard';
 import { submitScoreSchema } from '@/lib/validations/scores';
 import { calculateNormalizedScore, type Game } from '@/lib/game-data';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 export async function submitScoreAction(formData: unknown) {
   try {
@@ -15,7 +16,16 @@ export async function submitScoreAction(formData: unknown) {
     }
     const user = auth.user;
 
-    // 2. Validazione Zod
+    // 2. Protezione Rate Limiting (max 15 invii al minuto per utente)
+    const rateLimit = checkRateLimit(`score:${user.id}`, { limit: 15, windowMs: 60_000 });
+    if (!rateLimit.success) {
+      return {
+        success: false,
+        error: 'Troppe richieste di inserimento punteggio. Attendi qualche istante prima di riprovare.',
+      };
+    }
+
+    // 3. Validazione Zod
     const parsed = submitScoreSchema.safeParse(formData);
     if (!parsed.success) {
       const msg = parsed.error.issues.map((i) => i.message).join(', ');

@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { getAuthenticatedUser } from '@/lib/auth-guard';
 import { createNoteSchema } from '@/lib/validations/notes';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 export async function createNoteAction(content: string) {
   try {
@@ -12,6 +13,15 @@ export async function createNoteAction(content: string) {
       return { success: false, error: auth.error };
     }
     const user = auth.user;
+
+    // Protezione Rate Limiting (max 6 note al minuto per utente)
+    const rateLimit = checkRateLimit(`note:${user.id}`, { limit: 6, windowMs: 60_000 });
+    if (!rateLimit.success) {
+      return {
+        success: false,
+        error: 'Stai inviando messaggi troppo velocemente. Attendi qualche istante.',
+      };
+    }
 
     const parsed = createNoteSchema.safeParse({ content });
     if (!parsed.success) {
