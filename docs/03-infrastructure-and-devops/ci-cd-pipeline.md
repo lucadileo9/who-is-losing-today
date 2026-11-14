@@ -1,152 +1,158 @@
-# DevOps — Pipeline CI/CD (GitHub Actions)
+# DevOps — Pipeline CI/CD e Sicurezza (GitHub Actions)
 
-Questo documento descrive il funzionamento della pipeline di **Continuous
-Integration (CI)** configurata con GitHub Actions per garantire la stabilità del
-codice ed evitare fallimenti di build in produzione.
+Questo documento descrive il funzionamento dell'infrastruttura di **Continuous Integration (CI)** e **DevSecOps** configurata con GitHub Actions per garantire la stabilità, la tipizzazione rigorosa e la sicurezza del codice prima del rilascio.
 
 ---
 
 ## Obiettivi della Pipeline
 
-La pipeline ([.github/workflows/ci.yml](../../.github/workflows/ci.yml)) agisce
-come un cancello di controllo automatico prima che qualsiasi modifica venga
-integrata nel ramo `master`.
+La pipeline agisce come un cancello di controllo automatico prima che qualsiasi modifica venga integrata nei rami stabili (`dev` e `master`).
 
-Ogni volta che viene eseguito un `push` o una `pull_request`, la CI verifica in
-un ambiente vergine Ubuntu:
+Ogni volta che viene eseguito un `push` o aperta una `pull_request`, i workflow di GitHub Actions verificano in un ambiente Ubuntu vergine:
 
-1. **Integrità delle dipendenze**: Il lockfile `package-lock.json` è
-   sincronizzato e non corrotto.
-2. **Qualità del codice (Linting)**: Rispetto delle regole ESLint (assenza di
-   `any` espliciti, variabili non utilizzate, etc.).
-3. **Rigore dei tipi (Typecheck)**: Nessun errore di tipo TypeScript nell'intero
-   codebase (`tsc --noEmit`).
-4. **Compilazione di Produzione (Build)**: La compilazione `next build` genera
-   con successo tutte le route e i bundle JavaScript.
+1. **Integrità delle dipendenze**: Verifica con `npm ci` che il lockfile `package-lock.json` sia deterministico.
+2. **Audit delle Vulnerabilità**: Rilevamento automatico di vulnerabilità note con `npm audit --audit-level=high`.
+3. **Qualità del codice (Linting)**: Rispetto delle regole ESLint (assenza di `any`, import inutilizzati, etc.).
+4. **Rigore dei tipi (Typecheck)**: Nessun errore di tipo TypeScript nel codebase (`tsc --noEmit`).
+5. **Compilazione di Produzione (Build)**: Successo di `next build` per chunk e static pages.
+6. **Analisi Statica di Sicurezza (SAST CodeQL)**: Analisi semantica del codice sorgente contro OWASP Top 10 e secret hardcoded.
 
 ```mermaid
-flowchart LR
-    Push["Git Push / PR\n(master, feat/**, fix/**)"] --> Setup["Setup Node.js 22 LTS\n(cache npm)"]
+flowchart TD
+    Push["Git Push / PR\n(master, dev, feat/**, fix/**)"] --> Setup["Setup Node.js 22 LTS\n(cache npm)"]
     Setup --> Install["npm ci\n(Installazione deterministica)"]
-    Install --> PrismaGen["npx prisma generate\n(Generazione client)"]
+    Install --> Audit["npm audit --audit-level=high\n(Scansione vulnerabilità dipendenze)"]
+    Audit --> PrismaGen["npx prisma generate\n(Generazione client)"]
     PrismaGen --> Lint["npm run lint\n(ESLint 9)"]
     Lint --> TypeCheck["npm run typecheck\n(tsc --noEmit)"]
-    TypeCheck --> Build["npm run build\n(next build)"]
-    Build --> Success["✅ Successo CI\n(Pronto al deploy)"]
+    TypeCheck --> Build["npm run build\n(next build standalone)"]
+    Build --> Success["✅ CI Superata\n(Pronto al Deploy)"]
+
+    Push -.-> CodeQL["Workflow Parallelo: CodeQL v4\n(Analisi semantica SAST & data-flow)"]
+    CodeQL --> Alerts["Report Security Tab GitHub"]
+
+    classDef main fill:#1e1e2e,stroke:#3b82f6,stroke-width:2px,color:#f8fafc;
+    classDef sec fill:#450a0a,stroke:#ef4444,stroke-width:2px,color:#fca5a5;
+    classDef ok fill:#064e3b,stroke:#10b981,stroke-width:2px,color:#f8fafc;
+
+    class Push,Setup,Install,PrismaGen,Lint,TypeCheck,Build main;
+    class Audit,CodeQL,Alerts sec;
+    class Success ok;
 ```
 
 ---
 
-## Trigger e Concurrency Control
+## 1. Workflow Principale: Build & Typecheck (`.github/workflows/ci.yml`)
+
+### Trigger e Concurrency Control
 
 ```yaml
 on:
   push:
     branches:
       - master
+      - dev
       - 'feat/**'
       - 'fix/**'
   pull_request:
     branches:
       - master
+      - dev
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 ```
 
-- **Branch monitorati**: `master`, qualsiasi ramo di funzionalità (`feat/**`) o
-  di correzione (`fix/**`).
-- **`cancel-in-progress: true`**: Se uno sviluppatore invia più commit in rapida
-  successione sullo stesso branch, GitHub Actions interrompe immediatamente i
-  job precedenti ancora in esecuzione per risparmiare minuti di calcolo e
-  concentrarsi solo sull'ultimo commit.
+- **Branch monitorati**: `master`, `dev`, qualsiasi ramo di funzionalità (`feat/**`) o di correzione (`fix/**`).
+- **`cancel-in-progress: true`**: Se uno sviluppatore invia più commit in rapida successione, GitHub Actions interrompe immediatamente le esecuzioni precedenti per risparmiare risorse.
+
+### Step Salienti del Job `validate`
+
+1. **`npm ci` (Clean Install)**:  
+   Installa rigorosamente le versioni registrate in `package-lock.json` senza mai alterarlo.
+2. **Security Audit (`npm audit --audit-level=high`)**:  
+   Scansiona le dipendenze contro il database CVE. Se trova problemi critici o di alta gravità, blocca la pipeline.
+3. **`npx prisma generate`**:  
+   Genera i tipi TypeScript del client Prisma prima della compilazione.
+4. **`npm run lint`**:  
+   Analisi statica delle convenzioni e delle best practice con ESLint.
+5. **`npm run typecheck`**:  
+   Controllo statico del type system (`tsc --noEmit`).
+6. **`npm run build`**:  
+   Compilazione della build Next.js con export `standalone`.
 
 ---
 
-## Anatomia degli Step del Workflow
+## 2. Workflow SAST: GitHub CodeQL v4 (`.github/workflows/codeql.yml`)
 
-Il workflow esegue un singolo job snello (`validate`) su `ubuntu-latest`:
-
-### Setup e Caching
+CodeQL esegue l'analisi statica semantica del codice JavaScript e TypeScript senza eseguirlo:
 
 ```yaml
-- name: Setup Node.js 22 LTS
-  uses: actions/setup-node@v4
-  with:
-    node-version: 22
-    cache: 'npm'
+name: "Security / CodeQL SAST"
+
+on:
+  push:
+    branches: [ master, dev ]
+  pull_request:
+    branches: [ master, dev ]
+  schedule:
+    - cron: '0 6 1 * *' # Scansione mensile automatica il 1° giorno del mese alle 06:00 UTC
+
+jobs:
+  analyze:
+    name: CodeQL Security Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: 'javascript-typescript'
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
 ```
 
-Configura il runtime Node.js 22 e sfrutta il meccanismo di cache nativo di
-GitHub Actions sulla cartella `~/.npm`. Questo riduce il tempo di download dei
-pacchetti da minuti a pochi secondi.
-
-### `npm ci` (Clean Install)
-
-```yaml
-- name: Install Dependencies
-  run: npm ci
-```
-
-> [!IMPORTANT] **Perché `npm ci` invece di `npm install`?**  
-> `npm ci` richiede la presenza tassativa di `package-lock.json`, elimina la
-> cartella `node_modules` preesistente e installa **esattamente** le versioni
-> registrate nel lockfile senza mai alterarlo. In questo modo è impossibile che
-> un aggiornamento imprevisto di una sotto-dipendenza rompa la build sul server.
-
-### Generazione Tipi Prisma
-
-```yaml
-- name: Generate Prisma Client
-  run: npx prisma generate
-```
-
-Prima di procedere al controllo dei tipi TypeScript, è necessario che i tipi di
-Prisma Client (`@prisma/client`) vengano generati a partire dal file
-`prisma/schema.prisma`.
-
-### Controlli Separati di Qualità
-
-Invece di un comando cumulativo opaco, la CI mantiene gli step distinti:
-
-1. `run: npm run lint` $\rightarrow$ ESLint 9 analizza stile e best practices.
-2. `run: npm run typecheck` $\rightarrow$ `tsc --noEmit` verifica i contratti
-   statici.
-3. `run: npm run build` $\rightarrow$ `next build` crea i chunk ottimizzati e
-   convalida la raccolta dati delle route.
-
-Se uno qualsiasi di questi passaggi fallisce, la pipeline si blocca e indica
-chiaramente riga e file colpevole.
+- **Versionamento v4**: Utilizza le GitHub Actions v4 ufficiali per il pieno supporto a Node.js 24 sui runner moderni.
+- **Data-Flow Analysis**: Traccia il flusso di dati dall'input utente fino a database e comandi di sistema, rilevando vulnerabilità OWASP (SQL injection, XSS, auth bypass, secret hardcoded).
+- **Cadenza Bilanciata**: Si attiva ad ogni `push` e `pull_request` su `master` e `dev`, più una singola scansione mensile preventiva.
 
 ---
 
-## Gestione delle Variabili d'Ambiente in CI
+## 3. Gestione Dipendenze Vulnerabili Interne (`overrides`)
 
-In un ambiente di CI puro non è presente un database PostgreSQL attivo.
-Tuttavia, Next.js a build-time richiede le variabili di ambiente per validare i
-moduli:
+Quando una dipendenza interna (transitiva) di una libreria principale presenta una vulnerabilità (come nel caso di `postcss` annidato dentro Next.js 15), l'uso di `npm audit fix --force` rischia di forzare l'installazione di una major version incompatibile (es. Next.js 16).
 
-```yaml
-env:
-  DATABASE_URL: 'postgresql://ci_dummy_user:ci_dummy_pass@localhost:5432/ci_db?schema=public'
-  NEXTAUTH_SECRET: 'ci_secret_only_for_build_validation_purposes_32chars'
-  NEXTAUTH_URL: 'http://localhost:3000'
+Per risolvere questo problema senza breaking change, utilizziamo il campo nativo `overrides` in `package.json`:
+
+```json
+"overrides": {
+  "postcss": "$postcss"
+}
 ```
 
-Queste variabili fittizie soddisfano i controlli statici di Next.js e Prisma
-senza esporre credenziali reali.
+Questo vincola npm a risolvere `postcss` sempre e ovunque alla versione sicura e aggiornata (`^8.5.3`) presente in `devDependencies`, eliminando la vulnerabilità a monte.
 
 ---
 
-## Replica del Controllo CI in Locale
+## 4. Replica dei Controlli CI in Locale
 
-Prima di effettuare un commit o un push, lo sviluppatore può replicare
-esattamente l'intera pipeline sul proprio computer con il comando:
+Prima di effettuare un commit o un push, lo sviluppatore può replicare in locale tutti i controlli eseguiti dalla CI:
 
 ```bash
+# 1. Verifica di formattazione, linting, tipi e build
 npm run check:ci
+
+# 2. Verifica di sicurezza delle dipendenze
+npm audit --audit-level=high
 ```
 
-Se questo comando restituisce codice di uscita `0`, la pipeline GitHub Actions
-sul server remoto passerà con esito verde garantito.
+Se entrambi i comandi restituiscono codice di uscita `0`, la pipeline remota GitHub Actions passerà con esito verde garantito.
