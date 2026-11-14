@@ -1,8 +1,7 @@
 import React from 'react';
 import { Metadata } from 'next';
-import { getServerSession } from 'next-auth';
 import { Users } from 'lucide-react';
-import { authOptions } from '@/lib/auth';
+import { requireAuthPage } from '@/lib/auth-guard';
 import { getAllPlayers } from '@/lib/data/user';
 import { AppShell } from '@/components/molecules/AppShell';
 import { SectionHeading } from '@/components/atoms/SectionHeading';
@@ -17,7 +16,8 @@ export const metadata: Metadata = {
 };
 
 export default async function PlayersPage() {
-  const session = await getServerSession(authOptions);
+  const session = await requireAuthPage();
+
   const players = await getAllPlayers();
 
   return (

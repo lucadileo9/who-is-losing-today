@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma';
 import { getAuthenticatedUser } from '@/lib/auth-guard';
 import { submitScoreSchema } from '@/lib/validations/scores';
 import { calculateNormalizedScore, type Game } from '@/lib/game-data';
+import { enforceUserRateLimit, RATE_LIMIT_POLICIES } from '@/lib/rate-limit';
 
 export async function submitScoreAction(formData: unknown) {
   try {
@@ -15,7 +16,13 @@ export async function submitScoreAction(formData: unknown) {
     }
     const user = auth.user;
 
-    // 2. Validazione Zod
+    // 2. Protezione Rate Limiting Centralizzata (con Progressive Jail)
+    const rateLimit = enforceUserRateLimit(user, 'score', RATE_LIMIT_POLICIES.SCORES);
+    if (!rateLimit.ok) {
+      return { success: false, error: rateLimit.error };
+    }
+
+    // 3. Validazione Zod
     const parsed = submitScoreSchema.safeParse(formData);
     if (!parsed.success) {
       const msg = parsed.error.issues.map((i) => i.message).join(', ');
@@ -26,8 +33,8 @@ export async function submitScoreAction(formData: unknown) {
 
     // 4. Calcolo punteggio normalizzato
     const normalizedScore = calculateNormalizedScore(gameId as Game, rawScore);
-    const targetDate = new Date(scoreDate);
-    targetDate.setHours(0, 0, 0, 0);
+    // Garantisce data a mezzanotte UTC senza sfasamenti dovuti al fuso orario del server
+    const targetDate = new Date(`${scoreDate}T00:00:00.000Z`);
 
     // 5. Upsert su PostgreSQL con @db.Date per evitare duplicati
     const saved = await prisma.dailyScore.upsert({

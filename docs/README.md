@@ -16,7 +16,8 @@ docs/
 ├── 01-architecture/                   # Architettura e Sicurezza
 │   ├── overview.md                    # Stack tecnologico, Next.js 15 App Router e flussi
 │   ├── database-and-models.md         # Schema Prisma, modelli, relazioni, indici ed enum
-│   └── auth-and-security.md           # NextAuth, Google OAuth, Whitelist gating, RBAC e Zod
+│   ├── auth-and-security.md           # NextAuth, Google OAuth, Whitelist gating, RBAC e Zod
+│   └── security-hardening.md          # Hardening OWASP, Headers, Rate Limiting, Env validation e SAST
 │
 ├── 02-backend-and-dal/                # Data Access Layer & Logica di Business
 │   ├── dal-design.md                  # Architettura DAL (daily, period, hall-of-fame, user)
@@ -48,6 +49,7 @@ docs/
 - **[Panoramica del Sistema](./01-architecture/overview.md)**: Panoramica dell'applicazione, Next.js 15 con App Router, separazione Server/Client Components.
 - **[Database e Modelli](./01-architecture/database-and-models.md)**: Database PostgreSQL, schema Prisma v6, modelli `User`, `Account`, `Session`, `Whitelist`, `Score`, `DailyNote`, `BugReport` ed enum.
 - **[Autenticazione e Sicurezza](./01-architecture/auth-and-security.md)**: Flusso Google OAuth, controllo autorizzativo tramite Whitelist database-first, controllo ruoli RBAC (`ADMIN` / `PLAYER`), middleware e validazione centralizzata Zod con `auth-guard.ts`.
+- **[Hardening e Misure di Sicurezza](./01-architecture/security-hardening.md)**: Intestazioni HTTP di sicurezza (OWASP), Rate Limiting in-memory, validazione variabili d'ambiente a runtime e analisi statica SAST (CodeQL).
 
 ### [Backend e Data Access Layer](./02-backend-and-dal/)
 - **[Design del DAL](./02-backend-and-dal/dal-design.md)**: Pattern Data Access Layer per query performanti e riutilizzabili (`lib/data/`).

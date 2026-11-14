@@ -4,12 +4,11 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { useSession, signIn, signOut } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import {
   LayoutDashboard,
   MessageSquare,
   PlusCircle,
-  LogIn,
   LogOut,
   ShieldAlert,
   User,
@@ -19,6 +18,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PlayerAvatar } from '@/components/atoms/PlayerAvatar';
+import { GoogleSignInButton } from '@/components/atoms/GoogleSignInButton';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -53,13 +53,14 @@ export function Header() {
 
   const user = session?.user;
   const isAdmin = user?.role === 'ADMIN';
+  const logoHref = user ? '/dashboard' : '/';
 
   return (
     <header className="sticky top-0 z-30 w-full border-b border-white/10 bg-[#0a0b14]/80 backdrop-blur-xl">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-3 sm:px-6 md:h-16 lg:px-8">
-        {/* Brand Logo - non si accavalla mai su mobile */}
+        {/* Brand Logo - dinamicamente verso dashboard se autenticato, o home se ospite */}
         <Link
-          href="/dashboard"
+          href={logoHref}
           className="flex items-center gap-2.5 transition-transform hover:scale-[1.02] active:scale-[0.98]"
         >
           <div className="relative size-8 shrink-0 overflow-hidden rounded-xl border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.35)] sm:size-9">
@@ -181,7 +182,7 @@ export function Header() {
                 <DropdownMenuSeparator className="bg-white/10" />
 
                 <DropdownMenuItem
-                  onClick={() => signOut({ callbackUrl: '/dashboard' })}
+                  onClick={() => signOut({ callbackUrl: '/' })}
                   className="flex cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-sm text-red-400 hover:bg-red-500/15 focus:text-red-400"
                 >
                   <LogOut className="size-4" />
@@ -190,13 +191,7 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <button
-              onClick={() => signIn('google')}
-              className="flex cursor-pointer items-center gap-1.5 rounded-xl bg-cyan-500 px-3 py-1.5 text-xs font-bold text-black shadow-[0_0_12px_rgba(6,182,212,0.4)] transition-all hover:bg-cyan-400 active:scale-95"
-            >
-              <LogIn className="size-3.5" />
-              <span>Accedi</span>
-            </button>
+            <GoogleSignInButton size="sm" />
           )}
 
           {/* Hamburger Menu Toggle (visibile solo su mobile) */}
@@ -266,7 +261,7 @@ export function Header() {
                 type="button"
                 onClick={() => {
                   setMobileMenuOpen(false);
-                  signOut({ callbackUrl: '/dashboard' });
+                  signOut({ callbackUrl: '/' });
                 }}
                 className="flex items-center gap-3 rounded-xl px-3.5 py-2 text-left text-sm font-semibold text-red-400 hover:bg-red-500/10"
               >

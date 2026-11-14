@@ -128,6 +128,14 @@ Risultato: **2 sole query SQL complessive** (1 per il catalogo giochi, 1 per
 tutti i punteggi del giorno), indipendentemente dal numero di giocatori o giochi
 registrati.
 
+### Esempio in `getAllPlayers` e `getUserProfile`:
+
+1. **`getAllPlayers` (Single-Query In-Memory Aggregation)**:
+   Invece di invocare `getUserProfile` per ogni utente in un ciclo $N+1$ (che causerebbe $N$ query parallele e full-table scan ridondanti), `getAllPlayers` esegue una sola query `prisma.user.findMany({ include: { dailyScores: true } })`. Le classifiche giornaliere per vittorie e cucchiai di legno vengono calcolate una volta sola in memoria tramite `computeTrophies`, riducendo le chiamate al database a **1 singola query**.
+
+2. **`getUserProfile` (PostgreSQL Window Functions)**:
+   Il calcolo aggregato delle vittorie di giornata e dei cucchiai di legno subiti con $\ge 2$ partecipanti viene delegato direttamente al motore PostgreSQL tramite `prisma.$queryRaw` con window functions (`ROW_NUMBER() OVER (PARTITION BY "scoreDate" ORDER BY overall ...)`). Il database calcola il ranking nei propri indici interni e restituisce a Node.js esclusivamente i due numeri interi finali, azzerando il trasferimento di record storici sulla rete.
+
 ---
 
 ## Gestione del Connection Pooling

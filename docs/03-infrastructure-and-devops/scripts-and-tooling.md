@@ -60,7 +60,8 @@ convenzioni per i commit e il branching Git.
 | Comando                | Quando usarlo                   | Cosa fa                                                                                                                                                                    |
 | :--------------------- | :------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`npm run validate`** | **Prima di ogni commit locale** | Esegue in sequenza `format` $\rightarrow$ `lint` $\rightarrow$ `typecheck`. Riformatta il codice e controlla che non ci siano errori di stile o di tipo.                   |
-| **`npm run check:ci`** | **Prima di fare un `git push`** | Esegue esattamente gli stessi controlli della pipeline remota GitHub Actions (`lint` $\rightarrow$ `typecheck` $\rightarrow$ `build`). Se passa, la CI sarà verde al 100%. |
+| **`npm run check:ci`** | **Prima di fare un `git push`** | Esegue i controlli della pipeline remota GitHub Actions (`lint` $\rightarrow$ `typecheck` $\rightarrow$ `build`). Se passa, la compilazione remota sarà verde al 100%.    |
+| **`npm audit --audit-level=high`** | **Prima di fare un `git push`** | Verifica che nessuna dipendenza installata presenti vulnerabilità note di livello High o Critical nel database CVE.                                                       |
 
 ---
 

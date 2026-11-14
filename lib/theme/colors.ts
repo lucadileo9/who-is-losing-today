@@ -1,10 +1,12 @@
 export const BRAND_COLORS = {
   loser: '#ef4444', // Neon Crimson (perdente)
   winner: '#f59e0b', // Cyber Gold (vincente)
-  krilion: '#10b981', // Smeraldo Neon
-  metazooa: '#f97316', // Arancione Safari
-  chronophoto: '#8b5cf6', // Viola Synthwave
-  totale: '#3b82f6', // Blu Zaffiro
+  krilion: '#3b82f6', // Blu
+  metazooa: '#10b981', // Smeraldo 
+  chronophoto: '#f59e0b', // Ambra
+  totale: '#8b5cf6', // Viola Synthwave (Totale)
+  cyan: '#06b6d4', // Cyan Neon (Accenti e bottoni primari)
+  pink: '#ec4899', // Pink Neon (Social e Bacheca)
   space: '#0a0b14', // Sfondo dark deep space
   surface: '#121526', // Superficie card glassmorphism
 } as const;

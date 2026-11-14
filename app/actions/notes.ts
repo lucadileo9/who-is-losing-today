@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
 import { getAuthenticatedUser } from '@/lib/auth-guard';
 import { createNoteSchema } from '@/lib/validations/notes';
+import { enforceUserRateLimit, RATE_LIMIT_POLICIES } from '@/lib/rate-limit';
 
 export async function createNoteAction(content: string) {
   try {
@@ -12,6 +13,12 @@ export async function createNoteAction(content: string) {
       return { success: false, error: auth.error };
     }
     const user = auth.user;
+
+    // Protezione Rate Limiting Centralizzata (con Progressive Jail)
+    const rateLimit = enforceUserRateLimit(user, 'note', RATE_LIMIT_POLICIES.NOTES);
+    if (!rateLimit.ok) {
+      return { success: false, error: rateLimit.error };
+    }
 
     const parsed = createNoteSchema.safeParse({ content });
     if (!parsed.success) {

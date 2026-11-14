@@ -38,18 +38,22 @@ export async function getHallOfFame(): Promise<HallOfFameDTO> {
   });
 
   // 4. Record Totale Giornaliero di sempre:
-  // Legge tutti i punteggi per aggregare per giorno e trovare la media su 3 giochi più alta mai realizzata
+  // Seleziona solo i campi essenziali senza JOIN pesanti con User su tutta la tabella
   const allScores = await prisma.dailyScore.findMany({
-    include: {
-      user: { select: { id: true, name: true, color: true, image: true } },
+    select: {
+      userId: true,
+      scoreDate: true,
+      gameId: true,
+      rawScore: true,
+      normalizedScore: true,
     },
   });
 
-  // Mappa: `userId_scoreDate` -> { user, date, scores: Record<Game, number> }
+  // Mappa: `userId_scoreDate` -> { userId, date, krNorm, mzNorm, chNorm }
   const dailyUserTotals = new Map<
     string,
     {
-      user: { id: string; name: string; color: string; image?: string | null };
+      userId: string;
       date: string;
       krNorm: number;
       mzNorm: number;
@@ -63,12 +67,7 @@ export async function getHallOfFame(): Promise<HallOfFameDTO> {
 
     if (!dailyUserTotals.has(key)) {
       dailyUserTotals.set(key, {
-        user: {
-          id: sc.user.id,
-          name: sc.user.name || 'Giocatore',
-          color: sc.user.color || DEFAULT_USER_COLOR,
-          image: sc.user.image,
-        },
+        userId: sc.userId,
         date: dayStr,
         krNorm: 0,
         mzNorm: 0,
@@ -86,27 +85,42 @@ export async function getHallOfFame(): Promise<HallOfFameDTO> {
   });
 
   let bestTotaleScore = 0;
-  let bestTotaleHolder: AllTimeRecordItem | null = null;
+  let bestTotaleDate = '';
+  let bestUserId = '';
 
   dailyUserTotals.forEach((entry) => {
     // Formula ufficiale totale: diviso 3
     const avg = Math.round((entry.krNorm + entry.mzNorm + entry.chNorm) / 3);
     if (avg > bestTotaleScore) {
       bestTotaleScore = avg;
+      bestTotaleDate = entry.date;
+      bestUserId = entry.userId;
+    }
+  });
+
+  let bestTotaleHolder: AllTimeRecordItem | null = null;
+  if (bestUserId) {
+    // Recupera i dati anagrafici una sola volta per il singolo utente record
+    const bestUser = await prisma.user.findUnique({
+      where: { id: bestUserId },
+      select: { id: true, name: true, color: true, image: true },
+    });
+
+    if (bestUser) {
       bestTotaleHolder = {
         gameId: 'Totale',
-        score: avg,
+        score: bestTotaleScore,
         unit: 'pt',
-        date: entry.date,
+        date: bestTotaleDate,
         holder: {
-          id: entry.user.id,
-          name: entry.user.name,
-          color: entry.user.color,
-          image: entry.user.image,
+          id: bestUser.id,
+          name: bestUser.name || 'Giocatore',
+          color: bestUser.color || DEFAULT_USER_COLOR,
+          image: bestUser.image,
         },
       };
     }
-  });
+  }
 
   const krilionRecord = bestKrilion
     ? {

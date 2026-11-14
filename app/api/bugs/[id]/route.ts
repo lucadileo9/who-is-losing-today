@@ -1,12 +1,19 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getAuthenticatedAdmin } from '@/lib/auth-guard';
 
-// PATCH /api/bugs/[id] - Aggiorna lo stato o la priorità di un bug
+// PATCH /api/bugs/[id] - Aggiorna lo stato o la priorità di un bug (Solo ADMIN)
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const auth = await getAuthenticatedAdmin();
+    if (!auth.success) {
+      const status = auth.error.includes('Accesso negato') ? 403 : 401;
+      return NextResponse.json({ error: auth.error }, { status });
+    }
+
     const { id } = await params;
     const body = await request.json();
     const { status, priority, category } = body;
@@ -65,12 +72,18 @@ export async function PATCH(
   }
 }
 
-// DELETE /api/bugs/[id] - Elimina una segnalazione dal DB
+// DELETE /api/bugs/[id] - Elimina una segnalazione dal DB (Solo ADMIN)
 export async function DELETE(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const auth = await getAuthenticatedAdmin();
+    if (!auth.success) {
+      const status = auth.error.includes('Accesso negato') ? 403 : 401;
+      return NextResponse.json({ error: auth.error }, { status });
+    }
+
     const { id } = await params;
     await prisma.bugReport.delete({
       where: { id },

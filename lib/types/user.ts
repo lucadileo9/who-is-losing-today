@@ -21,6 +21,14 @@ export interface UserPersonalTrendPoint {
   totale?: number;
 }
 
+export interface ScoreRecord {
+  userId: string;
+  scoreDate: Date;
+  gameId: string;
+  rawScore: number;
+  normalizedScore: number | null;
+}
+
 export interface UserProfileDTO {
   user: UserSummaryDTO;
   role: Role;

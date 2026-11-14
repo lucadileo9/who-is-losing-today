@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import {
   LayoutDashboard,
   MessageSquare,
@@ -14,6 +15,12 @@ import { cn } from '@/lib/utils';
 
 export function MobileBottomNav() {
   const pathname = usePathname();
+  const { data: session } = useSession();
+
+  // Nasconde la barra di navigazione mobile agli utenti non autenticati o sulla home pubblica
+  if (!session?.user || pathname === '/') {
+    return null;
+  }
 
   const items = [
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },

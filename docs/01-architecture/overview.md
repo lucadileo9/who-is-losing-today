@@ -133,8 +133,8 @@ esegue l'autenticazione tramite la funzione di guardia `getAuthenticatedUser()`.
 Mantenuti per:
 
 - Il flusso di callback di NextAuth: `/api/auth/[...nextauth]`.
-- API programmatiche o export di dati: `/api/dashboard`, `/api/scores`,
-  `/api/notes`, `/api/bugs`.
+- API programmatiche o export di dati: `/api/dashboard`, `/api/notes`,
+  `/api/bugs`.
 
 ### Middleware di Protezione (`middleware.ts`)
 
