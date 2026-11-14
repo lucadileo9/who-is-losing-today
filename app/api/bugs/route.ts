@@ -60,11 +60,21 @@ export async function POST(request: Request) {
       );
     }
 
-    // Protezione Rate Limiting (max 5 segnalazioni ogni 5 minuti per utente)
-    const rateLimit = checkRateLimit(`bug:${auth.user.id}`, { limit: 5, windowMs: 300_000 });
+    // Protezione Rate Limiting con Penalità Progressiva (Jail)
+    const userLabel = `${auth.user.name || 'Utente'} (${auth.user.email})`;
+    const rateLimit = checkRateLimit(`bug:${auth.user.id}`, {
+      limit: 5,
+      windowMs: 300_000,
+      label: userLabel,
+    });
     if (!rateLimit.success) {
+      const waitMinutes = Math.ceil(rateLimit.retryAfterSeconds / 60);
       return NextResponse.json(
-        { error: 'Hai inviato troppe segnalazioni di recente. Attendi qualche minuto prima di riprovare.' },
+        {
+          error: rateLimit.isJailed
+            ? `Invio segnalazioni temporaneamente sospeso per tentativi consecutivi. Riprova tra ${waitMinutes} minuti.`
+            : `Hai inviato troppe segnalazioni di recente. Attendi ${waitMinutes} minuti prima di riprovare.`,
+        },
         { status: 429 }
       );
     }

@@ -14,12 +14,25 @@ export async function createNoteAction(content: string) {
     }
     const user = auth.user;
 
-    // Protezione Rate Limiting (max 6 note al minuto per utente)
-    const rateLimit = checkRateLimit(`note:${user.id}`, { limit: 6, windowMs: 60_000 });
+    // Protezione Rate Limiting con Penalità Progressiva (Jail)
+    const userLabel = `${user.name || 'Utente'} (${user.email})`;
+    const rateLimit = checkRateLimit(`note:${user.id}`, {
+      limit: 6,
+      windowMs: 60_000,
+      label: userLabel,
+    });
     if (!rateLimit.success) {
+      const waitMinutes = Math.ceil(rateLimit.retryAfterSeconds / 60);
+      const waitMessage =
+        rateLimit.retryAfterSeconds > 60
+          ? `${waitMinutes} minut${waitMinutes === 1 ? 'o' : 'i'}`
+          : `${rateLimit.retryAfterSeconds} secondi`;
+
       return {
         success: false,
-        error: 'Stai inviando messaggi troppo velocemente. Attendi qualche istante.',
+        error: rateLimit.isJailed
+          ? `Pubblicazione note temporaneamente sospesa per tentativi massivi. Riprova tra ${waitMessage}.`
+          : `Stai pubblicando messaggi troppo velocemente. Attendi ${waitMessage}.`,
       };
     }
 

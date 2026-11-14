@@ -16,12 +16,25 @@ export async function submitScoreAction(formData: unknown) {
     }
     const user = auth.user;
 
-    // 2. Protezione Rate Limiting (max 15 invii al minuto per utente)
-    const rateLimit = checkRateLimit(`score:${user.id}`, { limit: 15, windowMs: 60_000 });
+    // 2. Protezione Rate Limiting con Penalità Progressiva (Jail)
+    const userLabel = `${user.name || 'Utente'} (${user.email})`;
+    const rateLimit = checkRateLimit(`score:${user.id}`, {
+      limit: 15,
+      windowMs: 60_000,
+      label: userLabel,
+    });
     if (!rateLimit.success) {
+      const waitMinutes = Math.ceil(rateLimit.retryAfterSeconds / 60);
+      const waitMessage =
+        rateLimit.retryAfterSeconds > 60
+          ? `${waitMinutes} minut${waitMinutes === 1 ? 'o' : 'i'}`
+          : `${rateLimit.retryAfterSeconds} secondi`;
+
       return {
         success: false,
-        error: 'Troppe richieste di inserimento punteggio. Attendi qualche istante prima di riprovare.',
+        error: rateLimit.isJailed
+          ? `Invio punteggi temporaneamente sospeso per troppi tentativi consecutivi. Riprova tra ${waitMessage}.`
+          : `Troppe richieste. Attendi ${waitMessage} prima di inviare un nuovo punteggio.`,
       };
     }
 
