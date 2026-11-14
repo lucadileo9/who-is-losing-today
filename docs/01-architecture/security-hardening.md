@@ -49,6 +49,8 @@ Per proteggere il database PostgreSQL e le Server Actions da attacchi di floodin
 - **Zero dipendenze esterne**: opera direttamente nella memoria del runtime Node.js, perfetto per container singoli standalone.
 - **Garbage Collection automatica**: un timer periodico non bloccante (`unref()`) rimuove le chiavi scadute per evitare memory leak.
 - **Tracciamento Utente nei Log**: i log di sicurezza registrano direttamente nome ed email dell'utente (`"Mario Rossi (mario@email.com)"`) per audit immediato nei log Docker.
+- **Helper Centralizzato `enforceUserRateLimit`**: elimina codice ripetuto nelle Server Actions occupandosi della formattazione uniforme dei messaggi e dei tempi di attesa.
+- **Politiche Centralizzate (`RATE_LIMIT_POLICIES`)**: le soglie di tutti gli endpoint sono configurate in un unico punto.
 - **Penalità Progressiva (Jail)**:
   - Superamento iniziale: blocco standard per la durata residua della finestra temporale.
   - Insistenza media ($\ge 2\times$ limite): attivazione **Jail Livello 1** con sospensione forzata di **5 minuti**.

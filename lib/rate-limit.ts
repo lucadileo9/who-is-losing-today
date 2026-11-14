@@ -170,3 +170,69 @@ export function checkRateLimit(
     retryAfterSeconds: Math.max(1, Math.ceil((existing.resetTime - now) / 1000)),
   };
 }
+
+/**
+ * Politiche di rate limiting predefinite per le diverse operazioni dell'applicazione.
+ * Centralizza tutte le soglie in un unico punto facilmente manutenibile.
+ */
+export const RATE_LIMIT_POLICIES = {
+  SCORES: { limit: 15, windowMs: 60_000 },
+  NOTES: { limit: 6, windowMs: 60_000 },
+  BUGS: { limit: 5, windowMs: 300_000 },
+} as const;
+
+export interface EnforceRateLimitResult {
+  ok: boolean;
+  error?: string;
+  isJailed?: boolean;
+  retryAfterSeconds?: number;
+}
+
+export interface MinimalUser {
+  id: string;
+  name?: string | null;
+  email?: string | null;
+}
+
+/**
+ * Helper ad alto livello per Server Actions e Route Handlers.
+ * Gestisce automaticamente etichette utente, verifica delle soglie e formattazione
+ * uniforme dei messaggi di errore (inclusi i periodi di Jail).
+ */
+export function enforceUserRateLimit(
+  user: MinimalUser,
+  actionKey: 'score' | 'note' | 'bug' | string,
+  options: RateLimitOptions
+): EnforceRateLimitResult {
+  const userLabel = `${user.name || 'Utente'} (${user.email || user.id})`;
+  const result = checkRateLimit(`${actionKey}:${user.id}`, {
+    ...options,
+    label: userLabel,
+  });
+
+  if (result.success) {
+    return { ok: true };
+  }
+
+  const waitMinutes = Math.ceil(result.retryAfterSeconds / 60);
+  const waitMessage =
+    result.retryAfterSeconds > 60
+      ? `${waitMinutes} minut${waitMinutes === 1 ? 'o' : 'i'}`
+      : `${result.retryAfterSeconds} secondi`;
+
+  let actionDescription = 'questa operazione';
+  if (actionKey === 'score') actionDescription = "l'invio punteggi";
+  else if (actionKey === 'note') actionDescription = 'la pubblicazione note';
+  else if (actionKey === 'bug') actionDescription = "l'invio segnalazioni";
+
+  const error = result.isJailed
+    ? `Operazione temporaneamente sospesa per tentativi massivi consecutivi. Riprova tra ${waitMessage}.`
+    : `Troppe richieste per ${actionDescription}. Attendi ${waitMessage} prima di riprovare.`;
+
+  return {
+    ok: false,
+    error,
+    isJailed: result.isJailed,
+    retryAfterSeconds: result.retryAfterSeconds,
+  };
+}
