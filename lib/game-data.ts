@@ -1,3 +1,5 @@
+import { BRAND_COLORS } from '@/lib/theme/colors';
+
 export type Game = 'Krilion' | 'Metazooa' | 'Chronophoto';
 export type LeaderboardTab = 'Totale' | Game;
 
@@ -9,6 +11,11 @@ export interface GameInfo {
   tone: string; // Classi Tailwind per Badge/Card
   unit: string; // "pts" o "tentativi"
   isLowerBetter: boolean;
+  url: string; // Sito web ufficiale del puzzle game
+  category: string; // Genere / Categoria del gioco
+  rules: string; // Descrizione sintetica delle regole
+  scoringDescription: string; // Descrizione della scala originale del punteggio
+  normalizedDescription: string; // Spiegazione della normalizzazione (0-1000)
 }
 
 export const GAME_CONFIG: Record<Game, GameInfo> = {
@@ -16,28 +23,49 @@ export const GAME_CONFIG: Record<Game, GameInfo> = {
     id: 'Krilion',
     name: 'Krilion',
     shortName: 'KR',
-    color: '#3b82f6',
+    color: BRAND_COLORS.krilion,
     tone: 'bg-chart-1/15 text-chart-1 border-chart-1/25',
     unit: 'pts',
     isLowerBetter: false,
+    url: 'https://krilion.it',
+    category: 'Parole',
+    rules:
+      'Indovina la parola e ordina gli elementi corretti nel minor numero di mosse e nel minor tempo possibile.',
+    scoringDescription:
+      'Fino a 700 punti grezzi (più è alto, migliore è il risultato).',
+    normalizedDescription: '(punteggio / 700) × 1.000 punti normalizzati.',
   },
   Metazooa: {
     id: 'Metazooa',
     name: 'Metazooa',
     shortName: 'MZ',
-    color: '#10b981',
+    color: BRAND_COLORS.metazooa,
     tone: 'bg-chart-2/15 text-chart-2 border-chart-2/25',
     unit: 'tentativi',
     isLowerBetter: true,
+    url: 'https://metazooa.com',
+    category: 'Biologia',
+    rules:
+      "Indovina l'animale misterioso del giorno risalendo l'albero evolutivo tassonomico: phylum, classe, ordine e famiglia.",
+    scoringDescription:
+      'Da 1 a 20 tentativi (meno tentativi impieghi, migliore è il punteggio).',
+    normalizedDescription: '((20 - tentativi) / 19) × 1.000 punti normalizzati.',
   },
   Chronophoto: {
     id: 'Chronophoto',
     name: 'Chronophoto',
     shortName: 'CH',
-    color: '#f59e0b',
+    color: BRAND_COLORS.chronophoto,
     tone: 'bg-chart-3/15 text-chart-3 border-chart-3/25',
     unit: 'pts',
     isLowerBetter: false,
+    url: 'https://www.chronophoto.app',
+    category: 'Storia',
+    rules:
+      "Osserva attentamente 5 fotografie storiche e stima con precisione l'anno esatto dello scatto.",
+    scoringDescription:
+      'Fino a 5.000 punti (massimo 1.000 punti per ciascuna delle 5 foto indovinate).',
+    normalizedDescription: '(punteggio / 5.000) × 1.000 punti normalizzati.',
   },
 };
 
