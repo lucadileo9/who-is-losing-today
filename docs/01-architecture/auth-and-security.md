@@ -20,7 +20,7 @@ flowchart TD
     L3 -->|Sessione e Ruolo OK| L4["LIVELLO 4: Validazione Rigorosa<br/><code>lib/validations/*</code><br/>Schemi Zod a runtime per sanitizzare e convalidare ogni payload"]
     L4 --> DB[("PostgreSQL Database<br/>Operazioni CRUD Sicure")]
 
-    L1 -.->|Token Assente| R1["Redirect a /dashboard (Login)"]
+    L1 -.->|Token Assente| R1["Redirect a / (Landing Page Pubblica)"]
     L2 -.->|Email Non in Whitelist| R2["Redirect a /auth/unauthorized"]
     L3 -.->|Ruolo Insufficiente| R3["Errore 403 Forbidden"]
     L4 -.->|Payload Non Valido| R4["Errore 400 Bad Request"]

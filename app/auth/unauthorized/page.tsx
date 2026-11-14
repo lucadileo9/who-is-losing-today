@@ -26,11 +26,11 @@ export default function UnauthorizedPage() {
 
         <div className="mt-8">
           <Link
-            href="/dashboard"
+            href="/"
             className="inline-flex items-center gap-2 rounded-xl bg-white/10 px-5 py-2.5 text-xs font-semibold text-white transition-all hover:bg-white/20"
           >
             <ArrowLeft className="size-4" />
-            Torna alla Dashboard
+            Torna alla Home
           </Link>
         </div>
       </div>

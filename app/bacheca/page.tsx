@@ -1,9 +1,7 @@
 import React from 'react';
 import { Metadata } from 'next';
-import { redirect } from 'next/navigation';
-import { getServerSession } from 'next-auth';
 import { MessageSquare } from 'lucide-react';
-import { authOptions } from '@/lib/auth';
+import { requireAuthPage } from '@/lib/auth-guard';
 import { getActiveNotes } from '@/lib/data/notes';
 import { AppShell } from '@/components/molecules/AppShell';
 import { SectionHeading } from '@/components/atoms/SectionHeading';
@@ -18,11 +16,7 @@ export const metadata: Metadata = {
 };
 
 export default async function BachecaPage() {
-  const session = await getServerSession(authOptions);
-
-  if (!session?.user) {
-    redirect('/auth/signin?callbackUrl=/bacheca');
-  }
+  const session = await requireAuthPage();
 
   const currentUserId = session.user.id;
   const isAdmin = session.user.role === 'ADMIN';

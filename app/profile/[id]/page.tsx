@@ -1,10 +1,9 @@
 import React from 'react';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getServerSession } from 'next-auth';
 import Link from 'next/link';
 import { ArrowLeft, User as UserIcon } from 'lucide-react';
-import { authOptions } from '@/lib/auth';
+import { requireAuthPage } from '@/lib/auth-guard';
 import { getUserProfile } from '@/lib/data/user';
 import { AppShell } from '@/components/molecules/AppShell';
 import { SectionHeading } from '@/components/atoms/SectionHeading';
@@ -38,7 +37,7 @@ export async function generateMetadata({
 
 export default async function PlayerProfilePage({ params }: ProfilePageProps) {
   const { id } = await params;
-  const session = await getServerSession(authOptions);
+  const session = await requireAuthPage();
 
   const profile = await getUserProfile(id);
 
@@ -46,7 +45,7 @@ export default async function PlayerProfilePage({ params }: ProfilePageProps) {
     notFound();
   }
 
-  const isSelf = session?.user?.id === profile.user.id;
+  const isSelf = session.user.id === profile.user.id;
 
   return (
     <AppShell>

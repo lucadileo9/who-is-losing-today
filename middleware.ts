@@ -21,30 +21,33 @@ export default withAuth(
         // Rotte pubbliche accessibili a tutti
         if (
           pathname === '/' ||
-          pathname.startsWith('/dashboard') ||
           pathname.startsWith('/auth') ||
           pathname.startsWith('/api/auth') ||
           pathname.startsWith('/_next') ||
-          pathname.startsWith('/favicon.ico')
+          pathname.startsWith('/favicon.ico') ||
+          pathname === '/logo.jpeg' ||
+          pathname === '/background.jpg'
         ) {
           return true;
         }
 
-        // Tutte le altre rotte private (profile, submit, bacheca, admin) richiedono login
+        // Tutte le altre rotte private (dashboard, players, profile, submit, bacheca, admin) richiedono login
         return Boolean(token);
       },
     },
     pages: {
-      signIn: '/dashboard',
+      signIn: '/',
     },
   }
 );
 
 export const config = {
   matcher: [
-    '/admin/:path*',
+    '/dashboard/:path*',
+    '/players/:path*',
     '/profile/:path*',
     '/submit/:path*',
     '/bacheca/:path*',
+    '/admin/:path*',
   ],
 };
