@@ -50,5 +50,6 @@ export { NeonButton } from './NeonButton';
 export { StatCard } from './StatCard';
 export { CommunityStatCard } from './CommunityStatCard';
 export { SectionHeading } from './SectionHeading';
+export { GoogleSignInButton } from './GoogleSignInButton';
 export { ThemeProvider } from './ThemeProvider';
 export { Providers } from './Providers';
