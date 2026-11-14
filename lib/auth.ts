@@ -7,9 +7,7 @@ import { DEFAULT_USER_COLOR } from '@/lib/theme/colors';
 import { Adapter } from 'next-auth/adapters';
 import { Role } from '@prisma/client';
 
-const useSecureCookies =
-  process.env.NODE_ENV === 'production' ||
-  process.env.NEXTAUTH_URL?.startsWith('https://');
+const useSecureCookies = process.env.NEXTAUTH_URL?.startsWith('https://') ?? false;
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as Adapter,
